@@ -1,0 +1,7 @@
+<form method="post" action="">
+{% csrf_token %}<!-- required since Django 1.2 or later -->
+<ul>
+    {{ layers_form.as_ul }}
+</ul>
+<input type="submit" value="Save"/>
+</form>

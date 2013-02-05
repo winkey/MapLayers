@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+        <title>NASA Lance MODIS"</title>
+        
+        <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.3.1/adapter/ext/ext-base.js"></script>
+        <script type="text/javascript" src="http://extjs.cachefly.net/ext-3.3.1/ext-all.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.3.1/resources/css/ext-all.css" />
+        <link rel="stylesheet" type="text/css" href="http://extjs.cachefly.net/ext-3.3.1/examples/shared/examples.css" />
+
+        <script type="text/javascript" src="{{ STATIC_URL }}OpenLayers-2.12/OpenLayers.debug.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/GeoExt.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+        <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=sensor=false&amp;key=ABQIAAAASfdqEQTIBj55I22mjTNwhhRztyOfbm35_VK1CAYyThhuOVyq3BQqwp_JkHSBpWPhKuc4Hfy42pQUww"
+            ></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/proj-def.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/setup.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/kml.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/finish.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/tree.js"></script>
+    </head>
+    <body>
+    <div id="permalink"></div>
+    <div id="mappanel"></div>
+    <iframe style="width:0px;height:0px;border:0px;" id="kmliframe"  name="kmliframe" >
+    </iframe>
+    </body>
+</html>
+

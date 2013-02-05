@@ -1,0 +1,15 @@
+#this is what i did 
+
+
+
+django-admin.py startproject NewWorld
+cd NewWorld
+createdb 'NewWorld' -h localhost -T template_postgis
+
+#python manage.py runserver
+
+python manage.py sqlall layers
+
+python manage.py syncdb
+
+
