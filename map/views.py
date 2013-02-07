@@ -26,3 +26,7 @@ def postlogin( request ):
         
         return render_to_response( 'registration/postlogin.html', { },
             context_instance = RequestContext( request ) )
+def postlogout( request ):
+        
+        return render_to_response( 'registration/postlogout.html', { },
+            context_instance = RequestContext( request ) )
