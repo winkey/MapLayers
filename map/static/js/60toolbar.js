@@ -7,11 +7,18 @@
 
 function NewWorld_toolbar_Create(vector) {
 
-	NewWorld_Objects.loginbutton = new Ext.Toolbar.Button({
-        text: 'login',
-        handler: NewWorld_login
-	});
-
+	if (NewWorld_Settings.isLoggedin == true) {
+		NewWorld_Objects.loginbutton = new Ext.Toolbar.Button({
+	        text: 'logout',
+	        handler: NewWorld_logout
+		});
+	} else {
+		NewWorld_Objects.loginbutton = new Ext.Toolbar.Button({
+	        text: 'login',
+	        handler: NewWorld_login
+		});
+	}
+	
   var maptbar = [
     NewWorld_Objects.loginbutton,
     "->",

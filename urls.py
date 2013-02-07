@@ -17,6 +17,8 @@ urlpatterns = patterns('',
     url( r'^postlogin$', 'map.views.postlogin' ),
     url( r'^logout/$', 'django.contrib.auth.views.logout' ),
     url( r'^postlogout$', 'map.views.postlogout' ),
+    url( r'^isLoggedin', 'map.views.isLoggedin' ),
+    
     # Examples:
     # url(r'^$', 'NewWorld.views.home', name='home'),
     # url(r'^NewWorld/', include('NewWorld.foo.urls')),

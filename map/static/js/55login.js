@@ -10,6 +10,7 @@ function NewWorld_login() {
 
 }
 function NewWorld_login_Finish() {
+	NewWorld_Settings.isLoggedin = true;
 	NewWorld_Objects.loginbutton.setText('logout'); 
 	NewWorld_Objects.loginbutton.setHandler(NewWorld_logout);
 	
@@ -29,6 +30,7 @@ function NewWorld_logout() {
 	
 }
 function NewWorld_logout_Finish() {
+	NewWorld_Settings.isLoggedin = false;
 	NewWorld_Objects.loginbutton.setText('login'); 
 	NewWorld_Objects.loginbutton.setHandler(NewWorld_login); 
 	

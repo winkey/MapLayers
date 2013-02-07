@@ -15,6 +15,23 @@ function NewWorld_Tree_GetJson() {
 	);
 }
 
+/**************************************************************************//**
+ *
+ *  @brief fuction to get the login status json
+ * 
+******************************************************************************/
+
+
+function NewWorld_Login_GetJson() {
+	
+	$.getJSON( "/isLoggedin", {}, 
+		function(data) {
+			NewWorld_Settings.isLoggedin = data.isLoggedin;
+			NewWorld_OLMap_Create();
+			NewWorld_Tree_GetJson();
+		}
+	);
+}
 
 /**************************************************************************//**
  *
@@ -28,8 +45,7 @@ function NewWorld_Settings_GetJson() {
 	$.getJSON( "/map/settings", {}, 
 		function(data) {
 			NewWorld_Settings_Set(data);
-			NewWorld_OLMap_Create();
-			NewWorld_Tree_GetJson();
+			NewWorld_Login_GetJson();
 		}
 	);
 }

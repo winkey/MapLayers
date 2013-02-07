@@ -5,10 +5,10 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404, render_to_response
-from django.contrib.auth import authenticate, login, logout
-
+# from django.contrib.auth import authenticate, login, logout
+# from django.contrib.auth.views import logout
 from django.core import serializers
-
+import simplejson as json
 
 def index( request ):
         
@@ -30,3 +30,13 @@ def postlogout( request ):
         
         return render_to_response( 'registration/postlogout.html', { },
             context_instance = RequestContext( request ) )
+
+def isLoggedin( request ):
+    
+    result = {'isLoggedin': False}
+
+    if request.user.is_authenticated():
+        result['isLoggedin'] = True
+        
+    return HttpResponse( json.dumps( result ), mimetype = 'application/json' )
+        

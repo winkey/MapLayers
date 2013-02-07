@@ -3,6 +3,7 @@ NewWorld_Settings = new Object();
 NewWorld_Settings.title = "";
 NewWorld_Settings.center = {};
 NewWorld_Settings.zoom = 0;
+NewWorld_Settings.isLoggedin;
 
 urlcgibin_tc = "";
 urlkmlrepeater = "http://hyperquad.telascience.org/cgi-bin/kmlrepeater";
