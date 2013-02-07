@@ -1,0 +1,11 @@
+[
+  {
+    "model": "map.Settings",
+    "pk": 1,
+    "fields": {
+      "title": "NewWorld",
+      "zoom": "4",
+      "tilecacheurl": "http://hypercube.telascience.org/tilecache/tilecache.py"
+    }
+  }
+]
