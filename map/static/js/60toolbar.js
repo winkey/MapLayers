@@ -13,8 +13,8 @@ function NewWorld_login_Finish() {
 	NewWorld_Objects.loginbutton.setText('logout'); 
 	NewWorld_Objects.loginbutton.setHandler(NewWorld_logout);
 	
-	##### need to get a fresh tree ##### 
-	##### parse hash layer list ##### 
+	/***** need to get a fresh tree *****/ 
+	/***** parse hash layer list *****/ 
 	
 }
 	
@@ -32,8 +32,8 @@ function NewWorld_logout_Finish() {
 	NewWorld_Objects.loginbutton.setText('login'); 
 	NewWorld_Objects.loginbutton.setHandler(NewWorld_login); 
 	
-	##### need to get a fresh tree ##### 
-	##### parse hash layer list ##### 
+	/***** need to get a fresh tree *****/
+	/***** parse hash layer list *****/
 }
 /*******************************************************************************
    toolbar
