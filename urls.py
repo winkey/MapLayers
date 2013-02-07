@@ -1,5 +1,5 @@
 from django.conf.urls.defaults import patterns, include, url
-
+from django.contrib.auth.views import  login, logout
 # Uncomment the next two lines to enable the admin:
 # from django.contrib import admin
 # admin.autodiscover()
@@ -7,14 +7,16 @@ from django.conf.urls.defaults import patterns, include, url
 urlpatterns = patterns('',
     url( r'^map/$', 'map.views.index' ),
     url( r'^map/settings$', 'map.views.settingsjson' ),
-    url(r'^layers/$', 'layers.views.index'),
-    url(r'^layers/(?P<layer_id>\d+)/$', 'layers.views.get'),
-    url(r'^layers/add$', 'layers.views.add'),
+    url( r'^layers/$', 'layers.views.index' ),
+    url( r'^layers/(?P<layer_id>\d+)/$', 'layers.views.get' ),
+    url( r'^layers/add$', 'layers.views.add' ),
     url( r'^layers/tree$', 'layers.views.tree' ),
     url( r'^layers/treejson$', 'layers.views.treejson' ),
-    url(r'^layers/addfolder$', 'layers.views.addfolder'),
-    url(r'^login/$', 'django.contrib.auth.views.login'),
-    url(r'^logout/$', 'django.contrib.auth.views.logout'),
+    url( r'^layers/addfolder$', 'layers.views.addfolder' ),
+    url( r'^login/$', 'django.contrib.auth.views.login' ),
+    url( r'^postlogin$', 'map.views.postlogin' ),
+    url( r'^logout/$', 'django.contrib.auth.views.logout' ),
+    url( r'^postlogout$', 'map.views.postlogin' ),
     # Examples:
     # url(r'^$', 'NewWorld.views.home', name='home'),
     # url(r'^NewWorld/', include('NewWorld.foo.urls')),

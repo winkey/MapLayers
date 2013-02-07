@@ -7,7 +7,9 @@ NewWorld_Settings.zoom = 0;
 urlcgibin_tc = "";
 urlkmlrepeater = "http://hyperquad.telascience.org/cgi-bin/kmlrepeater";
 
+NewWorld_Objects = new Object();
 
+NewWorld_Objects.loginbutton = {};
 
 layers = [];
 

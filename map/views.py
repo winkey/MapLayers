@@ -21,3 +21,8 @@ def settingsjson( request ):
     data_list = Settings.objects.all()
     data = serializers.serialize( 'json', data_list )
     return HttpResponse( data, mimetype = 'application/json' )
+
+def postlogin( request ):
+        
+        return render_to_response( 'registration/postlogin.html', { },
+            context_instance = RequestContext( request ) )

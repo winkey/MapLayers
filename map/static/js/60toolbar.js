@@ -1,3 +1,40 @@
+
+function NewWorld_login() {
+	
+	window.open(
+    	"/login/",
+    	'login',
+    	'height=200,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
+    );
+	
+
+}
+function NewWorld_login_Finish() {
+	NewWorld_Objects.loginbutton.setText('logout'); 
+	NewWorld_Objects.loginbutton.setHandler(NewWorld_logout);
+	
+	##### need to get a fresh tree ##### 
+	##### parse hash layer list ##### 
+	
+}
+	
+function NewWorld_logout() {
+	
+	window.open(
+    	"/logout/",
+    	'logout',
+    	'height=400,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
+    );
+	
+	
+}
+function NewWorld_logout_Finish() {
+	NewWorld_Objects.loginbutton.setText('login'); 
+	NewWorld_Objects.loginbutton.setHandler(NewWorld_login); 
+	
+	##### need to get a fresh tree ##### 
+	##### parse hash layer list ##### 
+}
 /*******************************************************************************
    toolbar
 *******************************************************************************/
@@ -5,12 +42,14 @@
 
 function NewWorld_toolbar_Create(vector) {
 
-  var maptbar = [
-    /*new Ext.Toolbar.Button({
+	NewWorld_Objects.loginbutton = new Ext.Toolbar.Button({
         text: 'login',
-        handler: Newworld_login
-	}),
-    "->",*/
+        handler: NewWorld_login
+	});
+
+  var maptbar = [
+    NewWorld_Objects.loginbutton,
+    "->",
     new Ext.Toolbar.Button({
         text: 'Open in Google Earth',
         handler: writekml
@@ -68,22 +107,4 @@ function NewWorld_toolbar_Create(vector) {
 	return maptbar;
 }
 
-/*******************************************************************************
-   toolbar
-*******************************************************************************/
 
-function Newworld_login() {}
-function NewWorld_toolbar_Create2(vector) {
-
-    var maptbar = Ext.create('Ext.toolbar.Toolbar');
-    
-    maptbar.add({
-        text: 'login',
-        handler: Newworld_login,
-        tooltip: 'login',
-        xtype: 'button'
-    });
-
-    
-	return maptbar;
-}
