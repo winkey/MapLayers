@@ -158,10 +158,7 @@ function finishup() {
   
   map.events.register('moveend', map, MoveListner);
   
-  
-  
- 	var maptbar2 = NewWorld_toolbar_Create2(vector);
-mapPanel.tbar = maptbar2 ;
+
 };
 
 

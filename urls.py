@@ -6,7 +6,7 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
     url( r'^map/$', 'map.views.index' ),
-    url( r'^map/js/(.*)$', 'map.views.js' ),
+    url( r'^map/settings$', 'map.views.settingsjson' ),
     url(r'^layers/$', 'layers.views.index'),
     url(r'^layers/(?P<layer_id>\d+)/$', 'layers.views.get'),
     url(r'^layers/add$', 'layers.views.add'),
