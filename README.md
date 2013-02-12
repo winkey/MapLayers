@@ -1,13 +1,27 @@
 needs
 
-django
+django 1.4
+
 geodjango
+
 django-mptt
 
-edit the 2 full paths in settings
 
+edit setings.py 
+
+set the timezone
+
+set a new secret key
+
+
+run
 
 createdb 'NewWorld' -T template_postgis
+
 python manage.py syncdb
+
 python manage.py collectstatic
 
+python manage.py runserver
+
+point your browser at 127..0.1:8000/map
