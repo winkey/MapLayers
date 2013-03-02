@@ -128,6 +128,9 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'layers',
     'map',
+    'rest_framework',
+    'polymorphic_tree',
+    'polymorphic',
     'mptt',
 )
 

@@ -9,7 +9,7 @@ function NewWorld_Tree_GetJson() {
 	
 	$.getJSON( "/layers/treejson", {},
 		function(data) {
-			 NewWorld_Tree_Parse( data, {}, [] );
+			 NewWorld_Tree_Parse( data, null );
 			 finishup();
 	    }
 	);

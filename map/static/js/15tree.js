@@ -21,7 +21,7 @@ function treeCheckChange(node, checked) {
     
         /***** dont add or remove from the map if perm is true *****/
     
-        if (node.layer.perm === false) {
+        if (node.layer.isbaselayer != true) {
             if(checked) {
                 map.addLayer(node.layer);
             } else {
@@ -115,62 +115,6 @@ function parsetree(root, layers) {
 }
 
 
-/**************************************************************************//**
- * @brief function to build the openlayers options object from NodeNata
- * 
- * @param {Object} NodeData	object of json items for the layer
- * 
- * @returns openlayers options object
- * 
-******************************************************************************/
-
-function NewWorld_OL_options( NodeData ) {
-	var options = new Object();
-	options.lid=NodeData.pk;
-    if (NodeData.fields.isBaseLayer == undefined || NodeData.fields.isBaseLayer == false) {
-      	options.perm = true;
-    }
-    
-	if (NodeData.fields.extent != undefined) {
-       options.myExtent = new OpenLayers.Bounds( NodeData.fields.extent);
-    }
-    
-    var members = [
-    	"isBaseLayer",
-    	"visibility",
-    	"attribution",
-    	"displayInLayerSwitcher",
-    	"opacity",
-    	"singleTile"];
-	
-	for (var i = 0; i < members.length; i++) {
-    	if (NodeData.fields[members[i]] != undefined) {
-        	options[members[i]] = NodeData.fields[members[i]];
-    	}
-    }
-	
-	return options;
-}
-
-/**************************************************************************//**
- * @brief function to build the openlayers params object from NodeNata
- * 
- * @param {Object} NodeData	object of json items for the layer
- * 
- * @returns openlayers params object
- * 
-******************************************************************************/
-
-function NewWorld_OL_params( NodeData ) {
-	var params = new Object();
-	params.layers = NodeData.fields.layers;
-	params.format = NodeData.fields.format;
-	if (NodeData.fields.transparency != undefined) {
-	    params.transparency = NodeData.fields.transparency;
-	}
-	        
-	return params;
-}
 
 /**************************************************************************//**
  *
@@ -182,63 +126,86 @@ function NewWorld_OL_params( NodeData ) {
  * 
 ******************************************************************************/
 
-function NewWorld_Tree_Parse( NodesArray, ParentNode, LayerArray ) {
+function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	
 	/***** loop over the array of tree data *****/
 	
-	while (NodesArray.length > 0) {
-		var NodeData = NodesArray[0];
+	while (NodesArray.length > 0 &&
+		     ( NodesArray[0].parent == null ||
+		   	   NodesArray[0].parent == ParentNode.attributes.fid
+		     )
+		  ) {
+		
+		var layer = null;
+		var folder = null;
+		
+	    /***** pop the node off the array *****/
+	    
+	    var NodeData = NodesArray[0];
 		NodesArray.shift();
 		
-		/***** is this the root node? *****/
-		
-		if ( NodeData.pk == 1) {
-			var newLayerArray = new Array();
-	            
-			layerRoot = new Ext.tree.TreeNode({
-	            text: NodeData.fields.name,
-	            expanded: true});
-	        
-	        NewWorld_Tree_Parse( NodesArray, layerRoot, newLayerArray );
-	        
-	        continue;
-	    }
-	        
-		
-		switch(NodeData.fields.nodetype) {
+		switch(NodeData.nodetype) {
 	    	
-	        case 'normal':
-	            var newLayerArray = new Array();
+	        case 'Folder':
+	        	
+	        	/***** is this the root node? *****/
+		
+				/***** fixme layerroot needs to go in a global object *****/
+					
+				folder = new Ext.tree.TreeNode({
+	            		text: NodeData.name,
+	            		expanded: true,
+	            		fid: NodeData.id,
+	            		parent: NodeData.parent,
+	            		lft: NodeData.lft,
+						rght: NodeData.rght,
+						tree_id: NodeData.tree_id,
+						level: NodeData.level
+	            	});
 	            
-	            var folder = new GeoExt.tree.OverlayLayerContainer({
-		            text: NodeData.fields.name,
-		            leaf: false,
-		            nodeType: "gx_overlaylayercontainer",
-		            expanded: true,
-		            applyLoader: false });
+	    		if ( ParentNode == null) {
+					
+					layerRoot = folder;
+				}
+	    		
+	    		/*} else {
+	           
+	            	folder = new GeoExt.tree.OverlayLayerContainer({
+		        	    leaf: false,
+		            	nodeType: "gx_overlaylayercontainer",
+		            	text: NodeData.name,
+	            		expanded: true,
+		            	applyLoader: false,
+	            		fid: NodeData.id,
+	            		parent: NodeData.parent,
+	            		lft: NodeData.lft,
+						rght: NodeData.rght,
+						tree_id: NodeData.tree_id,
+						level: NodeData.level
+					});
+		       	
+			    }*/
 			                  
-	            NewWorld_Tree_Parse( NodesArray, folder, newLayerArray )
-	                
-	            ParentNode.appendChild(folder);
-	            
-	            continue;
+	            break;
 	        
-	        case 'radio':
+	        case 'Radio':
 	        
-	            var newLayerArray = new Array();
-	            
-	            var folder = new GeoExt.tree.BaseLayerContainer({
-	                text: NodeData.fields.name,
+	            folder = new GeoExt.tree.BaseLayerContainer({
+	                text: NodeData.name,
 	                map: map,
 	                draggable:false,
-	                expanded: true });
+	                expanded: true,
+	            		fid: NodeData.id,
+	            		parent: NodeData.parent,
+	            		lft: NodeData.lft,
+						rght: NodeData.rght,
+						tree_id: NodeData.tree_id,
+						level: NodeData.level
+				});
 	            
-	            NewWorld_Tree_Parse( NodesArray, folder, newLayerArray )
-	        
-	            ParentNode.appendChild(folder);
-	            continue;
-	
-	        case 'animation':
+	            break;
+	            
+	        case 'Animation':
 	        
 	            
 	            continue;
@@ -247,88 +214,177 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode, LayerArray ) {
 	            continue;
 	
 	        case 'ArcGIS93Rest':
-	            var layer = new OpenLayers.Layer.ArcGIS93Rest( NodeData.fields.name,
-		                                                            NodeData.fields.url,
-		           							                        NewWorld_OL_params( NodeData ) );
-		           							                        
-	            ParentNode.appendChild( new GeoExt.tree.LayerNode(layer));
-	            
-	            if (NodeData.fields.isBaseLayer == true) {
-	            	map.addLayers([layer]);
-	            }
-	            
-	            continue;
+	            layer = new OpenLayers.Layer.ArcGIS93Rest( NodeData.name,
+		                                                   NodeData.url,
+		        						                   NodeData.options
+		                                                 );
+		        break;
+		        
 	        case 'ArcIMS':
-	            continue;
+	            layer = new OpenLayers.Layer.ArcIMS( NodeData.name,
+		                                             NodeData.url,
+		        						             NodeData.options
+		                                           );
+		        break;
 	
 	        case 'Bing':
-	            continue;
-	
+	            layer = new OpenLayers.Layer.Bing( NodeData.name,
+		                                           NodeData.type,
+		        						           NodeData.key,
+		        						           NodeData.options
+		                                          );
+		        break;
+		        
 	        case 'GeoRSS':
-	            continue;
-	
-	        case 'Google':
 	        	
-	        	var options = NewWorld_OL_options( NodeData );
-	            options.sphericalMercator = true;
+	        	NodeData.popupSize = new OpenLayers.Size(NodeData.popupSize[0],
+	        		                                     NodeData.popupSize[1]);
+      			NodeData.projection = new OpenLayers.Projection("EPSG:" + NodeData.projection);
+      			
+	            layer = new OpenLayers.Layer.GeoRSS( NodeData.name,
+		                                             NodeData.url,
+		        						             NodeData.popupSize,
+		        						             NodeData.projection,
+		        						             NodeData.options
+		                                           );
+		        break;
+		        
+	        case 'Google':
+
+	        	switch (NodeData.options.type) {
+	        		case 'G_SATELLITE_MAP':
+	        			NodeData.options.type = G_SATELLITE_MAP;
+	        			break;
+					case 'G_HYBRID_MAP':
+						NodeData.options.type = G_HYBRID_MAP;
+	        			break;
+					case 'G_PHYSICAL_MAP':
+						NodeData.options.type = G_PHYSICAL_MAP
+						break;
+	        	}
 	            
-	            
-	            /* fixme i dont think this is a string type: G_PHYSICAL_MAP */
-	            
-	            var layer = new OpenLayers.Layer.Google( NodeData.fields.name,
-	                                                     options );
-	                  
-	            ParentNode.appendChild( new GeoExt.tree.LayerNode(layer));
-	            
-	            if (NodeData.fields.isBaseLayer == true) {
-	            	map.addLayers([layer]);
-	            }
-	            
-	            continue;
+	            layer = new OpenLayers.Layer.Google( NodeData.name,
+		                                             NodeData.options
+		                                           );
+		        break;
 	                   
 	        case 'Googlev3':
-	            continue;
-	
-	        case 'OSM':
-	        	var layer = new OpenLayers.Layer.OSM( NodeData.fields.name,
-		        	                                  NodeData.fields.url,
-		           		                              NewWorld_OL_options( NodeData ) );
-	            
-	            ParentNode.appendChild( new GeoExt.tree.LayerNode(layer));
-	            
-	            if (NodeData.fields.isBaseLayer == true) {
-	            	map.addLayers([layer]);
-	            }
-	            
-	            continue;
-	            
-	        case 'TMS':
-	        case 'WMS':
-		        var layer = new OpenLayers.Layer.WMS( NodeData.fields.name,
-		                                              NodeData.fields.url,
-		           							          NewWorld_OL_params( NodeData ),
-		           							          NewWorld_OL_options( NodeData ) );
+	        	switch (NodeData.options.type) {
+	        		case 'SATELLITE':
+	        			NodeData.options.type = google.maps.MapTypeId.SATELLITE;
+	        			break;
+					case 'HYBRID':
+						NodeData.options.type = google.maps.MapTypeId.HYBRID;
+	        			break;
+					case 'TERRAIN':
+						NodeData.options.type = google.maps.MapTypeId.TERRAIN;
+	        			break;
+					case 'ROADMAP':
+						NodeData.options.type = google.maps.MapTypeId.ROADMAP;
+	        			break;
+	        	}
+	        	
+	            layer = new OpenLayers.Layer.Googlev3( NodeData.name,
+		                                               NodeData.options
+		                                             );
+		        break;
 
-	            ParentNode.appendChild( new GeoExt.tree.LayerNode(layer));
-	            
-	            if (NodeData.fields.isBaseLayer == true) {
-	            	map.addLayers([layer]);
-	            }
-	            
-	            continue;
+	        case 'KaMap':
+	        	layer = new OpenLayers.Layer.KaMap( NodeData.name,
+		                                            NodeData.url,
+		        						            NodeData.params,
+		        						            NodeData.options
+		                                          );
+		        break;
+		        
+	        case 'KaMapCache':
+	        	layer = new OpenLayers.Layer.KaMapCache( NodeData.name,
+		                                                 NodeData.url,
+		        						                 NodeData.params,
+		        						                 NodeData.options
+		                                               );
+		        break;
+		        
+	        case 'MapGuide':
+	        	continue;
+		        
+	        case 'MapServer':
+	        	layer = new OpenLayers.Layer.MapServer( NodeData.name,
+		                                                NodeData.url,
+		        						                NodeData.params,
+		        						                NodeData.options
+		                                              );
+		        break;
+		        
+	        case 'OSM':
+	        	layer = new OpenLayers.Layer.OSM( NodeData.name,
+		                                          NodeData.url,
+		        						          NodeData.options
+		                                        );
+		        break;
+		        
+	        case 'TMS':
+	        	layer = new OpenLayers.Layer.TMS( NodeData.name,
+		                                          NodeData.url,
+		        						          NodeData.options
+		                                        );
+		        break;
+		        
+	        case 'WMS':
+		        layer = new OpenLayers.Layer.WMS( NodeData.name,
+		                                          NodeData.url,
+		        						          NodeData.params,
+		                                          NodeData.options
+		                                         );
+	            break;
 	            
 	        case 'WMTS':
-	            continue;
+	        	layer = new OpenLayers.Layer.WMTS( NodeData.options
+		        	                             );
+	            break;
 	
 	        case 'WorldWind':
-	            continue;
+	        	NodeData.options.tileSize = new OpenLayers.Size(NodeData.options.tileSize[0],
+	        													NodeData.options.tileSize[1] );
+	        	layer = new OpenLayers.Layer.WorldWind( NodeData.name,
+		        	                                    NodeData.url,
+		        	                                    NodeData.lzd,
+		        	                                    NodeData.zoomLevels,
+		        	                                    NodeData.params,
+		        	                                    NodeData.options
+		        	                                   );
+	            break;
 	
 	        case 'XYZ':
-	            LayerArray.push( new OpenLayers.Layer.XYZ( NodeData.fields.name,
-		        	                                       NodeData.fields.url,
-		           							               NewWorld_OL_options( NodeData )
-		           							             ));
-	            continue;
+	            layer = new OpenLayers.Layer.XYZ( NodeData.name,
+		        	                              NodeData.url,
+		           							      NodeData.options
+		           							    );
+	            break;
 	    }
+	    
+	    if ( layer != null) {
+	    	
+	    	/***** append the layer to its parent folder *****/
+	    	
+	    	alert ("adding " + NodeData.name + " to " +  ParentNode.attributes.text)
+	    	ParentNode.appendChild( new GeoExt.tree.LayerNode(layer));
+	        
+	        /***** add a baselayer to the map now *****/
+	           
+	        if (NodeData.options.isBaseLayer == true) {
+	        	map.addLayers([layer]);
+	        }
+	    }
+	    
+	    if ( folder != null) {
+	    	
+	    	NewWorld_Tree_Parse( NodesArray, folder)
+	        
+	        if ( ParentNode != null) {
+	        	ParentNode.appendChild(folder);
+	        }
+	    }
+	    
 	}        
 }

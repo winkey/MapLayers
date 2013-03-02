@@ -1,200 +1,200 @@
 [
   {
-    "model": "layers.layertreenode",
+	"model": "layers.layertreenode",
     "pk": 1,
     "fields": {
-      "name": "layers",
-      "nodetype": "folder",
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "rw",
+      "polymorphic_ctype": 9,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
-      "level": 0
+      "level": 0,
+      "parent": null,
+      "nodetype": "Folder"
+    }
+  },
+  {
+	"model": "layers.folder",
+    "pk": 1,
+    "fields": {
+      "name": "LayerTree"
     }
   },
   {
     "model": "layers.layertreenode",
     "pk": 2,
-    
     "fields": {
-      "name": "Base Layers",
-      "nodetype": "radio",
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 1,
+      "polymorphic_ctype": 10,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
-      "level": 1
+      "level": 1,
+      "parent": 1,
+      "nodetype": "Radio"
     }
   },
   {
-    "model": "layers.layertreenode",
+	"model": "layers.radio",
+    "pk": 2,
+    "fields": {
+      "name": "Base Layers"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 3,
+    "fields": {
+      "polymorphic_ctype": 21,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 2,
+      "parent": 2,
+      "nodetype": "OSM"
+    }
+  },
+  {
+	"model": "layers.osm",
     "pk": 3,
     "fields": {
       "name": "Open Street Map",
-      "nodetype": "OSM",
-      "layers": "",
       "url": "http://tile.openstreetmap.org/${z}/${x}/${y}.png",
-      "isBaseLayer": true,
-      "transparency": false,
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 2,
-      "lft": 0,
-      "rght": 0,
-      "tree_id": 1,
-      "level": 2
+      "isBaseLayer": true
     }
   },
   {
-    "model": "layers.layertreenode",
+	"model": "layers.layertreenode",
     "pk": 4,
     "fields": {
-      "name": "NewWorld",
-      "nodetype": "WMS",
-      "layers": "NewWorld_google",
-      "url": "http://cube.telascience.org/tilecache/tilecache.py",
-      "isBaseLayer": true,
-      "transparency": false,
-      "format": "image/jpeg",
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 2,
+      "polymorphic_ctype": 16,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
-      "level": 2
-    }
-  },
-  {
-    "model": "layers.layertreenode",
-    "pk": 5,
-    "fields": {
-      "name": "OnEarth_PAN_321",
-      "nodetype": "WMS",
-      "layers": "OnEarth_PAN_321_20030801",
-      "url": "http://cube.telascience.org/tilecache/tilecache.py",
-      "isBaseLayer": true,
-      "transparency": false,
-      "format": "image/jpeg",
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
+      "level": 2,
       "parent": 2,
-      "lft": 0,
-      "rght": 0,
-      "tree_id": 1,
-      "level": 2
+      "nodetype": "Google"
     }
   },
   {
-    "model": "layers.layertreenode",
-    "pk": 6,
-    "fields": {
-      "name": "NAIP",
-      "nodetype": "WMS",
-      "layers": "NAIP_ALL",
-      "url": "http://cube.telascience.org/tilecache/tilecache.py",
-      "isBaseLayer": true,
-      "transparency": false,
-      "format": "image/jpeg",
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 2,
-      "lft": 0,
-      "rght": 0,
-      "tree_id": 1,
-      "level": 2
-    }
-  },
-  {
-    "model": "layers.layertreenode",
-    "pk": 7,
-    "fields": {
-      "name": "Google Terrain",
-      "nodetype": "Google",
-      "isBaseLayer": true,
-      "transparency": false,
-      "extra_ol_args": "type: G_PHYSICAL_MAP",
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 2,
-      "lft": 0,
-      "rght": 0,
-      "tree_id": 1,
-      "level": 2
-    }
-  },
-  {
-    "model": "layers.layertreenode",
-    "pk": 8,
-    "fields": {
-      "name": "Google Streets",
-      "nodetype": "Google",
-      "isBaseLayer": true,
-      "transparency": false,
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 2,
-      "lft": 0,
-      "rght": 0,
-      "tree_id": 1,
-      "level": 2
-    }
-  },
-  {
-    "model": "layers.layertreenode",
-    "pk": 9,
-    "fields": {
-      "name": "Google Hybrid",
-      "nodetype": "Google",
-      "isBaseLayer": true,
-      "transparency": false,
-      "extra_ol_args": "type: G_HYBRID_MAP",
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 2,
-      "lft": 0,
-      "rght": 0,
-      "tree_id": 1,
-      "level": 2
-    }
-  },
-  {
-    "model": "layers.layertreenode",
-    "pk": 10,
+	"model": "layers.google",
+    "pk": 4,
     "fields": {
       "name": "Google Satellite",
-      "nodetype": "Google",
       "isBaseLayer": true,
-      "transparency": false,
-      "extra_ol_args": "type: G_SATELLITE_MAP",
-      "displayInLayerSwitcher": true,
-      "ownerperm": "rw",
-      "groupperm": "rw",
-      "globalperm": "r",
-      "parent": 2,
+      "type": "G_SATELLITE_MAP",
+      "sphericalMercator": true
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 5,
+    "fields": {
+      "polymorphic_ctype": 16,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
-      "level": 2
+      "level": 2,
+      "parent": 2,
+      "nodetype": "Google"
     }
-  } 
+  },
+  {
+	"model": "layers.google",
+    "pk": 5,
+    "fields": {
+      "name": "Google Hybrid",
+      "isBaseLayer": true,
+      "type": "G_HYBRID_MAP",
+      "sphericalMercator": true
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 6,
+    "fields": {
+      "polymorphic_ctype": 16,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 2,
+      "parent": 2,
+      "nodetype": "Google"
+    }
+  },
+  {
+	"model": "layers.google",
+    "pk": 6,
+    "fields": {
+      "name": "Google Terrain",
+      "isBaseLayer": true,
+      "type": "G_PHYSICAL_MAP",
+      "sphericalMercator": true
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 7,
+    "fields": {
+      "polymorphic_ctype": 16,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 2,
+      "parent": 2,
+      "nodetype": "Google"
+    }
+  },
+  {
+	"model": "layers.google",
+    "pk": 7,
+    "fields": {
+      "name": "Google Streets",
+      "isBaseLayer": true,
+      "type": "",
+      "sphericalMercator": true
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 8,
+    "fields": {
+      "polymorphic_ctype": 9,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 1,
+      "parent": 1,
+      "nodetype": "Folder"
+    }
+  },
+  {
+	"model": "layers.folder",
+    "pk": 8,
+    "fields": {
+      "name": "Test Layers"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 9,
+    "fields": {
+      "polymorphic_ctype": 16,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 2,
+      "parent": 8,
+      "nodetype": "Google"
+    }
+  },
+  {
+	"model": "layers.google",
+    "pk": 9,
+    "fields": {
+      "name": "Google Streets",
+      "isBaseLayer": true,
+      "type": "",
+      "sphericalMercator": true
+    }
+  }
 ]
+

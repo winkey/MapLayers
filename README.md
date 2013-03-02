@@ -6,6 +6,11 @@ geodjango
 
 django-mptt
 
+an upto date django-polymorphic
+
+django-polymorphic-tree
+
+
 
 edit setings.py 
 
@@ -24,4 +29,5 @@ python manage.py collectstatic
 
 python manage.py runserver
 
-point your browser at 127..0.1:8000/map
+point your browser at 127.0.0.1:8000/map
+
