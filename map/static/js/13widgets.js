@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
  * Project: NewWorld
- * App:     javascript geoext mappanel
+ * App:     javascript misc widgets
  *
  * 
  *
@@ -25,26 +25,36 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
-******************************************************************************/
-
-
-/*******************************************************************************
-  map panel
 *******************************************************************************/
 
-function NewWorld_Mappanel_Create(maptbar) {  
-  var mapPanel = new GeoExt.MapPanel({
-    //title: "title",
-    //renderTo: "mappanel",
-    border: true,
-    region: "center",
-    map: map,
-    center: [map.getCenter().Lon, map.getCenter().Lat],
-    zoom: map.getZoom(),
-    extent: map.getExtent(),
-    stateId: "map",
-    tbar: maptbar
-  });
-  
-	return mapPanel;
+/*******************************************************************************
+  transparency slider
+*******************************************************************************/
+
+function NewWorld_Widgets_TransparencySlider(layer) {
+	
+    var title = 'Transparency - ' + layer.name;
+    var transparency_window = new Ext.Window({
+        title:title,
+        layout:'fit',
+        width:300,
+        height:100,
+        items:[new GeoExt.LayerOpacitySlider({
+            layer: layer,
+            aggressive: true, 
+            width: 200,
+            fieldLabel: 'opacity',
+            plugins: new GeoExt.LayerOpacitySliderTip()
+        })],
+        buttons: [{
+          text: 'Close',
+          handler: function(){
+              transparency_window.close();
+          }
+        }]
+    });     
+    
+    transparency_window.show();
+
 }
+

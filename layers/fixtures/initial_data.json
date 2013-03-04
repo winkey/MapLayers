@@ -190,8 +190,8 @@
 	"model": "layers.google",
     "pk": 9,
     "fields": {
-      "name": "Google Streets",
-      "isBaseLayer": true,
+      "name": "testy123",
+      "isBaseLayer": false,
       "type": "",
       "sphericalMercator": true
     }
