@@ -45,13 +45,6 @@ function treeCheckChange(node, checked) {
         node.attributes.layer.setVisibility(false);
     }
 	
-	/***** handle folders *****/
-	
-	if (node.attributes.nodetype == 'Folder) {
-		cascade( function(scope, args )) {
-			
-	}
-	
     /***** keep the layers out of the map to keep the map fast *****/
     
     if ( node.attributes.layer.isBaseLayer === false &&
