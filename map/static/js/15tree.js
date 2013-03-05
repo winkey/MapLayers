@@ -190,7 +190,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	            	leaf: false,
 		           	text: NodeData.name,
 	            	expanded: true,
-	            	#checked: false,
+	            	//checked: false,
 	            	id: NodeData.id,
 	            	parent: NodeData.parent,
 	            	lft: NodeData.lft,
