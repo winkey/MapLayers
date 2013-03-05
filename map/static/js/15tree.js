@@ -40,24 +40,28 @@ function treeCheckChange(node, checked) {
         AddLayerToHashLayers(node.attributes.layer.lid);
         node.attributes.layer.setVisibility(true);
         
-    }
-    else {
+    } else {
         RemoveLayerFromHashLayers(node.attributes.layer.lid);
         node.attributes.layer.setVisibility(false);
     }
-
+	
+	/***** handle folders *****/
+	
+	if (node.attributes.nodetype == 'Folder) {
+		cascade( function(scope, args )) {
+			
+	}
+	
     /***** keep the layers out of the map to keep the map fast *****/
     
-    if (node.attributes.layer.isBaseLayer === false) {
+    if ( node.attributes.layer.isBaseLayer === false &&
+    	 node.attributes.nodetype != 'Google'
+       ) {
     
-        /***** dont add or remove from the map if perm is true *****/
-    
-        if (node.attributes.layer.isbaselayer != true) {
-            if(checked) {
-                map.addLayer(node.attributes.layer);
-            } else {
-                map.removeLayer(node.attributes.layer, 'TRUE');
-            }
+        if(checked) {
+            map.addLayer(node.layer);
+        } else {
+            map.removeLayer(node.layer, 'TRUE');
         }
 
     /***** set the zoom on the map when baselayer is changed *****/
@@ -87,7 +91,7 @@ function treeContextMenu(node, e) {
         if (node.attributes.layer.isBaseLayer) {
             var c = node.getOwnerTree().baseLayerContextMenu;
             c.showAt(e.getXY());
-        } else if (node.attributes.layer instanceof OpenLayers.Layer.Vector) {
+        } else if (node.layer instanceof OpenLayers.Layer.Vector) {
             //var c = node.getOwnerTree().vectorOverlayContextMenu;
             //c.showAt(e.getXY());
             1+1;
@@ -116,7 +120,7 @@ function parsetree(root, layers) {
             
             /***** is the node a laayer *****/
             mynode = nodes[iNode];
-            if ( nodes[iNode].attributes.nodeType == "gx_layer" ) {
+            if ( nodes[iNode].nodeType == "gx_layer" ) {
                 
                 /***** loop over the layers in the url *****/
 
@@ -154,118 +158,6 @@ function parsetree(root, layers) {
 ******************************************************************************/
 
 
-Ext.tree.RadioNode =function() {
-    Ext.tree.RadioNode.superclass.constructor.apply(this, arguments);
-}
-
-Ext.extend(Ext.tree.RadioNode, Ext.tree.TreeNodeUI, {
-    
-	render : function(bulkRender){
-        var n = this.node, a = n.attributes;
-        var targetNode = n.parentNode ? 
-              n.parentNode.ui.getContainer() : n.ownerTree.innerCt.dom;
-        
-        if(!this.rendered){
-            this.rendered = true;
-
-            this.renderElements(n, a, targetNode, bulkRender);
-
-            if(a.qtip){
-               if(this.textNode.setAttributeNS){
-                   this.textNode.setAttributeNS("ext", "qtip", a.qtip);
-                   if(a.qtipTitle){
-                       this.textNode.setAttributeNS("ext", "qtitle", a.qtipTitle);
-                   }
-               }else{
-                   this.textNode.setAttribute("ext:qtip", a.qtip);
-                   if(a.qtipTitle){
-                       this.textNode.setAttribute("ext:qtitle", a.qtipTitle);
-                   }
-               } 
-            }else if(a.qtipCfg){
-                a.qtipCfg.target = Ext.id(this.textNode);
-                Ext.QuickTips.register(a.qtipCfg);
-            }
-            
-            this.initEvents();
-            
-            if(!this.node.expanded){
-                this.updateExpandIcon(true);
-            }
-        }else{
-            if(bulkRender === true) {
-                targetNode.appendChild(this.wrap);
-            }
-        }
-    },
-
-    
-    renderElements : function(n, a, targetNode, bulkRender){
-        
-        this.indentMarkup = n.parentNode ? n.parentNode.ui.getChildIndent() : '';
-
-        var cb = typeof a.checked == 'boolean';
-        
-        var href = a.href ? a.href : Ext.isGecko ? "" : "#";
-        
-        var inputEl = '';
-        
-        //if(!(a.removeInput || n.removeInput)) {
-    	var ic = {};
-    	ic.tree = n.getOwnerTree();
-    	ic.inputName = ic.tree.inputName || a.inputName || n.inputName || ic.tree.id + '-input';
-    	ic.checked = a.checked || n.checked || '';
-    	ic.value = a.inputValue || n.inputValue || (ic.checked?'on':'');
-    	ic.id = Ext.id();
-    	
-        var buf = ['<li class="x-tree-node"><div ext:tree-node-id="',n.id,'" class="x-tree-node-el x-tree-node-leaf x-unselectable ', a.cls,'" unselectable="on">',
-            '<span class="x-tree-node-indent">',this.indentMarkup,"</span>",
-            '<img src="', this.emptyIcon, '" class="x-tree-ec-icon x-tree-elbow" />',
-            '<img src="', a.icon || this.emptyIcon, '" class="x-tree-node-icon',(a.icon ? " x-tree-node-inline-icon" : ""),(a.iconCls ? " "+a.iconCls : ""),'" unselectable="on" />',
-            cb ? ('<input class="x-tree-node-cb" id="' + ic.id + '" type="radio" name="'+ ic.inputName + '" value="' + ic.value + '"' + (a.checked ? 'checked="checked" />' : '/>')) : '',
-            '<a hidefocus="on" class="x-tree-node-anchor" href="',href,'" tabIndex="1" ',
-             a.hrefTarget ? ' target="' + a.hrefTarget+'"' : "", '><span unselectable="on">',n.text,"</span></a></div>",
-            '<ul class="x-tree-node-ct" style="display:none;"></ul>',
-            "</li>"].join('');
-
-        var nel;
-        if(bulkRender !== true && n.nextSibling && (nel = n.nextSibling.ui.getEl())){
-            this.wrap = Ext.DomHelper.insertHtml("beforeBegin", nel, buf);
-        }else{
-            this.wrap = Ext.DomHelper.insertHtml("beforeEnd", targetNode, buf);
-        }
-        
-        this.elNode = this.wrap.childNodes[0];
-        this.ctNode = this.wrap.childNodes[1];
-        var cs = this.elNode.childNodes;
-        this.indentNode = cs[0];
-        this.ecNode = cs[1];
-        this.iconNode = cs[2];
-        var index = 3;
-        if(cb) {
-        	this.checkbox = cs[3];
-			//this.checkbox.defaultChecked = this.checkbox.checked;						
-            //index++;
-        }
-        this.anchor = cs[index];
-        this.textNode = cs[index].firstChild;
-    }
-    
-    ,onClick: function(e) {
-    	e.preventDefault();
-        if(this.disabled){
-            return;
-        }
-        if(this.checkbox){
-            this.node.toggleCheck();
-        }
-        if(!this.animating && this.node.isExpandable()){
-            this.node.toggle();
-        }
-	}
-	
-});
-
 /**************************************************************************//**
  *
  *  @brief recursive funtion to parse the json array into the geoext tree
@@ -298,7 +190,6 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	    	
 	        case 'Folder':
 	        case 'Radio':
-	        case 'Animation':
 	        	
 	        	/***** is this the root node? *****/
 		
@@ -306,7 +197,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	            	leaf: false,
 		           	text: NodeData.name,
 	            	expanded: true,
-	            	checked: false,
+	            	#checked: false,
 	            	id: NodeData.id,
 	            	parent: NodeData.parent,
 	            	lft: NodeData.lft,
@@ -324,6 +215,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	            break;
 	        
 	        /*case 'Radio':
+	        case 'Animation':
 	        
 	            folder = new GeoExt.tree.BaseLayerContainer({
 	                text: NodeData.name,
@@ -517,23 +409,25 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 		    }
 		    
 	    	if (ParentNode.attributes.mynodetype == 'Radio') {
-	    		attrs.inputName = "RadioInput_" + ParentNode.attributes.id;
-				attrs.uiProvider = Ext.tree.RadioNode;
+	    		attrs.radioGroup = "RadioGroup_" + ParentNode.attributes.id;
 				
-				//if (ParentNode.hasChildNodes() == false) {
-				//	attrs.checked = true
-				//}
+				
+				if (ParentNode.hasChildNodes() == false) {
+					attrs.checked = true
+				}
 				
 			}
 	    	
 	    	ParentNode.appendChild(
-	    		new Ext.tree.AsyncTreeNode(
+	    		new GeoExt.tree.LayerNode(
 		    	attrs)
 		    );
 	        
 	        /***** add a baselayer to the map now *****/
 	           
-	        if (NodeData.options.isBaseLayer == true) {
+	        if ( NodeData.options.isBaseLayer == true ||
+	        	 NodeData.nodetype == 'Google'
+	           ) {
 	        	map.addLayers([layer]);
 	        }
 	    }
@@ -579,7 +473,8 @@ function NewWorld_Tree_Create() {
 		        scope: this
 		    },
 		    baseLayerContextMenu: NewWorld_Menu_baseLayerContextMenu,
-		    rasterOverlayContextMenu: NewWorld_Menu_rasterOverlayContextMenu
+		    rasterOverlayContextMenu: NewWorld_Menu_rasterOverlayContextMenu,
+
 	    }
   	);
   	
