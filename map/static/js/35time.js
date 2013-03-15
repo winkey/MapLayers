@@ -27,7 +27,9 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
-/***** fixme some of these shoiuld get stored in the hash *****/
+/***** fixme some of these shoiuld get stored in the hash     *****/
+/***** if you were to share a link or bookmark the current    *****/
+/***** time, loop settings, speed settings, and incr settings *****/
 
 Ext.onReady(function() {
 	NewWorld.Time = new Object();
@@ -47,6 +49,7 @@ Ext.onReady(function() {
 	NewWorld.Time.time = null;
 	NewWorld.Time.loop = false;
 	NewWorld.Time.speed = 1000;
+	NewWorld.Time.incr = null;
 	
 });
 
@@ -168,6 +171,8 @@ function NewWorld_Time_CreateSlider() {
 	    value: incrs[10][1]
 	});
 
+	/***** fixme this dont work *****/
+	
 	NewWorld.Time.Incrbox.addListener('change', NewWorld_Time_Incrbox_change)
 	
 	/***** speed slider *****/
@@ -276,6 +281,8 @@ function NewWorld_Time_expire_remaining() {
  * the current timestamp
  * 
 ******************************************************************************/
+
+/***** fixme fix flicker *****/
 
 function NewWorld_Time_Advance() {
 	var node;
@@ -388,6 +395,8 @@ function NewWorld_Time_Interval_Update() {
 	var stopped = false;
 	var looped = false;
 	var node = null;
+	
+	/***** fixme read a var not call a function *****/
 	
 	var incr = NewWorld.Time.Incrbox.getValue();
 	
