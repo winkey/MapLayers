@@ -503,7 +503,6 @@ function NewWorld_Time_setends(begin, end) {
 		NewWorld_Time_setVisible(true);
 			
 	}
-	/***** fixme we need to ssetvalue on the slider if play has never been pressed *****/
 	
 	else {
 		NewWorld.Time.SliderMinValue = MIN ( begin,
@@ -524,6 +523,7 @@ function NewWorld_Time_setends(begin, end) {
 		NewWorld.Time.Timeslider.setValue( NewWorld.Time.SliderMinValue )
 		NewWorld.Time.time = NewWorld.Time.SliderMinValue;
 	}
+	
 	
 	NewWorld.Time.IgnoreSliderChange = false;
 }
@@ -648,16 +648,72 @@ function NewWorld_Time_addnode(treenode) {
 	
 }
 
-function NewWorld_Time_removenode(node) {
+function NewWorld_Time_removenode(treenode) {
+	
+	var node = null;
+	var bext = null;
+	var found = 0;
+
+
+	/***** is it a timestamp? *****/
+	
+	if (treenode.attributes.timestamp != null) {
+		
+		for (node = NewWorld.Time.list.head; node ; node = next) {
+			next = node.next;
+			if (treenode.attributes.id == node.data.treenode.attributes.id) {
+				DLList_delete(NewWorld.Time.list, node);
+				break;
+			}
+		}
+		
+		/***** update the time slider *****/
+		
+		if (NewWorld.Time.list.head) {
+			NewWorld_Time_setends( NewWorld.Time.list.head.data.timestamp,
+								   NewWorld.Time.list.tail.data.timestamp
+								);
+		}	
+	}	
+	
+	/***** timespan *****/
+	
+	else if (treenode.attributes.begin_timespan != null && treenode.attributes.end_timespan != null ) {
+		
+		
+		for ( node = NewWorld.Time.spanlist.head, found = 0;
+			  node && found < 2;
+			  node = next
+			) {
+			
+			next = node.next;
+			if (treenode.attributes.id == node.data.treenode.attributes.id) {
+				DLList_delete(NewWorld.Time.spanlist, node);
+				
+				/***** it should only be in the list twice *****/
+
+				found++;
+			}
+		}
+		
+		/***** update the time slider *****/
+		
+		if (NewWorld.Time.spanlist.head) {
+			NewWorld_Time_setends( NewWorld.Time.spanlist.head.data.timestamp,
+								   NewWorld.Time.spanlist.tail.data.timestamp
+								);
+		}
+	}
+	
+	/***** hide the ui when there is no more nodes *****/
+	
+	if ( NewWorld.Time.list.head == null &&
+		 NewWorld.Time.spanlist.head == null
+	) {
+		NewWorld_Time_setVisible(false);
+	}
 	
 	
+
 }
-
-
-//changecomplete( slider, newValue, thumb )
-/***** timer *****/
-
-
-
-
 
