@@ -391,6 +391,8 @@ function NewWorld_Time_Incrbox_change( slider, newValue, thumb ) {
  * 
 ******************************************************************************/
 
+/***** fixme this only works on timespans not timestamps *****/
+
 function NewWorld_Time_Interval_Update() {
 	var stopped = false;
 	var looped = false;
