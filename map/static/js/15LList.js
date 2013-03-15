@@ -144,8 +144,9 @@ function DLList_insert_after ( list, node, data) {
 
 	else if (list.tail == node || !node) {
 		New.prev = list.tail;
+		list.tail.next = New;
 		list.tail = New;
-		node.next = New;
+
 	}
 
 	/***** middle entry *****/
@@ -197,8 +198,8 @@ function DLList_insert_before ( list, node, data) {
 
 	else if (list.head == node || !node) {
 		New.next = list.head;
+		list.head.prev = New;
 		list.head = New;
-		node.prev = New;
 	}
 
 	/***** middle entry *****/
