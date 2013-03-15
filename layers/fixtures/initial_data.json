@@ -195,6 +195,1735 @@
       "type": "",
       "sphericalMercator": true
     }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 10,
+    "fields": {
+      "polymorphic_ctype": 11,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 2,
+      "parent": 8,
+      "nodetype": "Animation"
+    }
+  },
+  {
+	"model": "layers.animation",
+    "pk": 10,
+    "fields": {
+      "name": "Test Layers"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 11,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-09 12:00:00",
+      "end_timespan": "2013-03-09 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 11,
+    "fields": {
+      "name": "GFS 925t 180",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=180",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 12,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-09 09:00:00",
+      "end_timespan": "2013-03-09 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 12,
+    "fields": {
+      "name": "GFS 925t 177",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=177",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 13,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-09 06:00:00",
+      "end_timespan": "2013-03-09 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 13,
+    "fields": {
+      "name": "GFS 925t 174",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=174",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 14,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-09 03:00:00",
+      "end_timespan": "2013-03-09 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 14,
+    "fields": {
+      "name": "GFS 925t 171",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=171",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 15,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-09 00:00:00",
+      "end_timespan": "2013-03-09 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 15,
+    "fields": {
+      "name": "GFS 925t 168",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=168",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 16,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 21:00:00",
+      "end_timespan": "2013-03-09 00:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 16,
+    "fields": {
+      "name": "GFS 925t 165",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=165",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 17,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 18:00:00",
+      "end_timespan": "2013-03-08 21:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 17,
+    "fields": {
+      "name": "GFS 925t 162",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=162",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 18,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 15:00:00",
+      "end_timespan": "2013-03-08 18:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 18,
+    "fields": {
+      "name": "GFS 925t 159",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=159",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 19,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 12:00:00",
+      "end_timespan": "2013-03-08 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 19,
+    "fields": {
+      "name": "GFS 925t 156",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=156",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 20,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 09:00:00",
+      "end_timespan": "2013-03-08 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 20,
+    "fields": {
+      "name": "GFS 925t 153",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=153",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 21,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 06:00:00",
+      "end_timespan": "2013-03-08 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 21,
+    "fields": {
+      "name": "GFS 925t 150",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=150",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 22,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 03:00:00",
+      "end_timespan": "2013-03-08 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 22,
+    "fields": {
+      "name": "GFS 925t 147",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=147",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 23,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-08 00:00:00",
+      "end_timespan": "2013-03-08 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 23,
+    "fields": {
+      "name": "GFS 925t 144",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=144",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 24,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 21:00:00",
+      "end_timespan": "2013-03-08 00:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 24,
+    "fields": {
+      "name": "GFS 925t 141",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=141",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 25,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 18:00:00",
+      "end_timespan": "2013-03-07 21:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 25,
+    "fields": {
+      "name": "GFS 925t 138",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=138",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 26,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 15:00:00",
+      "end_timespan": "2013-03-07 18:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 26,
+    "fields": {
+      "name": "GFS 925t 135",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=135",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 27,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 12:00:00",
+      "end_timespan": "2013-03-07 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 27,
+    "fields": {
+      "name": "GFS 925t 132",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=132",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 28,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 09:00:00",
+      "end_timespan": "2013-03-07 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 28,
+    "fields": {
+      "name": "GFS 925t 129",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=129",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 29,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 06:00:00",
+      "end_timespan": "2013-03-07 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 29,
+    "fields": {
+      "name": "GFS 925t 126",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=126",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 30,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 03:00:00",
+      "end_timespan": "2013-03-07 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 30,
+    "fields": {
+      "name": "GFS 925t 123",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=123",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 31,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-07 00:00:00",
+      "end_timespan": "2013-03-07 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 31,
+    "fields": {
+      "name": "GFS 925t 120",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=120",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 32,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 21:00:00",
+      "end_timespan": "2013-03-07 00:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 32,
+    "fields": {
+      "name": "GFS 925t 117",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=117",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 33,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 18:00:00",
+      "end_timespan": "2013-03-06 21:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 33,
+    "fields": {
+      "name": "GFS 925t 114",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=114",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 34,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 15:00:00",
+      "end_timespan": "2013-03-06 18:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 34,
+    "fields": {
+      "name": "GFS 925t 111",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=111",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 35,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 12:00:00",
+      "end_timespan": "2013-03-06 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 35,
+    "fields": {
+      "name": "GFS 925t 108",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=108",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 36,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 09:00:00",
+      "end_timespan": "2013-03-06 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 36,
+    "fields": {
+      "name": "GFS 925t 105",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=105",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 37,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 06:00:00",
+      "end_timespan": "2013-03-06 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 37,
+    "fields": {
+      "name": "GFS 925t 102",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=102",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 38,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 03:00:00",
+      "end_timespan": "2013-03-06 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 38,
+    "fields": {
+      "name": "GFS 925t 99",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=99",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 39,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-06 00:00:00",
+      "end_timespan": "2013-03-06 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 39,
+    "fields": {
+      "name": "GFS 925t 96",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=96",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 40,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 21:00:00",
+      "end_timespan": "2013-03-06 00:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 40,
+    "fields": {
+      "name": "GFS 925t 93",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=93",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 41,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 18:00:00",
+      "end_timespan": "2013-03-05 21:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 41,
+    "fields": {
+      "name": "GFS 925t 90",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=90",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 42,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 15:00:00",
+      "end_timespan": "2013-03-05 18:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 42,
+    "fields": {
+      "name": "GFS 925t 87",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=87",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 43,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 12:00:00",
+      "end_timespan": "2013-03-05 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 43,
+    "fields": {
+      "name": "GFS 925t 84",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=84",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 44,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 09:00:00",
+      "end_timespan": "2013-03-05 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 44,
+    "fields": {
+      "name": "GFS 925t 81",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=81",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 45,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 06:00:00",
+      "end_timespan": "2013-03-05 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 45,
+    "fields": {
+      "name": "GFS 925t 78",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=78",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 46,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 03:00:00",
+      "end_timespan": "2013-03-05 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 46,
+    "fields": {
+      "name": "GFS 925t 75",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=75",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 47,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-05 00:00:00",
+      "end_timespan": "2013-03-05 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 47,
+    "fields": {
+      "name": "GFS 925t 72",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=72",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 48,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 21:00:00",
+      "end_timespan": "2013-03-05 00:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 48,
+    "fields": {
+      "name": "GFS 925t 69",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=69",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 49,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 18:00:00",
+      "end_timespan": "2013-03-04 21:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 49,
+    "fields": {
+      "name": "GFS 925t 66",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=66",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 50,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 15:00:00",
+      "end_timespan": "2013-03-04 18:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 50,
+    "fields": {
+      "name": "GFS 925t 63",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=63",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 51,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 12:00:00",
+      "end_timespan": "2013-03-04 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 51,
+    "fields": {
+      "name": "GFS 925t 60",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=60",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 52,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 09:00:00",
+      "end_timespan": "2013-03-04 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 52,
+    "fields": {
+      "name": "GFS 925t 57",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=57",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 53,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 06:00:00",
+      "end_timespan": "2013-03-04 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 53,
+    "fields": {
+      "name": "GFS 925t 54",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=54",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 54,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 03:00:00",
+      "end_timespan": "2013-03-04 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 54,
+    "fields": {
+      "name": "GFS 925t 51",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=51",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 55,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-04 00:00:00",
+      "end_timespan": "2013-03-04 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 55,
+    "fields": {
+      "name": "GFS 925t 48",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=48",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 56,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 21:00:00",
+      "end_timespan": "2013-03-04 00:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 56,
+    "fields": {
+      "name": "GFS 925t 45",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=45",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 57,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 18:00:00",
+      "end_timespan": "2013-03-03 21:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 57,
+    "fields": {
+      "name": "GFS 925t 42",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=42",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 58,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 15:00:00",
+      "end_timespan": "2013-03-03 18:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 58,
+    "fields": {
+      "name": "GFS 925t 39",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=39",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 59,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 12:00:00",
+      "end_timespan": "2013-03-03 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 59,
+    "fields": {
+      "name": "GFS 925t 36",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=36",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 60,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 09:00:00",
+      "end_timespan": "2013-03-03 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 60,
+    "fields": {
+      "name": "GFS 925t 33",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=33",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 61,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 06:00:00",
+      "end_timespan": "2013-03-03 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 61,
+    "fields": {
+      "name": "GFS 925t 30",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=30",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 62,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 03:00:00",
+      "end_timespan": "2013-03-03 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 62,
+    "fields": {
+      "name": "GFS 925t 27",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=27",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 63,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-03 00:00:00",
+      "end_timespan": "2013-03-03 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 63,
+    "fields": {
+      "name": "GFS 925t 24",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=24",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 64,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 21:00:00",
+      "end_timespan": "2013-03-03 00:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 64,
+    "fields": {
+      "name": "GFS 925t 21",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=21",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 65,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 18:00:00",
+      "end_timespan": "2013-03-02 21:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 65,
+    "fields": {
+      "name": "GFS 925t 18",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=18",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 66,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 15:00:00",
+      "end_timespan": "2013-03-02 18:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 66,
+    "fields": {
+      "name": "GFS 925t 15",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=15",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 67,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 12:00:00",
+      "end_timespan": "2013-03-02 15:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 67,
+    "fields": {
+      "name": "GFS 925t 12",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=12",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 68,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 09:00:00",
+      "end_timespan": "2013-03-02 12:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 68,
+    "fields": {
+      "name": "GFS 925t 09",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=09",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 69,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 06:00:00",
+      "end_timespan": "2013-03-02 09:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 69,
+    "fields": {
+      "name": "GFS 925t 06",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=06",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 70,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 03:00:00",
+      "end_timespan": "2013-03-02 06:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 70,
+    "fields": {
+      "name": "GFS 925t 03",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=03",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
+  },
+  {
+	"model": "layers.layertreenode",
+    "pk": 71,
+    "fields": {
+      "polymorphic_ctype": 24,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 3,
+      "parent": 10,
+      "nodetype": "WMS",
+      "begin_timespan": "2013-03-02 00:00:00",
+      "end_timespan": "2013-03-02 03:00:00"
+    }
+  },
+  {
+	"model": "layers.wms",
+    "pk": 71,
+    "fields": {
+      "name": "GFS 925t 00",
+      "url": "http://atmos.ucsd.edu/cgi-bin/gfs_wms?HOUR=00",
+      "layers": "925t",
+      "format": "image/png",
+      "transparency": true,
+      "isBaseLayer": false,
+      "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
+    }
   }
+
 ]
 

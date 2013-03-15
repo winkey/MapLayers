@@ -27,28 +27,17 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+Ext.onReady(function() {
+	NewWorld = new Object(); 
+	NewWorld.Settings = new Object();
 
-NewWorld_Settings = new Object();
+	/***** fixme this needs to be a django app *****/
 
-NewWorld_Settings.title = "";
-NewWorld_Settings.center = {};
-NewWorld_Settings.zoom = 0;
-NewWorld_Settings.isLoggedin;
+	urlkmlrepeater = "http://hyperquad.telascience.org/cgi-bin/kmlrepeater";
+	
+	
+});
 
-urlcgibin_tc = "";
-urlkmlrepeater = "http://hyperquad.telascience.org/cgi-bin/kmlrepeater";
-
-NewWorld_Objects = new Object();
-
-NewWorld_Objects.loginbutton = {};
-
-layers = [];
-
-layerRoot = {};
-
-map = {};
-
-var mapPanel;
 
 /**************************************************************************//**
  *
@@ -58,13 +47,12 @@ var mapPanel;
 
 function NewWorld_Settings_Set(settings) {
 	
-    NewWorld_Settings.title = settings.title;
-    /*NewWorld_Settings.center = OpenLayers.Geometry.fromWKT(settings.center);
+    NewWorld.Settings.title = settings.title;
+    /*NewWorld.Settings.center = OpenLayers.Geometry.fromWKT(settings.center);
      */
-    NewWorld_Settings.center = new OpenLayers.LonLat(0, 0);
-    NewWorld_Settings.zoom = settings.zoom;
-    urlcgibin_tc = settings.tilecacheurl;
+    NewWorld.Settings.center = new OpenLayers.LonLat(0, 0);
+    NewWorld.Settings.zoom = settings.zoom;
+    NewWorld.Settings.tilecacheurl = settings.tilecacheurl;
     
-    document.title = NewWorld_Settings.title;
 
 }

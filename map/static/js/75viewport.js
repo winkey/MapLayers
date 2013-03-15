@@ -31,7 +31,7 @@
   viewport
 *******************************************************************************/
 
-function NewWorld_Viewport_Create(mapPanel, tree) {
+function NewWorld_Viewport_Create( tree ) {
 	
     new Ext.Viewport({
         layout: "fit",
@@ -39,7 +39,7 @@ function NewWorld_Viewport_Create(mapPanel, tree) {
         items: {
             layout: "border",
             deferredRender: false,
-            items: [mapPanel, tree]
+            items: [NewWorld.MapPanel.mapPanel, tree]
         }
     });
 

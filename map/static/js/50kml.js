@@ -93,13 +93,13 @@ function parsetree_kml(root, indent) {
                 }
                 kml += indent + '    <NetworkLink>\n';
                 kml += indent + '      <Link>\n';
-                kml += indent + '        <href>' + urlcgibin_tc + '/1.0.0/' + project + '_'+ nodes[iNode].text + '_4326/0/0/0.kml</href>\n';
+                kml += indent + '        <href>' + NewWorld.Settings.tilecacheurl + '/1.0.0/' + project + '_'+ nodes[iNode].text + '_4326/0/0/0.kml</href>\n';
                 kml += indent + '        <viewRefreshMode>onRegion</viewRefreshMode>\n';
                 kml += indent + '      </Link>\n';
                 kml += indent + '    </NetworkLink>\n';
                 kml += indent + '    <NetworkLink>\n';
                 kml += indent + '      <Link>\n';
-                kml += indent + '        <href>' + urlcgibin_tc + '/1.0.0/' + project + '_'+ nodes[iNode].text + '_4326/0/1/0.kml</href>\n';
+                kml += indent + '        <href>' + NewWorld.Settings.tilecacheurl + '/1.0.0/' + project + '_'+ nodes[iNode].text + '_4326/0/1/0.kml</href>\n';
                 kml += indent + '        <viewRefreshMode>onRegion</viewRefreshMode>\n';
                 kml += indent + '      </Link>\n';
                 kml += indent + '    </NetworkLink>\n';
@@ -149,11 +149,11 @@ function parsetree_kml(root, indent) {
 
 function writekml() {
     
-    var zoom = map.getZoom();
+    var zoom = NewWorld.Map.map.getZoom();
     
-    var center = map.getCenter();
+    var center = NewWorld.Map.map.getCenter();
     var proj = new OpenLayers.Projection("EPSG:4326");
-    newcenter = center.transform(map.getProjectionObject(), proj);
+    newcenter = center.transform(NewWorld.Map.map.getProjectionObject(), proj);
 
     var lon = newcenter.lon;
     var lat = newcenter.lat;
@@ -178,7 +178,7 @@ function writekml() {
     </LookAt>\n\
     <name>testy2</name>\n';
 
-    parsetree_kml(layerRoot, "    ");
+    parsetree_kml(NewWorld.Tree.layerRoot, "    ");
     
      kml += '\
   </Document>\n\

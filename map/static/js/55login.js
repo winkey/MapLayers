@@ -27,6 +27,11 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+Ext.onReady(function() {
+	NewWorld.login = new Object();
+	NewWorld.login.loginbutton = {};
+	
+});
 
 function NewWorld_login() {
 	
@@ -39,9 +44,9 @@ function NewWorld_login() {
 
 }
 function NewWorld_login_Finish() {
-	NewWorld_Settings.isLoggedin = true;
-	NewWorld_Objects.loginbutton.setText('logout'); 
-	NewWorld_Objects.loginbutton.setHandler(NewWorld_logout);
+	NewWorld.login.isLoggedin = true;
+	NewWorld.login.loginbutton.setText('logout'); 
+	NewWorld.login.loginbutton.setHandler(NewWorld_logout);
 	
 	/***** need to get a fresh tree *****/ 
 	/***** parse hash layer list *****/ 
@@ -59,9 +64,9 @@ function NewWorld_logout() {
 	
 }
 function NewWorld_logout_Finish() {
-	NewWorld_Settings.isLoggedin = false;
-	NewWorld_Objects.loginbutton.setText('login'); 
-	NewWorld_Objects.loginbutton.setHandler(NewWorld_login); 
+	NewWorld.login.isLoggedin = false;
+	NewWorld.login.loginbutton.setText('login'); 
+	NewWorld.login.loginbutton.setHandler(NewWorld_login); 
 	
 	/***** need to get a fresh tree *****/
 	/***** parse hash layer list *****/

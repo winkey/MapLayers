@@ -28,6 +28,10 @@
 ******************************************************************************/
 
 
+Ext.onReady(function() {
+	NewWorld.Map = new Object();
+});
+
 /**************************************************************************//**
  *
  *  @brief fuction to create the openlayers map
@@ -37,7 +41,7 @@
 
 function NewWorld_OLMap_Create() {
 
-  map = new OpenLayers.Map(
+  NewWorld.Map.map = new OpenLayers.Map(
     {
       'units' : "m",
       'maxResolution' : 156543.0339,

@@ -44,12 +44,12 @@ function finishup() {
     /*map.addLayer(vector);*/
 	var maptbar = NewWorld_toolbar_Create(vector);
 
- 	var mapPanel = NewWorld_Mappanel_Create(maptbar);
+ 	NewWorld_Mappanel_Create(maptbar);
 
  
   var tree = NewWorld_Tree_Create()
 
-  NewWorld_Viewport_Create(mapPanel, tree);
+  NewWorld_Viewport_Create( tree);
 
 
 
@@ -59,7 +59,7 @@ function finishup() {
   var slayers = getHashVariable('layers');
   
   if ( slayers && slayers != "") {
-    parsetree(layerRoot, slayers);
+    parsetree(NewWorld.Tree.layerRoot, slayers);
   }
   
 
@@ -67,9 +67,11 @@ function finishup() {
  add openlayers move event
 ******************************************************************************/
   
-  map.events.register('moveend', map, MoveListner);
+  NewWorld.Map.map.events.register('moveend', NewWorld.Map.map, MoveListner);
   
-
+	/***** set the topic on the window *****/
+	
+	document.title = NewWorld.Settings.title;
 };
 
 
@@ -103,7 +105,7 @@ function NewWorld_Login_GetJson() {
 	
 	$.getJSON( "/isLoggedin", {}, 
 		function(data) {
-			NewWorld_Settings.isLoggedin = data.isLoggedin;
+			NewWorld.login.isLoggedin = data.isLoggedin;
 			NewWorld_OLMap_Create();
 			NewWorld_Tree_GetJson();
 		}

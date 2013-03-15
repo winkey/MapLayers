@@ -27,24 +27,28 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+Ext.onReady(function() {
+
+	NewWorld.MapPanel = new Object();
+});
 
 /*******************************************************************************
   map panel
 *******************************************************************************/
 
 function NewWorld_Mappanel_Create(maptbar) {  
-  var mapPanel = new GeoExt.MapPanel({
-    //title: "title",
-    //renderTo: "mappanel",
-    border: true,
-    region: "center",
-    map: map,
-    center: [map.getCenter().Lon, map.getCenter().Lat],
-    zoom: map.getZoom(),
-    extent: map.getExtent(),
-    stateId: "map",
-    tbar: maptbar
-  });
+  	NewWorld.MapPanel.mapPanel = new GeoExt.MapPanel({
+	    //title: "title",
+	    //renderTo: "mappanel",
+	    border: true,
+	    region: "center",
+	    map: NewWorld.Map.map,
+	    center: [NewWorld.Map.map.getCenter().Lon, NewWorld.Map.map.getCenter().Lat],
+	    zoom: NewWorld.Map.map.getZoom(),
+	    extent: NewWorld.Map.map.getExtent(),
+	    stateId: "map",
+	    tbar: maptbar,
+	    bbar: NewWorld_Time_CreateSlider()
+    });
   
-	return mapPanel;
 }

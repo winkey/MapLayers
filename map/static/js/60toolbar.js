@@ -35,20 +35,20 @@
 
 function NewWorld_toolbar_Create(vector) {
 
-	if (NewWorld_Settings.isLoggedin == true) {
-		NewWorld_Objects.loginbutton = new Ext.Toolbar.Button({
+	if (NewWorld.login.isLoggedin == true) {
+		NewWorld.login.loginbutton = new Ext.Toolbar.Button({
 	        text: 'logout',
 	        handler: NewWorld_logout
 		});
 	} else {
-		NewWorld_Objects.loginbutton = new Ext.Toolbar.Button({
+		NewWorld.login.loginbutton = new Ext.Toolbar.Button({
 	        text: 'login',
 	        handler: NewWorld_login
 		});
 	}
 	
   var maptbar = [
-    NewWorld_Objects.loginbutton,
+    NewWorld.login.loginbutton,
     "->",
     new Ext.Toolbar.Button({
         text: 'Open in Google Earth',
@@ -57,7 +57,7 @@ function NewWorld_toolbar_Create(vector) {
     "->",
     new GeoExt.Action({
       control: new OpenLayers.Control.Navigation(),
-      map: map,
+      map: NewWorld.Map.map,
       toggleGroup: "edit",
       pressed: true,
       allowDepress: false,
@@ -68,7 +68,7 @@ function NewWorld_toolbar_Create(vector) {
         control: new OpenLayers.Control.DrawFeature(
             vector, OpenLayers.Handler.Polygon
         ),
-        map: map,
+        map: NewWorld.Map.map,
         // button options
         toggleGroup: "edit",
         allowDepress: false,
@@ -81,7 +81,7 @@ function NewWorld_toolbar_Create(vector) {
         control: new OpenLayers.Control.DrawFeature(
             vector, OpenLayers.Handler.Path
         ),
-        map: map,
+        map: NewWorld.Map.map,
         // button options
         toggleGroup: "edit",
         allowDepress: false,
@@ -94,7 +94,7 @@ function NewWorld_toolbar_Create(vector) {
         control: new OpenLayers.Control.DrawFeature(
             vector, OpenLayers.Handler.Point
         ),
-        map: map,
+        map: NewWorld.Map.map,
         // button options
         toggleGroup: "edit",
         allowDepress: false,

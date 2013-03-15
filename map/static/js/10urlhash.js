@@ -202,7 +202,7 @@ function MoveListner() {
     
     var center = this.getCenter();
     var proj = new OpenLayers.Projection("EPSG:4326");
-    newcenter = center.transform(map.getProjectionObject(), proj);
+    newcenter = center.transform(NewWorld.Map.map.getProjectionObject(), proj);
     ReplaceHashVariable('lon', newcenter.lon);
     ReplaceHashVariable('lat', newcenter.lat);
 
@@ -225,20 +225,20 @@ function NewWorld_Setcenter() {
   /***** if lat and lon are set in the url, override default *****/
   
   if ( slat && slat != "" && slon && slon != "" ) {
-    NewWorld_Settings.center = new OpenLayers.LonLat(slon, slat);
+    NewWorld.Settings.center = new OpenLayers.LonLat(slon, slat);
   }
   
   /***** if zoom is set in the url, override default *****/
 
   if ( szoom && szoom != "" ) {
-    NewWorld_Settings.zoom = szoom;
+    NewWorld.Settings.zoom = szoom;
   }
   
   /***** if map center and zoom arent set, set them *****/
   
-  if (!map.getCenter() || map.getCenter().lon == 0) {
+  if (!NewWorld.Map.map.getCenter() || NewWorld.Map.map.getCenter().lon == 0) {
     var proj = new OpenLayers.Projection("EPSG:4326");
-    map.setCenter(NewWorld_Settings.center.transform(proj, map.getProjectionObject()), NewWorld_Settings.zoom);
+    NewWorld.Map.map.setCenter(NewWorld.Settings.center.transform(proj, NewWorld.Map.map.getProjectionObject()), NewWorld.Settings.zoom);
   }
   
 }

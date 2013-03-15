@@ -27,7 +27,9 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
-
+Ext.onReady(function() {
+	NewWorld.Tree = new Object();
+});
 /*****************************************************************************
  function for the trees checkchange
 *****************************************************************************/
@@ -36,37 +38,61 @@ function treeCheckChange(node, checked) {
 
     /***** new permalink add/remove *****/
     
-    if(checked) {
-        AddLayerToHashLayers(node.attributes.layer.lid);
-        node.attributes.layer.setVisibility(true);
-        
-    } else {
-        RemoveLayerFromHashLayers(node.attributes.layer.lid);
-        node.attributes.layer.setVisibility(false);
-    }
+    if ( node.attributes.nodetype != 'Animation' ) {
+	    if(checked) {
+	        AddLayerToHashLayers(node.attributes.layer.lid);
+	        node.attributes.layer.setVisibility(true);
+	        
+	    } else {
+	        RemoveLayerFromHashLayers(node.attributes.layer.lid);
+	        node.attributes.layer.setVisibility(false);
+	    }
+	}
+	
+	if ( node.attributes.nodetype == 'Animation' ) {
+		
+		if(checked) {
+			AddLayerToHashLayers(node.attributes.id);
+			
+			node.eachChild(function (child) {
+	            NewWorld_Time_addnode(child);
+	            NewWorld.Map.map.addLayer(child.attributes.layer);
+	        });
+	    }
+	           
+		else {
+			RemoveLayerFromHashLayers(node.attributes.id);
+	        
+	        node.eachChild(function (child) {
+	            NewWorld_Time_removenode(child);
+	            NewWorld.Map.map.removeLayer(child.attributes.layer, 'TRUE');
+	        });
+	    }
+
+	}
 	
     /***** keep the layers out of the map to keep the map fast *****/
     
-    if ( node.attributes.layer.isBaseLayer === false &&
+    else if ( node.attributes.layer.isBaseLayer === false &&
     	 node.attributes.nodetype != 'Google'
        ) {
     
         if(checked) {
-            map.addLayer(node.layer);
+            NewWorld.Map.map.addLayer(node.attributes.layer);
         } else {
-            map.removeLayer(node.layer, 'TRUE');
+            NewWorld.Map.map.removeLayer(node.attributes.layer, 'TRUE');
         }
 
     /***** set the zoom on the map when baselayer is changed *****/
 
     } else {
         node.attributes.layer.onMapResize();
-        var center = map.getCenter();
+        var center = NewWorld.Map.map.getCenter();
     
-        if (map.baseLayer != null && center != null) {
-            var zoom = map.getZoom();
-            map.zoom = null;
-            map.setCenter(center, zoom);
+        if (NewWorld.Map.map.baseLayer != null && center != null) {
+            var zoom = NewWorld.Map.map.getZoom();
+            NewWorld.Map.map.zoom = null;
+            NewWorld.Map.map.setCenter(center, zoom);
         }
     }
     
@@ -184,9 +210,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	        case 'Folder':
 	        case 'Radio':
 	        	
-	        	/***** is this the root node? *****/
-		
-				folder = new Ext.tree.TreeNode({
+	        	folder = new Ext.tree.TreeNode({
 	            	leaf: false,
 		           	text: NodeData.name,
 	            	expanded: true,
@@ -197,39 +221,36 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 					rght: NodeData.rght,
 					tree_id: NodeData.tree_id,
 					level: NodeData.level,
-					mynodetype: NodeData.nodetype
+					nodetype: NodeData.nodetype
 	            });
 	            
-	    		if ( ParentNode == null) {
-	            	layerRoot = folder;
+	    		/***** is this the root node? *****/
+		
+				if ( ParentNode == null) {
+	            	NewWorld.Tree.layerRoot = folder;
 	            }
 				
 	                             
 	            break;
 	        
-	        /*case 'Radio':
 	        case 'Animation':
 	        
-	            folder = new GeoExt.tree.BaseLayerContainer({
-	                text: NodeData.name,
-	                map: map,
-	                draggable:false,
-	                expanded: true,
-	                
-	            		fid: NodeData.id,
-	            		parent: NodeData.parent,
-	            		lft: NodeData.lft,
-						rght: NodeData.rght,
-						tree_id: NodeData.tree_id,
-						level: NodeData.level
-				});
-	            
+	            folder = new Ext.tree.TreeNode({
+	            	leaf: false,
+		           	text: NodeData.name,
+	            	expanded: true,
+	            	checked: false,
+	            	id: NodeData.id,
+	            	parent: NodeData.parent,
+	            	lft: NodeData.lft,
+					rght: NodeData.rght,
+					tree_id: NodeData.tree_id,
+					level: NodeData.level,
+					nodetype: NodeData.nodetype
+	            });
+	            	            
 	            break;
-	          */  
-	        
 	            
-	            continue;
-	
 	        case 'ArcGISCache':
 	            continue;
 	
@@ -397,31 +418,35 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 		        lft: NodeData.lft,
 				rght: NodeData.rght,
 				tree_id: NodeData.tree_id,
-				level: NodeData.level,
-				mynodetype: NodeData.nodetype
+				level:NodeData.level,
+				mynodetype: NodeData.nodetype,
+				timestamp:NodeData.timestamp,
+    			begin_timespan:NodeData.begin_timespan,
+    			end_timespan:NodeData.end_timespan
 		    }
 		    
-	    	if (ParentNode.attributes.mynodetype == 'Radio') {
+	    	if (ParentNode.attributes.nodetype == 'Radio') {
 	    		attrs.radioGroup = "RadioGroup_" + ParentNode.attributes.id;
 				
 				
 				if (ParentNode.hasChildNodes() == false) {
-					attrs.checked = true
+					attrs.checked = true;
 				}
 				
 			}
 	    	
-	    	ParentNode.appendChild(
-	    		new GeoExt.tree.LayerNode(
-		    	attrs)
-		    );
+	    	if (ParentNode.attributes.nodetype == 'Animation') {
+	    		attrs.checked = null;
+	    	}
+	    		
+	    	ParentNode.appendChild(	new GeoExt.tree.LayerNode(attrs));
 	        
 	        /***** add a baselayer to the map now *****/
 	           
 	        if ( NodeData.options.isBaseLayer == true ||
 	        	 NodeData.nodetype == 'Google'
 	           ) {
-	        	map.addLayers([layer]);
+	        	NewWorld.Map.map.addLayers([layer]);
 	        }
 	    }
 	    
@@ -459,7 +484,7 @@ function NewWorld_Tree_Create() {
 		    collapsible: true,
 		    collapseMode: "mini",
 		    autoScroll: true,
-		    root: layerRoot,
+		    root: NewWorld.Tree.layerRoot,
 		    listeners: {
 		        checkchange: treeCheckChange,
 		        contextmenu: treeContextMenu,
