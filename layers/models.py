@@ -42,7 +42,7 @@ from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User, Group
 
-from datetime import datetime
+import datetime
 
 FOLDER_TYPE_CHOICES = ( 
     ( 'Folder', 'Folder' ),
