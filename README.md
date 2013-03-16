@@ -2,14 +2,6 @@ needs
 
 django 1.4
 
-geodjango
-
-django-mptt
-
-an upto date django-polymorphic
-
-django-polymorphic-tree
-
 
 
 edit setings.py 
