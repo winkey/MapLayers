@@ -42,7 +42,7 @@ from django.forms import ModelForm
 from django import forms
 from django.contrib.auth.models import User, Group
 
-
+from datetime import datetime
 
 FOLDER_TYPE_CHOICES = ( 
     ( 'Folder', 'Folder' ),
@@ -100,8 +100,8 @@ class layertreenode( PolymorphicMPTTModel ):
     nodetype = models.CharField( max_length = 40, choices = LAYER_TYPE_CHOICES )
 
     
-    added = models.DateTimeField( auto_now_add = True )
-    modified = models.DateTimeField( auto_now = True )
+    added = models.DateTimeField( default = datetime.datetime.utcnow() )
+    modified = models.DateTimeField( default = datetime.datetime.utcnow() )
     
     ##### owner group and perms #####
     
