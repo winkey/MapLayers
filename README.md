@@ -1,6 +1,6 @@
 needs
 
-django 1.4
+django 1.3
 
 
 
@@ -13,7 +13,12 @@ set a new secret key
 
 run
 
-createdb 'NewWorld' -T template_postgis
+createdb 'NewWorld'                    
+psql NewWorld
+CREATE EXTENSION postgis;
+CREATE EXTENSION postgis_topology;
+\q
+
 
 python manage.py syncdb
 

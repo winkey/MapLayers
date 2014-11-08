@@ -46,28 +46,27 @@ function finishup() {
 
  	NewWorld_Mappanel_Create(maptbar);
 
- 
-  var tree = NewWorld_Tree_Create()
+    var tree = NewWorld_Tree_Create()
 
-  NewWorld_Viewport_Create( tree);
-
+    NewWorld_Viewport_Create( tree);
 
 
-  /***** get layer list from the url *****/
+
+    /***** get layer list from the url *****/
   
-  var pair;
-  var slayers = getHashVariable('layers');
+    var pair;
+    var slayers = getHashVariable('layers');
   
-  if ( slayers && slayers != "") {
-    parsetree(NewWorld.Tree.layerRoot, slayers);
-  }
+    if ( slayers && slayers != "") {
+        NewWorld_Tree_FindLayers(NewWorld.Tree.layerRoot, slayers);
+    }
   
 
 /******************************************************************************
  add openlayers move event
 ******************************************************************************/
   
-  NewWorld.Map.map.events.register('moveend', NewWorld.Map.map, MoveListner);
+    NewWorld.Map.map.events.register('moveend', NewWorld.Map.map, MoveListner);
   
 	/***** set the topic on the window *****/
 	

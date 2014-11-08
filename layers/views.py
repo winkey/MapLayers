@@ -85,6 +85,9 @@ def treejson( request ):
     objects = layertreenode.objects.all()
     base_objects = layertreenode.base_objects.all()
     
+    print objects
+    #print base_objects
+    #print layertreenode
     serializer = layertreenodeSerializer( objects )
 
     return JSONResponse(serializer.data)

@@ -27,12 +27,12 @@
 # DEALINGS IN THE SOFTWARE.
 ################################################################################ 
 
-# from django.db import models
+#from django.db import models
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 from polymorphic_tree.models import PolymorphicMPTTModel, PolymorphicTreeForeignKey
 
-#####
+##### srializers #####
 
 from rest_framework import serializers
 
@@ -138,53 +138,77 @@ class layertreenodeSerializer( serializers.ModelSerializer ):
        
     def to_native( self, obj ):
         print obj
-        if isinstance( obj, Folder ):
-            print 'isfolder\n'
+        #print obj.nodetype
+        if isinstance( obj, Folder ) or obj.nodetype == 'Folder' :
+            print 'is Folder\n'
             serializer = FolderSerializer( obj )
-        elif isinstance( obj, Radio ):
+        elif isinstance( obj, Radio ) or obj.nodetype == 'Radio' :
+            print 'is Radio\n'
             serializer = RadioSerializer( obj )
-        elif isinstance( obj, Animation ):
+        elif isinstance( obj, Animation ) or obj.nodetype == 'Animation' :
+            print 'is Animation\n'
             serializer = AnimationSerializer( obj )
-        # elif isinstance( obj, ArcGISCache ):
+        # elif isinstance( obj, ArcGISCache ) or obj.nodetype == 'ArcGISCache' :
+        #    print 'is ArcGISCache\n'
         #    serializer = ArcGISCacheSerializer( obj )
-        elif isinstance( obj, ArcGIS93Rest ):
+        elif isinstance( obj, ArcGIS93Rest ) or obj.nodetype == 'ArcGIS93Rest' :
+            print 'is ArcGIS93Rest\n'
             serializer = ArcGIS93RestSerializer( obj )
-        elif isinstance( obj, ArcIMS ):
+        elif isinstance( obj, ArcIMS ) or obj.nodetype == 'ArcIMS' :
+            print 'is ArcIMS\n'
             serializer = ArcIMSSerializer( obj )
-        elif isinstance( obj, Bing ):
+        elif isinstance( obj, Bing ) or obj.nodetype == 'Bing' :
+            print 'is Bing\n'
             serializer = BingSerializer( obj )
-        elif isinstance( obj, GeoRSS ):
+        elif isinstance( obj, GeoRSS ) or obj.nodetype == 'GeoRSS' :
+            print 'is GeoRSS\n'
             serializer = GeoRSSSerializer( obj )
-        elif isinstance( obj, Google ):
+        elif isinstance( obj, Google ) or obj.nodetype == 'Google' :
+            print 'is Google\n'
             serializer = GoogleSerializer( obj )
-        elif isinstance( obj, Googlev3 ):
+        elif isinstance( obj, Googlev3 ) or obj.nodetype == 'Googlev3' :
+            print 'is Googlev3\n'
             serializer = Googlev3Serializer( obj )
-        elif isinstance( obj, KaMap ):
+        elif isinstance( obj, KaMap ) or obj.nodetype == 'KaMap' :
+            print 'is KaMap\n'
             serializer = KaMapSerializer( obj )
-        elif isinstance( obj, KaMapCache ):
+        elif isinstance( obj, KaMapCache ) or obj.nodetype == 'KaMapCache' :
+            print 'is KaMapCache\n'
             serializer = KaMapCacheSerializer( obj )
-        # elif isinstance( obj, MapGuide ):
+        # elif isinstance( obj, MapGuide ) or obj.nodetype == 'MapGuide' :
+        #    print 'is MapGuide\n'
         #    serializer = MapGuideSerializer( obj )
-        elif isinstance( obj, MapServer ):
+        elif isinstance( obj, MapServer ) or obj.nodetype == 'MapServer' :
+            print 'is MapServer\n'
             serializer = MapServerSerializer( obj )
-        elif isinstance( obj, OSM ):
+        elif isinstance( obj, OSM ) or obj.nodetype == 'OSM' :
+            print 'is OSM\n'
             serializer = OSMSerializer( obj )
-        elif isinstance( obj, TileCache ):
+        elif isinstance( obj, TileCache ) or obj.nodetype == 'TileCache' :
+            print 'is TileCache\n'
             serializer = TileCacheSerializer( obj )
-        elif isinstance( obj, TMS ):
+        elif isinstance( obj, TMS ) or obj.nodetype == 'TMS' :
+            print 'is TMS\n'
             serializer = TMSSerializer( obj )
-        elif isinstance( obj, WMS ):
+        elif isinstance( obj, WMS ) or obj.nodetype == 'WMS' :
+            print 'is WMS\n'
             serializer = WMSSerializer( obj )
-        elif isinstance( obj, WMTS ):
+        elif isinstance( obj, WMTS ) or obj.nodetype == 'WMTS' :
+            print 'is WMTS\n'
             serializer = WMTSSerializer( obj )
-        elif isinstance( obj, WorldWind ):
+        elif isinstance( obj, WorldWind ) or obj.nodetype == 'WorldWind' :
+            print 'is WorldWind\n'
             serializer = WorldWindSerializer( obj )
-        elif isinstance( obj, XYZ ):
+        elif isinstance( obj, XYZ ) or obj.nodetype == 'XYZ' :
+            print 'is XYZ\n'
             serializer = XYZSerializer( obj )
         elif hasattr( obj, '__iter__' ):
+            print 'is iter\n'
             return [self.to_native( item ) for item in obj]
         #    return super( layertreenodeSerializer, self ).to_native( obj )
-        
+
+        print serializer
+        print serializer.data
         return serializer.data
 
 class FolderNode():

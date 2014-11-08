@@ -34,7 +34,7 @@ Ext.onReady(function() {
  function for the trees checkchange
 *****************************************************************************/
 
-function treeCheckChange(node, checked) {
+function NewWorld_Tree_CheckChange(node, checked) {
 
     /***** new permalink add/remove *****/
     
@@ -103,7 +103,7 @@ function treeCheckChange(node, checked) {
  function for the trees context menu
 *****************************************************************************/
 
-function treeContextMenu(node, e) {
+function NewWorld_Tree_ContextMenu(node, e) {
 
     if (node && node.attributes.layer) {
         node.select();
@@ -126,7 +126,7 @@ function treeContextMenu(node, e) {
     recursive function to parse the tree to turn on the requested layers
 ******************************************************************************/
 
-function parsetree(root, layers) {
+function NewWorld_Tree_FindLayers(root, layers) {
 
     var nodes = root.childNodes;
     
@@ -138,8 +138,8 @@ function parsetree(root, layers) {
         for ( iNode = 0; iNode < nodes.length ; iNode++ ) {
             
             /***** is the node a laayer *****/
-            mynode = nodes[iNode];
-            if ( nodes[iNode].nodeType == "gx_layer" ) {
+            var node = nodes[iNode];
+            if ( node.attributes.Checkable == true ) {
                 
                 /***** loop over the layers in the url *****/
 
@@ -149,8 +149,8 @@ function parsetree(root, layers) {
                     
                     /***** if this node is in the url list select it *****/
                     
-                    if ( nodes[iNode].layer.lid == lays[iLid] ) {
-                        nodes[iNode].getUI().toggleCheck(true);
+                    if ( node.attributes.id == lays[iLid] ) {
+                        node.getUI().toggleCheck(true);
                     }
                 }
                 
@@ -160,9 +160,9 @@ function parsetree(root, layers) {
                 
                 /***** open and close the container *****/
                 //nodes[iNode].expand(true);
-                nodes[iNode].collapse(true);
+                node.collapse(true);
                 
-                parsetree(nodes[iNode], layers);
+                NewWorld_Tree_FindLayers(node, layers);
             }
         }
     }    
@@ -221,7 +221,8 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 					rght: NodeData.rght,
 					tree_id: NodeData.tree_id,
 					level: NodeData.level,
-					nodetype: NodeData.nodetype
+					nodetype: NodeData.nodetype,
+                    Checkable: false
 	            });
 	            
 	    		/***** is this the root node? *****/
@@ -246,7 +247,8 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 					rght: NodeData.rght,
 					tree_id: NodeData.tree_id,
 					level: NodeData.level,
-					nodetype: NodeData.nodetype
+					nodetype: NodeData.nodetype,
+                    Checkable: true
 	            });
 	            	            
 	            break;
@@ -419,10 +421,11 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 				rght: NodeData.rght,
 				tree_id: NodeData.tree_id,
 				level:NodeData.level,
-				mynodetype: NodeData.nodetype,
+				nodetype: NodeData.nodetype,
 				timestamp:NodeData.timestamp,
     			begin_timespan:NodeData.begin_timespan,
-    			end_timespan:NodeData.end_timespan
+    			end_timespan:NodeData.end_timespan,
+                Checkable: true
 		    }
 		    
 	    	if (ParentNode.attributes.nodetype == 'Radio') {
@@ -486,8 +489,8 @@ function NewWorld_Tree_Create() {
 		    autoScroll: true,
 		    root: NewWorld.Tree.layerRoot,
 		    listeners: {
-		        checkchange: treeCheckChange,
-		        contextmenu: treeContextMenu,
+		        checkchange: NewWorld_Tree_CheckChange,
+		        contextmenu: NewWorld_Tree_ContextMenu,
 		        scope: this
 		    },
 		    baseLayerContextMenu: NewWorld_Menu_baseLayerContextMenu,

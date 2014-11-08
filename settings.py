@@ -126,12 +126,15 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'layers',
-    'map',
     'rest_framework',
     'polymorphic_tree',
     'polymorphic',
     'mptt',
+    'layers',
+    'map',
+    #'mapfile',
+
+    #'colorpicker'
 )
 
 # A sample logging configuration. The only tangible logging

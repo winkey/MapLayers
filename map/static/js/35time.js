@@ -6,7 +6,7 @@
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2014,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -139,7 +139,7 @@ function NewWorld_Time_CreateSlider() {
         [ "2 Month",    [ 2,   "M" ] ],
         [ "3 Month",    [ 3,   "M" ] ],
         [ "6 Month",    [ 6,   "M" ] ],
-		[ "Year",       [ 1,   "y" ] ],
+        [ "Year",       [ 1,   "y" ] ],
         [ "2 Years",    [ 2,   "y" ] ],
         [ "5 Years",    [ 5,   "y" ] ],
         [ "Decade",     [ 10,  "y" ] ],
