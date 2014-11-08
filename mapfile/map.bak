@@ -1,0 +1,51 @@
+################################################################################
+# map (child of mapfile)
+################################################################################
+
+class Mapbak(models.Model):
+    name                = models.CharField(                  max_length = 25)
+    angle               = models.FloatField(                 tooltip='Angle, given in degrees, to rotate the map in a clockwise direction.',
+                                                             default = 0.0)
+    config              = models.ManyToManyField(config)
+    datapattern         = models.CharField(                  max_length = 2048)
+    #  DEBUG [off|on|0|1|2|3|4|5] */
+    defresolution       = models.IntegerField(               tooltip='Sets the reference resolution (pixels per inch) used for symbology.',
+                                                             default = 72)
+    extent              = models.ForeignKey('extent')
+    fontset             = models.CharField(                  max_length = 2048)
+    imagecolor          = models.CommaSeparatedIntegerField( max_length=3)
+    #d imagequality        = models.IntegerField()*/
+    imagetype           = models.CharField(                  max_length = 2048)
+    #d interlace           = models.NullBooleanField()
+    layer               = models.ManyToManyField(layer)
+    legend              = models.ForeignKey('legend')
+    maxsize             = models.IntegerField(               tooltip='Sets the maximum size of the map image.',
+                                                             default = 2048,
+                                                             min_value=256,
+                                                             max_value=2048)
+    outputformat        = models.ManyToManyField(outputformat)
+    projection          = models.ForeignKey('projection')
+    querymap            = models.ForeignKey('querymap')
+    reference           = models.ForeignKey('reference')
+    resolution          = models.IntegerField()
+    scaledenom          = models.FloatField(                 tooltip='Computed scale of the map',
+                                                             null=True)
+    scalebar            = models.ForeignKey('scalebar')
+    shapepath           = models.CharField(                  max_length = 2048)
+    size                = models.CommaSeparatedIntegerField( tooltip='Size in pixels of the output image (i.e. the map).',
+                                                             max_length=2,
+                                                             min_length=2,
+                                                             default=[256,256])
+    status              = models.BooleanField(               default = True)
+    symbolset           = models.CharField(                  max_length = 2048)
+    symbol              = models.ManyToManyField(symbol)
+    templatepattern     = models.CharField(                  max_length = 2048)
+    #d transparent      = models.NullBooleanField()
+    units               = models.CharField(                  tooltip='Units of the map coordinates. Used for scale computations',
+                                                             max_length = 2048)
+    web                 = models.ForeignKey('web')
+
+    class Meta:
+        verbose_name = _( "Mapbak" )
+        verbose_name_plural = _( "Mapbak" )
+

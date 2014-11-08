@@ -1,0 +1,64 @@
+[
+  {
+	"model": "layers.layertreenode",
+    "pk": 1,
+    "fields": {
+      "polymorphic_ctype": 9,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 0,
+      "parent": null,
+      "nodetype": "Folder"
+    }
+  },
+
+  {
+	"model": "mapfile.outputformat",
+    "pk": 1,
+    "fields": {
+      "
+    driver              = models.CharField(                  max_length = 2048)
+    extension           = models.CharField(                  max_length = 2048)
+    formatoptio         = models.CharField(                  max_length = 2048)
+    imagemode           = models.CharField(                  max_length = 2048,
+                                                             choices=OUTPUTFORMAT_IMAGEMODE_CHOICES)
+    mimetype            = models.CharField(                  max_length = 2048)
+    driver              = models.CharField(                  max_length = 2048)
+    transparent         = models.NullBooleanField()
+
+#    NAME png
+#    DRIVER "GD/PNG"
+#    TRANSPARENT ON
+#    MIMETYPE "image/png"
+#    IMAGEMODE PC256
+#    EXTENSION "png"
+#  END  
+
+  OUTPUTFORMAT
+    NAME jpeg
+    DRIVER 'GD/JPEG'
+    MIMETYPE 'image/jpeg'
+    IMAGEMODE RGB
+    FORMATOPTION  QUALITY=80
+    EXTENSION 'jpg'
+  END
+
+  OUTPUTFORMAT
+    NAME GTiff
+    DRIVER "GDAL/GTiff"
+    MIMETYPE "image/tiff"
+    IMAGEMODE RGBA
+    FORMATOPTION  TILED=YES
+    EXTENSION "tif"
+    TRANSPARENT ON
+  END
+
+  OUTPUTFORMAT
+    NAME PNG24
+    DRIVER "GDAL/PNG"
+    MIMETYPE "image/png"
+    EXTENSION PNG
+    IMAGEMODE RGBA
+    TRANSPARENT ON
+  END

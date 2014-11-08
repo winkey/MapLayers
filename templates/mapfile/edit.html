@@ -1,0 +1,11 @@
+<link rel="stylesheet" media="screen" type="text/css" href="{{ STATIC_URL }}css/colorpicker.css" />
+<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/colorpicker.js"></script>
+
+<form method="post" action="">
+{% csrf_token %}<!-- required since Django 1.2 or later -->
+<ul>
+    {{ Mapfile.as_ul }}
+</ul>
+<input type="submit" value="Save"/>
+</form>

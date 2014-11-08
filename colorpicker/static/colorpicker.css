@@ -1,0 +1,13 @@
+# =============================================================================
+# static/cssjs/colorpicker.css
+# =============================================================================
+
+/*
+    see: http://github.com/laktek/really-simple-color-picker/tree/master/colorPicker.css
+
+    To render nicely in the Django admin I added these lines to the bottom:
+*/
+
+.form-row div .color_picker {
+float:left;
+}

@@ -1,0 +1,56 @@
+[
+  {
+	"model": "mapfile.outputformat",
+    "pk": 1,
+    "fields": {
+      "name"": "png",
+      "driver": "GD/PNG",
+      "extension": "png",
+      "formatoption": "",
+      "imagemode": "PC256",
+      "mimetype": "image/png",
+      "transparent": true
+    }
+  },
+  {
+	"model": "mapfile.outputformat",
+    "pk": 2,
+    "fields": {
+      "name"": "jpeg",
+      "driver": "GD/JPEG",
+      "extension": "jpg",
+      "formatoption": "QUALITY=80",
+      "imagemode": "PC256",
+      "mimetype": "image/jpeg",
+      "transparent": false
+    }
+  },
+  {
+	"model": "mapfile.outputformat",
+    "pk": 3,
+    "fields": {
+      "name"": "GTiff",
+      "driver": "GDAL/GTiff",
+      "extension": "tif",
+      "formatoption": "TILED=YES",
+      "imagemode": "RGBA",
+      "mimetype": "image/tiff",
+      "transparent": true
+    }
+  },
+  {
+	"model": "mapfile.outputformat",
+    "pk": 4,
+    "fields": {
+      "name"": "PNG24",
+      "driver": "GDAL/PNG",
+      "extension": "png",
+      "formatoption": "",
+      "imagemode": "RGBA",
+      "mimetype": "image/png",
+      "transparent": true
+    }
+  },
+
+
+
