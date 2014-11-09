@@ -14,3 +14,5 @@ Alias /static/ /home/winkey/NewWorld/static/
     Require all granted
 </Directory>
 
+RedirectMatch ^/$ /map/
+
