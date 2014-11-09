@@ -1,0 +1,16 @@
+
+WSGIScriptAlias / /home/winkey/NewWorld/wsgi.py
+WSGIPythonPath /home/winkey/NewWorld/
+
+<Directory /home/winkey/NewWorld/>
+  <Files wsgi.py>
+    Require all granted
+  </Files>
+</Directory>
+
+Alias /static/ /home/winkey/NewWorld/static/
+
+<Directory /home/winkey/NewWorld/static/>
+    Require all granted
+</Directory>
+
