@@ -3,5 +3,56 @@
 <ul>
     {{ layers_form.as_ul }}
 </ul>
+
+
+{% for nt in layers_form.nodetype %}
+    {% if nt.is_ArcGISCache %}
+        {% include "ArcGISCache.html" %}
+    {% elif nt.is_ArcGIS93Rest %}
+        {% include "ArcGIS93Rest.html" %}
+    {% elif nt.is_ArcIMS %}
+        {% include "ArcIMS.html" %}
+    {% elif nt.is_Bing %}
+        {% include "Bing.html" %}
+    {% elif nt.is_GeoRSS %}
+        {% include "GeoRSS.html" %}
+    {% elif nt.is_Google %}
+        {% include "Google.html" %}
+    {% elif nt.is_Googlev3 %}
+        {% include "Googlev3.html" %}
+    {% elif nt.is_KaMap %}
+        {% include "KaMap.html" %}
+    {% elif nt.is_KaMapCache %}
+        {% include "KaMapCache.html" %}
+    {% elif nt.is_MapGuide %}
+        {% include "MapGuide.html" %}
+    {% elif nt.is_MapServer %}
+        {% include "MapServer.html" %}
+    {% elif nt.is_OSM %}
+        {% include "OSM.html" %}
+    {% elif nt.is_TileCache %}
+        {% include "TileCache.html" %}
+    {% elif nt.is_TMS %}
+        {% include "TMS.html" %}
+    {% elif nt.is_WMS %}
+        {% include "WMS.html" %}
+    {% elif nt.is_WMTS %}
+        {% include "WMTS.html" %}
+    {% elif nt.is_WorldWind %}
+        {% include "WorldWind.html" %}
+    {% elif nt.is_XYZ %}
+        {% include "XYZ.html" %}
+
+
+    {% if product.is_customised %}
+        {% include "customised.html" %}
+    {% elif product.is_grouped %}
+        {% include "grouped.html" %}
+    {% else %}
+        {% include "normal.html" %}
+{% endfor %}
 <input type="submit" value="Save"/>
 </form>
+
+
+
