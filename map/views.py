@@ -20,7 +20,7 @@ def settingsjson( request ):
 
     data_list = Settings.objects.all()
     data = serializers.serialize( 'json', data_list )
-    return HttpResponse( data, mimetype = 'application/json' )
+    return HttpResponse( data, content_type = 'application/json' )
 
 def postlogin( request ):
         
@@ -38,5 +38,5 @@ def isLoggedin( request ):
     if request.user.is_authenticated():
         result['isLoggedin'] = True
         
-    return HttpResponse( json.dumps( result ), mimetype = 'application/json' )
+    return HttpResponse( json.dumps( result ), content_type = 'application/json' )
         
