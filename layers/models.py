@@ -112,6 +112,11 @@ class layertreenode( PolymorphicMPTTModel ):
     begin_timespan = models.DateTimeField( null = True, blank = True )
     end_timespan = models.DateTimeField( null = True, blank = True )
     
+    tile_cache = models.NullBooleanField( default = False )
+    tooltip = models.CharField( max_length = 80 )
+    metadata = models.CharField( max_length = 8096 )
+
+    
     # overriding the default manager with a GeoManager instance.
     # objects = models.GeoManager()
     
