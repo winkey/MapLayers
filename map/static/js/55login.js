@@ -36,7 +36,7 @@ Ext.onReady(function() {
 function NewWorld_login() {
 	
 	window.open(
-    	"/login/",
+    	"../login/",
     	'login',
     	'height=200,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
     );
@@ -56,7 +56,7 @@ function NewWorld_login_Finish() {
 function NewWorld_logout() {
 	
 	window.open(
-    	"/logout/",
+    	"../logout/",
     	'logout',
     	'height=200,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
     );
