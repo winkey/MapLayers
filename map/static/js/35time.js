@@ -337,8 +337,6 @@ function NewWorld_Time_Timeslider_change( slider, newValue, thumb ) {
 	if (NewWorld.Time.IgnoreSliderChange)
 		return;
 		
-		
-	alert("gotcha");
 	/***** stop if playing *****/
 	
 	if (NewWorld.Time.timer != null) {
