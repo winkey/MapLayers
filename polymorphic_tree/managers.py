@@ -25,12 +25,14 @@ class PolymorphicMPTTModelManager(TreeManager, PolymorphicManager):
     queryset_class = PolymorphicMPTTQuerySet
 
 
-    def __init__(self, *args, **kwargs):
-        PolymorphicManager.__init__(self, self.queryset_class, *args, **kwargs)
-
-
     def toplevel(self):
         """
         Return all nodes which have no parent.
         """
-        return self.get_query_set().toplevel()
+        if hasattr(PolymorphicManager, 'get_queryset'):
+            # Latest django-polymorphic for Django 1.7
+            qs = self.get_queryset()
+        else:
+            qs = self.get_query_set()
+
+        return qs.toplevel()

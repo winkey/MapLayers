@@ -1,55 +1,89 @@
 # This file is distributed under the same license as the Django package.
 #
+# Translators:
+# Bashar Al-Abdulhadi, 2014
+# Jannis Leidel <jannis@leidel.info>, 2011
 msgid ""
 msgstr ""
-"Project-Id-Version: Django\n"
+"Project-Id-Version: django\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-20 21:03+0100\n"
-"PO-Revision-Date: 2011-03-17 15:51+0000\n"
-"Last-Translator: okhayat <okhayat@gmail.com>\n"
-"Language-Team: Arabic <None>\n"
+"POT-Creation-Date: 2014-05-19 15:12+0200\n"
+"PO-Revision-Date: 2014-05-20 17:17+0000\n"
+"Last-Translator: Bashar Al-Abdulhadi\n"
+"Language-Team: Arabic (http://www.transifex.com/projects/p/django/language/"
+"ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ar\n"
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5\n"
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
-#: media/js/SelectFilter2.js:45
-#, perl-format
+#: contrib/admin/static/admin/js/SelectFilter2.js:45
+#, c-format
 msgid "Available %s"
 msgstr "%s المتوفرة"
 
-#: media/js/SelectFilter2.js:52
+#: contrib/admin/static/admin/js/SelectFilter2.js:46
+#, c-format
+msgid ""
+"This is the list of available %s. You may choose some by selecting them in "
+"the box below and then clicking the \"Choose\" arrow between the two boxes."
+msgstr ""
+"هذه قائمة %s المتوفرة. يمكنك اختيار بعضها بانتقائها في الصندوق أدناه ثم "
+"الضغط على سهم الـ\"اختيار\" بين الصندوقين."
+
+#: contrib/admin/static/admin/js/SelectFilter2.js:53
+#, c-format
+msgid "Type into this box to filter down the list of available %s."
+msgstr "اكتب في هذا الصندوق لتصفية قائمة %s المتوفرة."
+
+#: contrib/admin/static/admin/js/SelectFilter2.js:57
 msgid "Filter"
 msgstr "انتقاء"
 
-#: media/js/SelectFilter2.js:59
+#: contrib/admin/static/admin/js/SelectFilter2.js:61
 msgid "Choose all"
 msgstr "اختر الكل"
 
-#: media/js/SelectFilter2.js:64
-msgid "Add"
-msgstr "أضف"
+#: contrib/admin/static/admin/js/SelectFilter2.js:61
+#, c-format
+msgid "Click to choose all %s at once."
+msgstr "اضغط لاختيار جميع %s جملة واحدة."
 
-#: media/js/SelectFilter2.js:66
+#: contrib/admin/static/admin/js/SelectFilter2.js:67
+msgid "Choose"
+msgstr "اختيار"
+
+#: contrib/admin/static/admin/js/SelectFilter2.js:69
 msgid "Remove"
 msgstr "احذف"
 
-#: media/js/SelectFilter2.js:71
-#, perl-format
+#: contrib/admin/static/admin/js/SelectFilter2.js:75
+#, c-format
 msgid "Chosen %s"
 msgstr "%s المُختارة"
 
-#: media/js/SelectFilter2.js:72
-msgid "Select your choice(s) and click "
-msgstr "حدد خياراتك واضغط"
+#: contrib/admin/static/admin/js/SelectFilter2.js:76
+#, c-format
+msgid ""
+"This is the list of chosen %s. You may remove some by selecting them in the "
+"box below and then clicking the \"Remove\" arrow between the two boxes."
+msgstr ""
+"هذه قائمة %s المحددة. يمكنك إزالة بعضها باختيارها في الصندوق أدناه ثم اضغط "
+"على سهم الـ\"إزالة\" بين الصندوقين."
 
-#: media/js/SelectFilter2.js:77
-msgid "Clear all"
-msgstr "امسح الكل"
+#: contrib/admin/static/admin/js/SelectFilter2.js:80
+msgid "Remove all"
+msgstr "إزالة الكل"
 
-#: media/js/actions.js:18 media/js/actions.min.js:1
+#: contrib/admin/static/admin/js/SelectFilter2.js:80
+#, c-format
+msgid "Click to remove all chosen %s at once."
+msgstr "اضغط لإزالة جميع %s المحددة جملة واحدة."
+
+#: contrib/admin/static/admin/js/actions.js:22
+#: contrib/admin/static/admin/js/actions.min.js:1
 msgid "%(sel)s of %(cnt)s selected"
 msgid_plural "%(sel)s of %(cnt)s selected"
 msgstr[0] "لا شي محدد"
@@ -59,7 +93,8 @@ msgstr[3] "%(sel)s من %(cnt)s محددة"
 msgstr[4] "%(sel)s من %(cnt)s محدد"
 msgstr[5] "%(sel)s من %(cnt)s محدد"
 
-#: media/js/actions.js:109 media/js/actions.min.js:5
+#: contrib/admin/static/admin/js/actions.js:114
+#: contrib/admin/static/admin/js/actions.min.js:4
 msgid ""
 "You have unsaved changes on individual editable fields. If you run an "
 "action, your unsaved changes will be lost."
@@ -67,7 +102,8 @@ msgstr ""
 "لديك تعديلات غير محفوظة على بعض الحقول القابلة للتعديل. إن نفذت أي إجراء "
 "فسوف تخسر تعديلاتك."
 
-#: media/js/actions.js:121 media/js/actions.min.js:6
+#: contrib/admin/static/admin/js/actions.js:126
+#: contrib/admin/static/admin/js/actions.min.js:5
 msgid ""
 "You have selected an action, but you haven't saved your changes to "
 "individual fields yet. Please click OK to save. You'll need to re-run the "
@@ -76,80 +112,101 @@ msgstr ""
 "اخترت إجراءً لكن دون أن تحفظ تغييرات التي قمت بها. رجاء اضغط زر الموافقة "
 "لتحفظ تعديلاتك. ستحتاج إلى إعادة تنفيذ الإجراء."
 
-#: media/js/actions.js:123 media/js/actions.min.js:6
+#: contrib/admin/static/admin/js/actions.js:128
+#: contrib/admin/static/admin/js/actions.min.js:5
 msgid ""
 "You have selected an action, and you haven't made any changes on individual "
 "fields. You're probably looking for the Go button rather than the Save "
 "button."
 msgstr "اخترت إجراءً دون تغيير أي حقل. لعلك تريد زر التنفيذ بدلاً من زر الحفظ."
 
-#: media/js/calendar.js:24 media/js/dateparse.js:32
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:79
+#, c-format
+msgid "Note: You are %s hour ahead of server time."
+msgid_plural "Note: You are %s hours ahead of server time."
+msgstr[0] "ملاحظة: أنت متقدم بـ %s ساعة من وقت الخادم."
+msgstr[1] "ملاحظة: أنت متقدم بـ %s ساعة من وقت الخادم."
+msgstr[2] "ملاحظة: أنت متقدم بـ %s ساعة من وقت الخادم."
+msgstr[3] "ملاحظة: أنت متقدم بـ %s ساعة من وقت الخادم."
+msgstr[4] "ملاحظة: أنت متقدم بـ %s ساعة من وقت الخادم."
+msgstr[5] "ملاحظة: أنت متقدم بـ %s ساعة من وقت الخادم."
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:87
+#, c-format
+msgid "Note: You are %s hour behind server time."
+msgid_plural "Note: You are %s hours behind server time."
+msgstr[0] "ملاحظة: أنت متأخر بـ %s ساعة من وقت الخادم."
+msgstr[1] "ملاحظة: أنت متأخر بـ %s ساعة من وقت الخادم."
+msgstr[2] "ملاحظة: أنت متأخر بـ %s ساعة من وقت الخادم."
+msgstr[3] "ملاحظة: أنت متأخر بـ %s ساعة من وقت الخادم."
+msgstr[4] "ملاحظة: أنت متأخر بـ %s ساعة من وقت الخادم."
+msgstr[5] "ملاحظة: أنت متأخر بـ %s ساعة من وقت الخادم."
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:114
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:149
+msgid "Now"
+msgstr "الآن"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:118
+msgid "Clock"
+msgstr "الساعة"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:146
+msgid "Choose a time"
+msgstr "اختر وقتاً"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:150
+msgid "Midnight"
+msgstr "منتصف الليل"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:151
+msgid "6 a.m."
+msgstr "6 ص."
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:152
+msgid "Noon"
+msgstr "الظهر"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:156
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:276
+msgid "Cancel"
+msgstr "ألغ"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:216
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:269
+msgid "Today"
+msgstr "اليوم"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:220
+msgid "Calendar"
+msgstr "التقويم"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:267
+msgid "Yesterday"
+msgstr "أمس"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:271
+msgid "Tomorrow"
+msgstr "غداً"
+
+#: contrib/admin/static/admin/js/calendar.js:8
 msgid ""
 "January February March April May June July August September October November "
 "December"
 msgstr ""
 "يناير فبراير مارس إبريل مايو يونيو يوليو أغسطس سبتمبر أكتوبر نوفمبر ديسمبر"
 
-#: media/js/calendar.js:25
+#: contrib/admin/static/admin/js/calendar.js:9
 msgid "S M T W T F S"
 msgstr "أ إ ث أ خ ج س"
 
-#: media/js/collapse.js:9 media/js/collapse.js.py:21
-#: media/js/collapse.min.js:1
+#: contrib/admin/static/admin/js/collapse.js:8
+#: contrib/admin/static/admin/js/collapse.js:19
+#: contrib/admin/static/admin/js/collapse.min.js:1
 msgid "Show"
 msgstr "أظهر"
 
-#: media/js/collapse.js:16 media/js/collapse.min.js:1
+#: contrib/admin/static/admin/js/collapse.js:16
+#: contrib/admin/static/admin/js/collapse.min.js:1
 msgid "Hide"
 msgstr "اخف"
-
-#: media/js/dateparse.js:33
-msgid "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
-msgstr "الأحد الإثنين الثلاثاء الأربعاء الخميس الجمعة السبت"
-
-#: media/js/admin/DateTimeShortcuts.js:49
-#: media/js/admin/DateTimeShortcuts.js:84
-msgid "Now"
-msgstr "الآن"
-
-#: media/js/admin/DateTimeShortcuts.js:53
-msgid "Clock"
-msgstr "الساعة"
-
-#: media/js/admin/DateTimeShortcuts.js:80
-msgid "Choose a time"
-msgstr "اختر وقتاً"
-
-#: media/js/admin/DateTimeShortcuts.js:85
-msgid "Midnight"
-msgstr "منتصف الليل"
-
-#: media/js/admin/DateTimeShortcuts.js:86
-msgid "6 a.m."
-msgstr "6 ص."
-
-#: media/js/admin/DateTimeShortcuts.js:87
-msgid "Noon"
-msgstr "الظهر"
-
-#: media/js/admin/DateTimeShortcuts.js:91
-#: media/js/admin/DateTimeShortcuts.js:188
-msgid "Cancel"
-msgstr "ألغ"
-
-#: media/js/admin/DateTimeShortcuts.js:133
-#: media/js/admin/DateTimeShortcuts.js:182
-msgid "Today"
-msgstr "اليوم"
-
-#: media/js/admin/DateTimeShortcuts.js:137
-msgid "Calendar"
-msgstr "التقويم"
-
-#: media/js/admin/DateTimeShortcuts.js:180
-msgid "Yesterday"
-msgstr "أمس"
-
-#: media/js/admin/DateTimeShortcuts.js:184
-msgid "Tomorrow"
-msgstr "غداً"

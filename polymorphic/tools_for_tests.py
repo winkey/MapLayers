@@ -4,16 +4,16 @@
 
 import uuid
 
-from django.forms.util import ValidationError
 from django import forms
 from django.db import models
-from django.utils.encoding import smart_unicode
-from django.utils.translation import ugettext_lazy
+from django.utils.encoding import smart_text
+from django.utils import six
 
 class UUIDVersionError(Exception):
     pass
 
-class UUIDField(models.CharField):
+
+class UUIDField(six.with_metaclass(models.SubfieldBase, models.CharField)):
     """Encode and stores a Python uuid.UUID in a manner that is appropriate
     for the given datatabase that we are using.
 
@@ -22,7 +22,6 @@ class UUIDField(models.CharField):
 
     This class supports type 1, 2, 4, and 5 UUID's.
     """
-    __metaclass__ = models.SubfieldBase
 
     _CREATE_COLUMN_TYPES = {
         'postgresql_psycopg2': 'uuid',
@@ -60,31 +59,33 @@ class UUIDField(models.CharField):
 
         self.auto = auto
         self.version = version
-        if version==1:
+        if version == 1:
             self.node, self.clock_seq = node, clock_seq
-        elif version==3 or version==5:
+        elif version == 3 or version == 5:
             self.namespace, self.name = namespace, name
 
         super(UUIDField, self).__init__(verbose_name=verbose_name,
             name=name, **kwargs)
 
     def create_uuid(self):
-        if not self.version or self.version==4:
+        if not self.version or self.version == 4:
             return uuid.uuid4()
-        elif self.version==1:
+        elif self.version == 1:
             return uuid.uuid1(self.node, self.clock_seq)
-        elif self.version==2:
+        elif self.version == 2:
             raise UUIDVersionError("UUID version 2 is not supported.")
-        elif self.version==3:
+        elif self.version == 3:
             return uuid.uuid3(self.namespace, self.name)
-        elif self.version==5:
+        elif self.version == 5:
             return uuid.uuid5(self.namespace, self.name)
         else:
             raise UUIDVersionError("UUID version %s is not valid." % self.version)
 
     def db_type(self, connection):
         from django.conf import settings
-        return UUIDField._CREATE_COLUMN_TYPES.get(settings.DATABASE_ENGINE, "char(%s)" % self.max_length)
+        full_database_type = settings.DATABASES['default']['ENGINE']
+        database_type = full_database_type.split('.')[-1]
+        return UUIDField._CREATE_COLUMN_TYPES.get(database_type, "char(%s)" % self.max_length)
 
     def to_python(self, value):
         """Return a uuid.UUID instance from the value returned by the database."""
@@ -97,7 +98,7 @@ class UUIDField(models.CharField):
         if isinstance(value, uuid.UUID):
             return value
         # attempt to parse a UUID
-        return uuid.UUID(smart_unicode(value))
+        return uuid.UUID(smart_text(value))
 
         #
         # If I do the following (returning a String instead of a UUID
@@ -107,7 +108,7 @@ class UUIDField(models.CharField):
         #if not value:
         # return None
         #if isinstance(value, uuid.UUID):
-        # return smart_unicode(value)
+        # return smart_text(value)
         #else:
         # return value
 
@@ -116,7 +117,7 @@ class UUIDField(models.CharField):
             value = self.create_uuid()
             setattr(model_instance, self.attname, value)
         else:
-            value = super(UUIDField, self).pre_save(model_instance,add)
+            value = super(UUIDField, self).pre_save(model_instance, add)
             if self.auto and not value:
                 value = self.create_uuid()
                 setattr(model_instance, self.attname, value)
@@ -125,7 +126,7 @@ class UUIDField(models.CharField):
     def get_db_prep_value(self, value, connection, prepared):
         """Casts uuid.UUID values into the format expected by the back end for use in queries"""
         if isinstance(value, uuid.UUID):
-            return smart_unicode(value)
+            return smart_text(value)
         return value
 
     def value_to_string(self, obj):
@@ -133,7 +134,7 @@ class UUIDField(models.CharField):
         if val is None:
             data = ''
         else:
-            data = smart_unicode(val)
+            data = smart_text(val)
         return data
 
     def formfield(self, **kwargs):

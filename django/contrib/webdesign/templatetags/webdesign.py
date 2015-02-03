@@ -1,7 +1,10 @@
+from __future__ import unicode_literals
+
 from django.contrib.webdesign.lorem_ipsum import words, paragraphs
 from django import template
 
 register = template.Library()
+
 
 class LoremNode(template.Node):
     def __init__(self, count, method, common):
@@ -18,9 +21,10 @@ class LoremNode(template.Node):
             paras = paragraphs(count, common=self.common)
         if self.method == 'p':
             paras = ['<p>%s</p>' % p for p in paras]
-        return u'\n\n'.join(paras)
+        return '\n\n'.join(paras)
 
-#@register.tag
+
+@register.tag
 def lorem(parser, token):
     """
     Creates random Latin text useful for providing test data in templates.
@@ -39,10 +43,11 @@ def lorem(parser, token):
     paragraph (starting "Lorem ipsum dolor sit amet, consectetuer...").
 
     Examples:
-        * ``{% lorem %}`` will output the common "lorem ipsum" paragraph
-        * ``{% lorem 3 p %}`` will output the common "lorem ipsum" paragraph
-          and two random paragraphs each wrapped in HTML ``<p>`` tags
-        * ``{% lorem 2 w random %}`` will output two random latin words
+
+    * ``{% lorem %}`` will output the common "lorem ipsum" paragraph
+    * ``{% lorem 3 p %}`` will output the common "lorem ipsum" paragraph
+      and two random paragraphs each wrapped in HTML ``<p>`` tags
+    * ``{% lorem 2 w random %}`` will output two random latin words
     """
     bits = list(token.split_contents())
     tagname = bits[0]
@@ -64,4 +69,3 @@ def lorem(parser, token):
     if len(bits) != 1:
         raise template.TemplateSyntaxError("Incorrect format for %r tag" % tagname)
     return LoremNode(count, method, common)
-lorem = register.tag(lorem)

@@ -1,21 +1,24 @@
 """
 Extra HTML Widget classes
 """
+from __future__ import unicode_literals
 
-import time
 import datetime
 import re
 
 from django.forms.widgets import Widget, Select
 from django.utils import datetime_safe
 from django.utils.dates import MONTHS
+from django.utils.encoding import force_str
 from django.utils.safestring import mark_safe
 from django.utils.formats import get_format
+from django.utils import six
 from django.conf import settings
 
 __all__ = ('SelectDateWidget',)
 
 RE_DATE = re.compile(r'(\d{4})-(\d\d?)-(\d\d?)$')
+
 
 def _parse_date_fmt():
     fmt = get_format('DATE_FORMAT')
@@ -37,6 +40,7 @@ def _parse_date_fmt():
             #if not self.first_select: self.first_select = 'day'
     return output
 
+
 class SelectDateWidget(Widget):
     """
     A Widget that splits date input into three <select> boxes.
@@ -49,30 +53,32 @@ class SelectDateWidget(Widget):
     day_field = '%s_day'
     year_field = '%s_year'
 
-    def __init__(self, attrs=None, years=None, required=True):
-        # years is an optional list/tuple of years to use in the "year" select box.
+    def __init__(self, attrs=None, years=None, months=None):
         self.attrs = attrs or {}
-        self.required = required
+
+        # Optional list or tuple of years to use in the "year" select box.
         if years:
             self.years = years
         else:
             this_year = datetime.date.today().year
-            self.years = range(this_year, this_year+10)
+            self.years = range(this_year, this_year + 10)
+
+        # Optional dict of months to use in the "month" select box.
+        if months:
+            self.months = months
+        else:
+            self.months = MONTHS
 
     def render(self, name, value, attrs=None):
         try:
             year_val, month_val, day_val = value.year, value.month, value.day
         except AttributeError:
             year_val = month_val = day_val = None
-            if isinstance(value, basestring):
+            if isinstance(value, six.string_types):
                 if settings.USE_L10N:
                     try:
                         input_format = get_format('DATE_INPUT_FORMATS')[0]
-                        # Python 2.4 compatibility:
-                        #     v = datetime.datetime.strptime(value, input_format)
-                        # would be clearer, but datetime.strptime was added in
-                        # Python 2.5
-                        v = datetime.datetime(*(time.strptime(value, input_format)[0:6]))
+                        v = datetime.datetime.strptime(force_str(value), input_format)
                         year_val, month_val, day_val = v.year, v.month, v.day
                     except ValueError:
                         pass
@@ -82,10 +88,10 @@ class SelectDateWidget(Widget):
                         year_val, month_val, day_val = [int(v) for v in match.groups()]
         choices = [(i, i) for i in self.years]
         year_html = self.create_select(name, self.year_field, value, year_val, choices)
-        choices = MONTHS.items()
+        choices = list(six.iteritems(self.months))
         month_html = self.create_select(name, self.month_field, value, month_val, choices)
         choices = [(i, i) for i in range(1, 32)]
-        day_html = self.create_select(name, self.day_field, value, day_val,  choices)
+        day_html = self.create_select(name, self.day_field, value, day_val, choices)
 
         output = []
         for field in _parse_date_fmt():
@@ -95,7 +101,7 @@ class SelectDateWidget(Widget):
                 output.append(month_html)
             elif field == 'day':
                 output.append(day_html)
-        return mark_safe(u'\n'.join(output))
+        return mark_safe('\n'.join(output))
 
     def id_for_label(self, id_):
         first_select = None
@@ -106,7 +112,6 @@ class SelectDateWidget(Widget):
             return '%s_%s' % (id_, first_select)
         else:
             return '%s_month' % id_
-    id_for_label = classmethod(id_for_label)
 
     def value_from_datadict(self, data, files, name):
         y = data.get(self.year_field % name)
@@ -133,7 +138,7 @@ class SelectDateWidget(Widget):
             id_ = self.attrs['id']
         else:
             id_ = 'id_%s' % name
-        if not (self.required and val):
+        if not self.is_required:
             choices.insert(0, self.none_value)
         local_attrs = self.build_attrs(id=field % id_)
         s = Select(choices=choices)

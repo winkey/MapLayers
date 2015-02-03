@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 """ PolymorphicQuerySet support functions
-    Please see README.rst or DOCS.rst or http://bserve.webhop.org/wiki/django_polymorphic
+    Please see README.rst or DOCS.rst or http://chrisglass.github.com/django_polymorphic/
 """
+from __future__ import absolute_import
 
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.db.models import Q
-from compatibility_tools import compat_partition
+from django.db.models import Q, FieldDoesNotExist
+from django.db.models.related import RelatedObject
+
+from functools import reduce
 
 
 ###################################################################################
@@ -32,7 +35,7 @@ def translate_polymorphic_filter_definitions_in_kwargs(queryset_model, kwargs):
     Returns: a list of non-keyword-arguments (Q objects) to be added to the filter() query.
     """
     additional_args = []
-    for field_path, val in kwargs.items():
+    for field_path, val in kwargs.copy().items():  # Python 3 needs copy
 
         new_expr = _translate_polymorphic_filter_definition(queryset_model, field_path, val)
 
@@ -46,6 +49,7 @@ def translate_polymorphic_filter_definitions_in_kwargs(queryset_model, kwargs):
             additional_args.append(new_expr)
 
     return additional_args
+
 
 def translate_polymorphic_Q_object(queryset_model, potential_q_object):
     def tree_node_correct_field_specs(my_model, node):
@@ -67,6 +71,7 @@ def translate_polymorphic_Q_object(queryset_model, potential_q_object):
         tree_node_correct_field_specs(queryset_model, potential_q_object)
 
     return potential_q_object
+
 
 def translate_polymorphic_filter_definitions_in_args(queryset_model, args):
     """
@@ -104,7 +109,7 @@ def _translate_polymorphic_filter_definition(queryset_model, field_path, field_v
     elif field_path == 'not_instance_of':
         return _create_model_filter_Q(field_val, not_instance_of=True)
     elif not '___' in field_path:
-        return None #no change
+        return None  # no change
 
     # filter expression contains '___' (i.e. filter for polymorphic field)
     # => get the model class specified in the filter expression
@@ -122,8 +127,9 @@ def translate_polymorphic_field_path(queryset_model, field_path):
     into modela__modelb__modelc__field3.
     Returns: translated path (unchanged, if no translation needed)
     """
-    classname, sep, pure_field_path = compat_partition(field_path, '___')
-    if not sep: return field_path
+    classname, sep, pure_field_path = field_path.partition('___')
+    if not sep:
+        return field_path
     assert classname, 'PolymorphicModel: %s: bad field specification' % field_path
 
     negated = False
@@ -133,7 +139,7 @@ def translate_polymorphic_field_path(queryset_model, field_path):
 
     if '__' in classname:
         # the user has app label prepended to class name via __ => use Django's get_model function
-        appname, sep, classname = compat_partition(classname, '__')
+        appname, sep, classname = classname.partition('__')
         model = models.get_model(appname, classname)
         assert model, 'PolymorphicModel: model %s (in app %s) not found!' % (model.__name__, appname)
         if not issubclass(model, queryset_model):
@@ -141,8 +147,20 @@ def translate_polymorphic_field_path(queryset_model, field_path):
             raise AssertionError(e)
 
     else:
-        # the user has only given us the class name via __
+        # the user has only given us the class name via ___
         # => select the model from the sub models of the queryset base model
+
+        # Test whether it's actually a regular relation__ _fieldname (the field starting with an _)
+        # so no tripple ClassName___field was intended.
+        try:
+            # rel = (field_object, model, direct, m2m)
+            field = queryset_model._meta.get_field_by_name(classname)[0]
+            if isinstance(field, RelatedObject):
+                # Can also test whether the field exists in the related object to avoid ambiguity between
+                # class names and field names, but that never happens when your class names are in CamelCase.
+                return field_path  # No exception raised, field does exist.
+        except FieldDoesNotExist:
+            pass
 
         # function to collect all sub-models, this should be optimized (cached)
         def add_all_sub_models(model, result):
@@ -173,16 +191,20 @@ def translate_polymorphic_field_path(queryset_model, field_path):
             if b == baseclass:
                 return myclass.__name__.lower()
             path = _create_base_path(baseclass, b)
-            if path: return path + '__' + myclass.__name__.lower()
+            if path:
+                return path + '__' + myclass.__name__.lower()
         return ''
 
     basepath = _create_base_path(queryset_model, model)
 
-    if negated: newpath = '-'
-    else: newpath = ''
-    
+    if negated:
+        newpath = '-'
+    else:
+        newpath = ''
+
     newpath += basepath
-    if basepath: newpath += '__'
+    if basepath:
+        newpath += '__'
 
     newpath += pure_field_path
     return newpath
@@ -201,9 +223,10 @@ def _create_model_filter_Q(modellist, not_instance_of=False):
     be needed.
     """
 
-    if not modellist: return None
+    if not modellist:
+        return None
 
-    from polymorphic_model import PolymorphicModel
+    from .polymorphic_model import PolymorphicModel
 
     if type(modellist) != list and type(modellist) != tuple:
         if issubclass(modellist, PolymorphicModel):
@@ -212,14 +235,14 @@ def _create_model_filter_Q(modellist, not_instance_of=False):
             assert False, 'PolymorphicModel: instance_of expects a list of (polymorphic) models or a single (polymorphic) model'
 
     def q_class_with_subclasses(model):
-        q = Q(polymorphic_ctype=ContentType.objects.get_for_model(model))
+        q = Q(polymorphic_ctype=ContentType.objects.get_for_model(model, for_concrete_model=False))
         for subclass in model.__subclasses__():
             q = q | q_class_with_subclasses(subclass)
         return q
 
-    qlist = [  q_class_with_subclasses(m)  for m in modellist  ]
+    qlist = [q_class_with_subclasses(m)  for m in modellist]
 
     q_ored = reduce(lambda a, b: a | b, qlist)
-    if not_instance_of: q_ored = ~q_ored
+    if not_instance_of:
+        q_ored = ~q_ored
     return q_ored
-

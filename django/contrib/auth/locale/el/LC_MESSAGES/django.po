@@ -1,210 +1,273 @@
 # This file is distributed under the same license as the Django package.
 #
+# Translators:
+# Apostolis Bessas <mpessas+txc@transifex.com>, 2013
+# Dimitris Glezos <glezos@transifex.com>, 2011-2012
+# glogiotatidis <seadog@sealabs.net>, 2011
+# Jannis Leidel <jannis@leidel.info>, 2011
+# Panos Laganakos <panos.laganakos@gmail.com>, 2014
+# Yorgos Pagles <y.pagles@gmail.com>, 2011
 msgid ""
 msgstr ""
-"Project-Id-Version: Django\n"
+"Project-Id-Version: django\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-20 21:04+0100\n"
-"PO-Revision-Date: 2011-03-20 11:31+0000\n"
-"Last-Translator: pagles <y.pagles@gmail.com>\n"
-"Language-Team: Greek <>\n"
+"POT-Creation-Date: 2014-05-20 12:20+0200\n"
+"PO-Revision-Date: 2014-08-17 09:56+0000\n"
+"Last-Translator: Panos Laganakos <panos.laganakos@gmail.com>\n"
+"Language-Team: Greek (http://www.transifex.com/projects/p/django/language/"
+"el/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: el\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: admin.py:28
+#: contrib/auth/admin.py:44
 msgid "Personal info"
 msgstr "Προσωπικές πληροφορίες"
 
-#: admin.py:29
+#: contrib/auth/admin.py:45
 msgid "Permissions"
 msgstr "Δικαιώματα"
 
-#: admin.py:30
+#: contrib/auth/admin.py:47
 msgid "Important dates"
 msgstr "Σημαντικές ημερομηνίες"
 
-#: admin.py:31
-msgid "Groups"
-msgstr "Ομάδες"
-
-#: admin.py:113
+#: contrib/auth/admin.py:134
 msgid "Password changed successfully."
 msgstr "Ο κωδικός πρόσβασης αλλάχτηκε με επιτυχία."
 
-#: admin.py:123
+#: contrib/auth/admin.py:145
 #, python-format
 msgid "Change password: %s"
 msgstr "Αλλαγή κωδικού πρόσβασης: %s"
 
-#: forms.py:14 forms.py:48 forms.py:66
+#: contrib/auth/apps.py:10
+msgid "Authentication and Authorization"
+msgstr "Πιστοποίηση και Εξουσιοδότηση"
+
+#: contrib/auth/forms.py:37 contrib/auth/tests/test_forms.py:316
+#: contrib/auth/tests/test_forms.py:321 contrib/auth/tests/test_forms.py:504
+msgid "No password set."
+msgstr "Δεν έχει τεθεί κωδικός."
+
+#: contrib/auth/forms.py:43 contrib/auth/tests/test_forms.py:326
+#: contrib/auth/tests/test_forms.py:332
+msgid "Invalid password format or unknown hashing algorithm."
+msgstr "Μη έγκυρη μορφή κώδικα ή άγνωστος αλγόριθμος hashing."
+
+#: contrib/auth/forms.py:76
+msgid "A user with that username already exists."
+msgstr "Αυτό το όνομα χρήστη χρησιμοποιείται ήδη."
+
+#: contrib/auth/forms.py:77 contrib/auth/forms.py:285
+#: contrib/auth/forms.py:349
+msgid "The two password fields didn't match."
+msgstr "Τα δύο πεδία κωδικού χρήστη δεν ταιριάζουν."
+
+#: contrib/auth/forms.py:79 contrib/auth/forms.py:129
 msgid "Username"
 msgstr "Όνομα χρήστη"
 
-#: forms.py:15 forms.py:49
+#: contrib/auth/forms.py:81 contrib/auth/forms.py:130
+#: contrib/auth/models.py:368
 msgid "Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."
 msgstr ""
 "Απαραίτητο. Πρέπει να αποτελείται από 30 ή λιγότερους χαρακτήρες. Μπορείτε "
 "να χρησιμοποιήσετε μόνο γράμματα, αριθμούς και τους χαρακτήρες @/./+/-/_."
 
-#: forms.py:16 forms.py:50
+#: contrib/auth/forms.py:84 contrib/auth/forms.py:133
 msgid "This value may contain only letters, numbers and @/./+/-/_ characters."
 msgstr ""
 "Αυτή η τιμή μπορεί να περιέχει μόνο γράμματα, αριθμούς και τους χαρακτήρες "
 "@/./+/-/_."
 
-#: forms.py:17 forms.py:67 forms.py:196
+#: contrib/auth/forms.py:86 contrib/auth/forms.py:135
+#: contrib/auth/forms.py:163 contrib/auth/forms.py:351
 msgid "Password"
 msgstr "Κωδικός χρήστη"
 
-#: forms.py:18
+#: contrib/auth/forms.py:88
 msgid "Password confirmation"
 msgstr "Επιβεβαίωση κωδικού χρήστη"
 
-#: forms.py:19
+#: contrib/auth/forms.py:90
 msgid "Enter the same password as above, for verification."
 msgstr ""
 "Εισάγετε τον ίδιο κωδικό χρήστη όπως παραπάνω, για λόγους επιβεβαίωσης."
 
-#: forms.py:31
-msgid "A user with that username already exists."
-msgstr "Αυτό το όνομα χρήστη χρησιμοποιείται ήδη."
-
-#: forms.py:37 forms.py:166 forms.py:208
-msgid "The two password fields didn't match."
-msgstr "Τα δύο πεδία κωδικού χρήστη δεν ταιριάζουν."
-
-#: forms.py:87
+#: contrib/auth/forms.py:136
 msgid ""
-"Please enter a correct username and password. Note that both fields are case-"
-"sensitive."
+"Raw passwords are not stored, so there is no way to see this user's "
+"password, but you can change the password using <a href=\"password/\">this "
+"form</a>."
 msgstr ""
-"Παρακαλούμε εισάγετε ένα σωστό όνομα χρήστη και κωδικό χρήστη. Να σημειωθεί "
-"ότι και τα δύο πεδία κάνουν διάκριση μεταξύ πεζών και κεφαλαίων."
+"Οι ακατέργαστοι κώδικες δεν αποθηκεύονται, οπότε δεν υπάρχει τρόπος να δείτε "
+"τον κώδικα αυτού του χρήστη, αλλά μπορείτε να τον αλλάξετε χρησιμοποιόντας "
+"<a href=\"password/\">αυτή τη φόρμα</a>."
 
-#: forms.py:89
+#: contrib/auth/forms.py:166
+#, python-format
+msgid ""
+"Please enter a correct %(username)s and password. Note that both fields may "
+"be case-sensitive."
+msgstr ""
+"Παρακαλώ εισάγετε ένα σωστό %(username)s και κωδικό. Σημειώστε ότι και τα "
+"δύο πεδία έχει σημασία αν είναι κεφαλαία-μικρά."
+
+#: contrib/auth/forms.py:168
 msgid "This account is inactive."
 msgstr "Αυτός ο λογαριασμός είναι ανενεργός."
 
-#: forms.py:96
-msgid ""
-"Your Web browser doesn't appear to have cookies enabled. Cookies are "
-"required for logging in."
-msgstr ""
-"Ο πλοηγητής σας δεν φαίνεται να έχει ενεργοποιημένα τα αρχεία cookie. Τα "
-"αρχεία cookie απαιτούνται για να συνδεθείτε."
+#: contrib/auth/forms.py:231
+msgid "Email"
+msgstr "Email"
 
-#: forms.py:108
-msgid "E-mail"
-msgstr "E-mail"
-
-#: forms.py:120
-msgid ""
-"That e-mail address doesn't have an associated user account. Are you sure "
-"you've registered?"
-msgstr ""
-"Αυτή η διεύθυνση e-mail δεν αντιστοιχεί σε κάποιον λογαριασμό χρήστη. Είστε "
-"σίγουρος ότι έχετε γραφτεί;"
-
-#: forms.py:146
-#, python-format
-msgid "Password reset on %s"
-msgstr "Επαναφορά συνθηματικού για %s"
-
-#: forms.py:154
+#: contrib/auth/forms.py:287
 msgid "New password"
 msgstr "Νέο συνθηματικό"
 
-#: forms.py:155
+#: contrib/auth/forms.py:289
 msgid "New password confirmation"
 msgstr "Επιβεβαίωση νέου συνθηματικού"
 
-#: forms.py:180
-msgid "Old password"
-msgstr "Παλιό συνθηματικό"
-
-#: forms.py:188
+#: contrib/auth/forms.py:320
 msgid "Your old password was entered incorrectly. Please enter it again."
 msgstr "Το παλιό συνθηματικό σας δόθηκε λανθασμένα. Παρακαλώ δοκιμάστε ξανά."
 
-#: forms.py:197
+#: contrib/auth/forms.py:323
+msgid "Old password"
+msgstr "Παλιό συνθηματικό"
+
+#: contrib/auth/forms.py:353
 msgid "Password (again)"
 msgstr "Συνθηματικό (ξανά)"
 
-#: models.py:77 models.py:105
+#: contrib/auth/hashers.py:252 contrib/auth/hashers.py:335
+#: contrib/auth/hashers.py:383 contrib/auth/hashers.py:411
+#: contrib/auth/hashers.py:444 contrib/auth/hashers.py:477
+#: contrib/auth/hashers.py:511
+msgid "algorithm"
+msgstr "αλγόριθμος"
+
+#: contrib/auth/hashers.py:253
+msgid "iterations"
+msgstr "Επανάληψη"
+
+#: contrib/auth/hashers.py:254 contrib/auth/hashers.py:337
+#: contrib/auth/hashers.py:384 contrib/auth/hashers.py:412
+#: contrib/auth/hashers.py:512
+msgid "salt"
+msgstr "salt"
+
+#: contrib/auth/hashers.py:255 contrib/auth/hashers.py:385
+#: contrib/auth/hashers.py:413 contrib/auth/hashers.py:445
+#: contrib/auth/hashers.py:478 contrib/auth/hashers.py:513
+msgid "hash"
+msgstr "hash"
+
+#: contrib/auth/hashers.py:336
+msgid "work factor"
+msgstr "work factor"
+
+#: contrib/auth/hashers.py:338
+msgid "checksum"
+msgstr "checksum"
+
+#: contrib/auth/models.py:63 contrib/auth/models.py:112
 msgid "name"
 msgstr "όνομα"
 
-#: models.py:79
+#: contrib/auth/models.py:65
 msgid "codename"
 msgstr "κωδικό όνομα"
 
-#: models.py:83
+#: contrib/auth/models.py:69
 msgid "permission"
 msgstr "δικαίωμα"
 
-#: models.py:84 models.py:106
+#: contrib/auth/models.py:70 contrib/auth/models.py:114
 msgid "permissions"
 msgstr "διακαιώματα"
 
-#: models.py:109
+#: contrib/auth/models.py:119
 msgid "group"
 msgstr "ομάδα"
 
-#: models.py:110 models.py:217
+#: contrib/auth/models.py:120 contrib/auth/models.py:293
 msgid "groups"
 msgstr "ομάδες"
 
-#: models.py:207
-msgid "username"
-msgstr "όνομα χρήστη"
-
-#: models.py:207
-msgid ""
-"Required. 30 characters or fewer. Letters, numbers and @/./+/-/_ characters"
-msgstr ""
-"Απαραίτητα. 30 ή λιγότεροι χαρακτήρες. Γράμματα, αριθμοί και οι χαρακτήρες "
-"@/./+/-/_."
-
-#: models.py:208
-msgid "first name"
-msgstr "όνομα"
-
-#: models.py:209
-msgid "last name"
-msgstr "επώνυμο"
-
-#: models.py:210
-msgid "e-mail address"
-msgstr "ηλεκτρονική διεύθυνση"
-
-#: models.py:211
+#: contrib/auth/models.py:192
 msgid "password"
 msgstr "συνθηματικό"
 
-#: models.py:211
-msgid ""
-"Use '[algo]$[salt]$[hexdigest]' or use the <a href=\"password/\">change "
-"password form</a>."
-msgstr ""
-"Χρησιμοποιήστε την μορφή '[algo]$[salt]$[hexdigest]' ή εναλλακτικά την <a "
-"href=\"password/\">φόρμα αλλαγής κωδικού πρόσβασης</a>."
+#: contrib/auth/models.py:193
+msgid "last login"
+msgstr "τελευταία σύνδεση"
 
-#: models.py:212
+#: contrib/auth/models.py:290
+msgid "superuser status"
+msgstr "κατάσταση υπερχρήστη"
+
+#: contrib/auth/models.py:291
+msgid ""
+"Designates that this user has all permissions without explicitly assigning "
+"them."
+msgstr ""
+"Υποδηλώνει ότι ο συγκεκριμένος χρήστης έχει όλα τα δικαιώματα χωρίς να "
+"χρειάζεται να τα παραχωρήσετε ξεχωριστά."
+
+#: contrib/auth/models.py:294
+msgid ""
+"The groups this user belongs to. A user will get all permissions granted to "
+"each of his/her group."
+msgstr ""
+"Οι ομάδες που ανοίκει αυτός ο χρήστης. Ένας χρήστης θα πάρει όλες άδειες που "
+"έχουν δωθεί σε κάθε μία από τις ομάδες του."
+
+#: contrib/auth/models.py:299
+msgid "user permissions"
+msgstr "δικαιώματα χρήστη"
+
+#: contrib/auth/models.py:300
+msgid "Specific permissions for this user."
+msgstr "Συγκεκριμένα δικαιώματα για αυτόν τον χρήστη."
+
+#: contrib/auth/models.py:367
+msgid "username"
+msgstr "όνομα χρήστη"
+
+#: contrib/auth/models.py:371
+msgid "Enter a valid username."
+msgstr "Εισάφετε ένα έγκυρο όνομα χρήστη."
+
+#: contrib/auth/models.py:373
+msgid "first name"
+msgstr "όνομα"
+
+#: contrib/auth/models.py:374
+msgid "last name"
+msgstr "επώνυμο"
+
+#: contrib/auth/models.py:375
+msgid "email address"
+msgstr "διεύθυνση email"
+
+#: contrib/auth/models.py:376
 msgid "staff status"
 msgstr "Κατάσταση προσωπικού"
 
-#: models.py:212
+#: contrib/auth/models.py:377
 msgid "Designates whether the user can log into this admin site."
 msgstr "Ορίζει αν ο χρήστης μπορεί να συνδεθεί στο χώρο διαχείρισης."
 
-#: models.py:213
+#: contrib/auth/models.py:379
 msgid "active"
 msgstr "ενεργό"
 
-#: models.py:213
+#: contrib/auth/models.py:380
 msgid ""
 "Designates whether this user should be treated as active. Unselect this "
 "instead of deleting accounts."
@@ -213,55 +276,55 @@ msgstr ""
 "την επεπιλογή αυτής της επιλογής αντί του να πραγματοποιήσετε διαγραφή του "
 "χρήστη."
 
-#: models.py:214
-msgid "superuser status"
-msgstr "κατάσταση υπερχρήστη"
-
-#: models.py:214
-msgid ""
-"Designates that this user has all permissions without explicitly assigning "
-"them."
-msgstr ""
-"Υποδηλώνει ότι ο συγκεκριμένος χρήστης έχει όλα τα δικαιώματα χωρίς να "
-"χρειάζεται να τα παραχωρήσετε ξεχωριστά."
-
-#: models.py:215
-msgid "last login"
-msgstr "τελευταία σύνδεση"
-
-#: models.py:216
+#: contrib/auth/models.py:382
 msgid "date joined"
 msgstr "ημερομηνία σύνδεσης"
 
-#: models.py:218
-msgid ""
-"In addition to the permissions manually assigned, this user will also get "
-"all permissions granted to each group he/she is in."
-msgstr ""
-"Επιπροσθέτως των δικαιωμάτων που παρέχονται χειροκίνητα στον χρήστη θα έχει "
-"και όλα τα δικαιώμετα που έχουν παραχωρηθεί στην ομάδα χρηστών στην οποία "
-"ανήκει. "
-
-#: models.py:219
-msgid "user permissions"
-msgstr "δικαιώματα χρήστη"
-
-#: models.py:223
+#: contrib/auth/models.py:390
 msgid "user"
 msgstr "χρήστης"
 
-#: models.py:224
+#: contrib/auth/models.py:391
 msgid "users"
 msgstr "χρήστες"
 
-#: models.py:407
-msgid "message"
-msgstr "μήνυμα"
+#: contrib/auth/templates/registration/password_reset_subject.txt:2
+#, python-format
+msgid "Password reset on %(site_name)s"
+msgstr "Επαναφοράς κωδικού πρόσβασης για το %(site_name)s "
 
-#: views.py:91
+#: contrib/auth/tests/test_forms.py:387
+msgid "Enter a valid email address."
+msgstr "Εισάφετε ένα έγκυρο όνομα χρήστη."
+
+#: contrib/auth/views.py:92
 msgid "Logged out"
 msgstr "Έγινε αποσύνδεση"
 
-#: management/commands/createsuperuser.py:23
-msgid "Enter a valid e-mail address."
-msgstr "Εισάγετε μια έγκυρη διεύθυνση ηλ. ταχυδρομείου."
+#: contrib/auth/views.py:169
+msgid "Password reset"
+msgstr "Επαναφορά κωδικού"
+
+#: contrib/auth/views.py:181
+msgid "Password reset successful"
+msgstr "Επιτυχής επαναφορά κωδικού"
+
+#: contrib/auth/views.py:216
+msgid "Enter new password"
+msgstr "Εισάγετε νεό κωδικό"
+
+#: contrib/auth/views.py:227
+msgid "Password reset unsuccessful"
+msgstr "Ανεπιτυχής επαναφορά κωδικού"
+
+#: contrib/auth/views.py:244
+msgid "Password reset complete"
+msgstr "Ολοκλήρωση επαναφοράς κωδικού"
+
+#: contrib/auth/views.py:278
+msgid "Password change"
+msgstr "Αλλαγή κωδικού"
+
+#: contrib/auth/views.py:291
+msgid "Password change successful"
+msgstr "Αλλαγή κωδικού επιτυχής"

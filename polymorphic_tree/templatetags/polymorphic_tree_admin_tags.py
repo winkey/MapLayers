@@ -1,58 +1,13 @@
+from future.builtins import next
 from django.contrib.admin.views.main import ChangeList
 from django.contrib.contenttypes.models import ContentType
 from django.template import Library, Node, TemplateSyntaxError, Variable
 from django.utils.safestring import mark_safe
-from django.utils.translation import ugettext_lazy as _
 from mptt.templatetags.mptt_tags import cache_tree_children
 from polymorphic_tree.templatetags.stylable_admin_list import stylable_column_repr
 
+
 register = Library()
-
-
-class BreadcrumbScope(Node):
-    def __init__(self, base_opts, nodelist):
-        self.base_opts = base_opts
-        self.nodelist = nodelist   # Note, takes advantage of Node.child_nodelists
-
-    @classmethod
-    def parse(cls, parser, token):
-        bits = token.split_contents()
-        if len(bits) == 2:
-            (tagname, base_opts) = bits
-            base_opts = parser.compile_filter(base_opts)
-            nodelist = parser.parse(('endbreadcrumb_scope',))
-            parser.delete_first_token()
-
-            return cls(
-                base_opts=base_opts,
-                nodelist=nodelist
-            )
-        else:
-            raise TemplateSyntaxError("{0} tag expects 1 argument".format(token.contents[0]))
-
-
-    def render(self, context):
-        # app_label is really hard to overwrite in the standard Django ModelAdmin.
-        # To insert it in the template, the entire render_change_form() and delete_view() have to copied and adjusted.
-        # Instead, overwrite them here.
-        base_opts = self.base_opts.resolve(context)
-        new_vars = {}
-        if base_opts and not isinstance(base_opts, basestring):
-            new_vars = {
-                'app_label': base_opts.app_label,  # What this is all about
-                'opts': base_opts,
-            }
-
-        d = context.push()
-        d.update(new_vars)
-        html = self.nodelist.render(context)
-        context.pop()
-        return html
-
-
-@register.tag
-def breadcrumb_scope(parser, token):
-    return BreadcrumbScope.parse(parser, token)
 
 
 @register.filter
@@ -99,7 +54,7 @@ class AdminListRecurseTreeNode(Node):
             bits.append(self._render_node(context, cl, child))
 
         columns = self._get_column_repr(cl, node)  # list(tuple(name, html), ..)
-        first_real_column = (col for col in columns if col[0] != 'action_checkbox').next()
+        first_real_column = next(col for col in columns if col[0] != 'action_checkbox')
 
         context['columns'] = columns
         context['other_columns'] = [col for col in columns if col[0] not in ('action_checkbox', first_real_column[0])]

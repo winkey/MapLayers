@@ -6,14 +6,14 @@ variable, and then from django.conf.global_settings; see the global settings fil
 a list of all possible variables.
 """
 
+import importlib
 import os
-import re
 import time     # Needed for Windows
-import warnings
 
 from django.conf import global_settings
-from django.utils.functional import LazyObject
-from django.utils import importlib
+from django.core.exceptions import ImproperlyConfigured
+from django.utils.functional import LazyObject, empty
+from django.utils import six
 
 ENVIRONMENT_VARIABLE = "DJANGO_SETTINGS_MODULE"
 
@@ -24,22 +24,27 @@ class LazySettings(LazyObject):
     The user can manually configure settings prior to using them. Otherwise,
     Django uses the settings module pointed to by DJANGO_SETTINGS_MODULE.
     """
-    def _setup(self):
+    def _setup(self, name=None):
         """
         Load the settings module pointed to by the environment variable. This
         is used the first time we need any settings at all, if the user has not
         previously configured the settings manually.
         """
-        try:
-            settings_module = os.environ[ENVIRONMENT_VARIABLE]
-            if not settings_module: # If it's set but is an empty string.
-                raise KeyError
-        except KeyError:
-            # NOTE: This is arguably an EnvironmentError, but that causes
-            # problems with Python's interactive help.
-            raise ImportError("Settings cannot be imported, because environment variable %s is undefined." % ENVIRONMENT_VARIABLE)
+        settings_module = os.environ.get(ENVIRONMENT_VARIABLE)
+        if not settings_module:
+            desc = ("setting %s" % name) if name else "settings"
+            raise ImproperlyConfigured(
+                "Requested %s, but settings are not configured. "
+                "You must either define the environment variable %s "
+                "or call settings.configure() before accessing settings."
+                % (desc, ENVIRONMENT_VARIABLE))
 
         self._wrapped = Settings(settings_module)
+
+    def __getattr__(self, name):
+        if self._wrapped is empty:
+            self._setup(name)
+        return getattr(self._wrapped, name)
 
     def configure(self, default_settings=global_settings, **options):
         """
@@ -47,19 +52,19 @@ class LazySettings(LazyObject):
         parameter sets where to retrieve any unspecified values from (its
         argument must support attribute access (__getattr__)).
         """
-        if self._wrapped != None:
+        if self._wrapped is not empty:
             raise RuntimeError('Settings already configured.')
         holder = UserSettingsHolder(default_settings)
         for name, value in options.items():
             setattr(holder, name, value)
         self._wrapped = holder
 
+    @property
     def configured(self):
         """
         Returns True if the settings have already been configured.
         """
-        return bool(self._wrapped)
-    configured = property(configured)
+        return self._wrapped is not empty
 
 
 class BaseSettings(object):
@@ -68,9 +73,8 @@ class BaseSettings(object):
     """
     def __setattr__(self, name, value):
         if name in ("MEDIA_URL", "STATIC_URL") and value and not value.endswith('/'):
-            warnings.warn('If set, %s must end with a slash' % name,
-                          PendingDeprecationWarning)
-        elif name == "ALLOWED_INCLUDE_ROOTS" and isinstance(value, basestring):
+            raise ImproperlyConfigured("If set, %s must end with a slash" % name)
+        elif name == "ALLOWED_INCLUDE_ROOTS" and isinstance(value, six.string_types):
             raise ValueError("The ALLOWED_INCLUDE_ROOTS setting must be set "
                 "to a tuple, not a string.")
         object.__setattr__(self, name, value)
@@ -80,7 +84,7 @@ class Settings(BaseSettings):
     def __init__(self, settings_module):
         # update this dict from global settings (but only for ALL_CAPS settings)
         for setting in dir(global_settings):
-            if setting == setting.upper():
+            if setting.isupper():
                 setattr(self, setting, getattr(global_settings, setting))
 
         # store the settings module in case someone later cares
@@ -88,36 +92,27 @@ class Settings(BaseSettings):
 
         try:
             mod = importlib.import_module(self.SETTINGS_MODULE)
-        except ImportError, e:
-            raise ImportError("Could not import settings '%s' (Is it on sys.path?): %s" % (self.SETTINGS_MODULE, e))
+        except ImportError as e:
+            raise ImportError(
+                "Could not import settings '%s' (Is it on sys.path? Is there an import error in the settings file?): %s"
+                % (self.SETTINGS_MODULE, e)
+            )
 
-        # Settings that should be converted into tuples if they're mistakenly entered
-        # as strings.
         tuple_settings = ("INSTALLED_APPS", "TEMPLATE_DIRS")
-
+        self._explicit_settings = set()
         for setting in dir(mod):
-            if setting == setting.upper():
+            if setting.isupper():
                 setting_value = getattr(mod, setting)
-                if setting in tuple_settings and type(setting_value) == str:
-                    setting_value = (setting_value,) # In case the user forgot the comma.
-                setattr(self, setting, setting_value)
 
-        # Expand entries in INSTALLED_APPS like "django.contrib.*" to a list
-        # of all those apps.
-        new_installed_apps = []
-        for app in self.INSTALLED_APPS:
-            if app.endswith('.*'):
-                app_mod = importlib.import_module(app[:-2])
-                appdir = os.path.dirname(app_mod.__file__)
-                app_subdirs = os.listdir(appdir)
-                app_subdirs.sort()
-                name_pattern = re.compile(r'[a-zA-Z]\w*')
-                for d in app_subdirs:
-                    if name_pattern.match(d) and os.path.isdir(os.path.join(appdir, d)):
-                        new_installed_apps.append('%s.%s' % (app[:-2], d))
-            else:
-                new_installed_apps.append(app)
-        self.INSTALLED_APPS = new_installed_apps
+                if (setting in tuple_settings and
+                        isinstance(setting_value, six.string_types)):
+                    raise ImproperlyConfigured("The %s setting must be a tuple. "
+                            "Please fix your settings." % setting)
+                setattr(self, setting, setting_value)
+                self._explicit_settings.add(setting)
+
+        if not self.SECRET_KEY:
+            raise ImproperlyConfigured("The SECRET_KEY setting must not be empty.")
 
         if hasattr(time, 'tzset') and self.TIME_ZONE:
             # When we can, attempt to validate the timezone. If we can't find
@@ -131,15 +126,8 @@ class Settings(BaseSettings):
             os.environ['TZ'] = self.TIME_ZONE
             time.tzset()
 
-        # Settings are configured, so we can set up the logger if required
-        if self.LOGGING_CONFIG:
-            # First find the logging configuration function ...
-            logging_config_path, logging_config_func_name = self.LOGGING_CONFIG.rsplit('.', 1)
-            logging_config_module = importlib.import_module(logging_config_path)
-            logging_config_func = getattr(logging_config_module, logging_config_func_name)
-
-            # ... then invoke it with the logging settings
-            logging_config_func(self.LOGGING)
+    def is_overridden(self, setting):
+        return setting in self._explicit_settings
 
 
 class UserSettingsHolder(BaseSettings):
@@ -155,16 +143,30 @@ class UserSettingsHolder(BaseSettings):
         Requests for configuration variables not in this class are satisfied
         from the module specified in default_settings (if possible).
         """
+        self.__dict__['_deleted'] = set()
         self.default_settings = default_settings
 
     def __getattr__(self, name):
+        if name in self._deleted:
+            raise AttributeError
         return getattr(self.default_settings, name)
 
-    def __dir__(self):
-        return self.__dict__.keys() + dir(self.default_settings)
+    def __setattr__(self, name, value):
+        self._deleted.discard(name)
+        super(UserSettingsHolder, self).__setattr__(name, value)
 
-    # For Python < 2.6:
-    __members__ = property(lambda self: self.__dir__())
+    def __delattr__(self, name):
+        self._deleted.add(name)
+        if hasattr(self, name):
+            super(UserSettingsHolder, self).__delattr__(name)
+
+    def __dir__(self):
+        return list(self.__dict__) + dir(self.default_settings)
+
+    def is_overridden(self, setting):
+        deleted = (setting in self._deleted)
+        set_locally = (setting in self.__dict__)
+        set_on_default = getattr(self.default_settings, 'is_overridden', lambda s: False)(setting)
+        return (deleted or set_locally or set_on_default)
 
 settings = LazySettings()
-

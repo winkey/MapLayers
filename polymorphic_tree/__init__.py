@@ -1,4 +1,5 @@
-VERSION = (0,8,4)
+# following PEP 386
+__version__ = "1.0.1"
 
 # Do some sane version checking
 import django

@@ -1,16 +1,21 @@
-VERSION = (1, 3, 7, 'final', 0)
+VERSION = (1, 7, 4, 'final', 0)
 
-def get_version():
-    version = '%s.%s' % (VERSION[0], VERSION[1])
-    if VERSION[2]:
-        version = '%s.%s' % (version, VERSION[2])
-    if VERSION[3:] == ('alpha', 0):
-        version = '%s pre-alpha' % version
-    else:
-        if VERSION[3] != 'final':
-            version = '%s %s %s' % (version, VERSION[3], VERSION[4])
-    from django.utils.version import get_svn_revision
-    svn_rev = get_svn_revision()
-    if svn_rev != u'SVN-unknown':
-        version = "%s %s" % (version, svn_rev)
-    return version
+
+def get_version(*args, **kwargs):
+    # Don't litter django/__init__.py with all the get_version stuff.
+    # Only import if it's actually called.
+    from django.utils.version import get_version
+    return get_version(*args, **kwargs)
+
+
+def setup():
+    """
+    Configure the settings (this happens as a side effect of accessing the
+    first setting), configure logging and populate the app registry.
+    """
+    from django.apps import apps
+    from django.conf import settings
+    from django.utils.log import configure_logging
+
+    configure_logging(settings.LOGGING_CONFIG, settings.LOGGING)
+    apps.populate(settings.INSTALLED_APPS)

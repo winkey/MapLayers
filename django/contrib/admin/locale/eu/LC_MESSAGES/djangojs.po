@@ -1,60 +1,97 @@
 # This file is distributed under the same license as the Django package.
 #
+# Translators:
+# Aitzol Naberan <anaberan@codesyntax.com>, 2011
+# Jannis Leidel <jannis@leidel.info>, 2011
+# julen <julenx@gmail.com>, 2012-2013
 msgid ""
 msgstr ""
-"Project-Id-Version: Django\n"
+"Project-Id-Version: django\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-15 13:13-0400\n"
-"PO-Revision-Date: 2011-03-04 18:14+0000\n"
-"Last-Translator: Jannis <jannis@leidel.info>\n"
-"Language-Team: Basque <None>\n"
+"POT-Creation-Date: 2014-05-19 15:12+0200\n"
+"PO-Revision-Date: 2014-05-20 09:41+0000\n"
+"Last-Translator: Jannis Leidel <jannis@leidel.info>\n"
+"Language-Team: Basque (http://www.transifex.com/projects/p/django/language/"
+"eu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: eu\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: media/js/SelectFilter2.js:45
-#, perl-format
+#: contrib/admin/static/admin/js/SelectFilter2.js:45
+#, c-format
 msgid "Available %s"
 msgstr "%s Erabilgarri"
 
-#: media/js/SelectFilter2.js:52
-msgid "Filter"
+#: contrib/admin/static/admin/js/SelectFilter2.js:46
+#, c-format
+msgid ""
+"This is the list of available %s. You may choose some by selecting them in "
+"the box below and then clicking the \"Choose\" arrow between the two boxes."
 msgstr ""
+"Hau da aukeran dauden %s zerrenda. Hauetako zenbait aukera ditzakezu "
+"azpiko \n"
+"kaxan hautatu eta kutxen artean dagoen \"Aukeratu\" gezian klik eginez."
 
-#: media/js/SelectFilter2.js:59
+#: contrib/admin/static/admin/js/SelectFilter2.js:53
+#, c-format
+msgid "Type into this box to filter down the list of available %s."
+msgstr "Idatzi kutxa honetan erabilgarri dauden %s objektuak iragazteko."
+
+#: contrib/admin/static/admin/js/SelectFilter2.js:57
+msgid "Filter"
+msgstr "Filtroa"
+
+#: contrib/admin/static/admin/js/SelectFilter2.js:61
 msgid "Choose all"
 msgstr "Denak aukeratu"
 
-#: media/js/SelectFilter2.js:64
-msgid "Add"
-msgstr "Gehitu"
+#: contrib/admin/static/admin/js/SelectFilter2.js:61
+#, c-format
+msgid "Click to choose all %s at once."
+msgstr "Egin klik %s guztiak batera aukeratzeko."
 
-#: media/js/SelectFilter2.js:66
+#: contrib/admin/static/admin/js/SelectFilter2.js:67
+msgid "Choose"
+msgstr "Aukeratu"
+
+#: contrib/admin/static/admin/js/SelectFilter2.js:69
 msgid "Remove"
-msgstr "Ezabatu"
+msgstr "Kendu"
 
-#: media/js/SelectFilter2.js:71
-#, perl-format
+#: contrib/admin/static/admin/js/SelectFilter2.js:75
+#, c-format
 msgid "Chosen %s"
 msgstr "%s Aukeratuak"
 
-#: media/js/SelectFilter2.js:72
-msgid "Select your choice(s) and click "
-msgstr "Egin zure aukerak eta click egin "
+#: contrib/admin/static/admin/js/SelectFilter2.js:76
+#, c-format
+msgid ""
+"This is the list of chosen %s. You may remove some by selecting them in the "
+"box below and then clicking the \"Remove\" arrow between the two boxes."
+msgstr ""
+"Hau da aukeratutako %s zerrenda. Hauetako zenbait ezaba ditzakezu azpiko "
+"kutxan hautatu eta bi kutxen artean dagoen \"Ezabatu\" gezian klik eginez."
 
-#: media/js/SelectFilter2.js:77
-msgid "Clear all"
-msgstr "Denak garbitu"
+#: contrib/admin/static/admin/js/SelectFilter2.js:80
+msgid "Remove all"
+msgstr "Kendu guztiak"
 
-#: media/js/actions.js:18 media/js/actions.min.js:1
+#: contrib/admin/static/admin/js/SelectFilter2.js:80
+#, c-format
+msgid "Click to remove all chosen %s at once."
+msgstr "Egin klik aukeratutako %s guztiak kentzeko."
+
+#: contrib/admin/static/admin/js/actions.js:22
+#: contrib/admin/static/admin/js/actions.min.js:1
 msgid "%(sel)s of %(cnt)s selected"
 msgid_plural "%(sel)s of %(cnt)s selected"
 msgstr[0] "%(cnt)s-etik %(sel)s aukeratuta"
 msgstr[1] "%(cnt)s-etik %(sel)s aukeratuta"
 
-#: media/js/actions.js:109 media/js/actions.min.js:5
+#: contrib/admin/static/admin/js/actions.js:114
+#: contrib/admin/static/admin/js/actions.min.js:4
 msgid ""
 "You have unsaved changes on individual editable fields. If you run an "
 "action, your unsaved changes will be lost."
@@ -62,25 +99,88 @@ msgstr ""
 "Gorde gabeko aldaketak dauzkazu eremuetan. Ekintza bat exekutatzen baduzu, "
 "gorde gabeko aldaketak galduko dira."
 
-#: media/js/actions.js:121 media/js/actions.min.js:6
+#: contrib/admin/static/admin/js/actions.js:126
+#: contrib/admin/static/admin/js/actions.min.js:5
 msgid ""
 "You have selected an action, but you haven't saved your changes to "
 "individual fields yet. Please click OK to save. You'll need to re-run the "
 "action."
 msgstr ""
-"Ekintza bat aukeratu duzu, baina oraindik ez duzu eremuetako aldaketak "
-"gorde. Mesedez, sakatu OK gordetzeko. Ekintza berriro exekutatu beharko duzu."
+"Ekintza bat hautatu duzu, baina oraindik ez duzu eremuetako aldaketak gorde. "
+"Mesedez, sakatu OK gordetzeko. Ekintza berriro exekutatu beharko duzu."
 
-#: media/js/actions.js:123 media/js/actions.min.js:6
+#: contrib/admin/static/admin/js/actions.js:128
+#: contrib/admin/static/admin/js/actions.min.js:5
 msgid ""
 "You have selected an action, and you haven't made any changes on individual "
 "fields. You're probably looking for the Go button rather than the Save "
 "button."
 msgstr ""
-"Ekintza bat aukeratu duzu, baina ez duzu inongo aldaketarik egin eremuetan. "
+"Ekintza bat hautatu duzu, baina ez duzu inongo aldaketarik egin eremuetan. "
 "Litekeena da, Gorde botoia beharrean Aurrera botoiaren bila aritzea."
 
-#: media/js/calendar.js:24 media/js/dateparse.js:32
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:79
+#, c-format
+msgid "Note: You are %s hour ahead of server time."
+msgid_plural "Note: You are %s hours ahead of server time."
+msgstr[0] ""
+msgstr[1] ""
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:87
+#, c-format
+msgid "Note: You are %s hour behind server time."
+msgid_plural "Note: You are %s hours behind server time."
+msgstr[0] ""
+msgstr[1] ""
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:114
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:149
+msgid "Now"
+msgstr "Orain"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:118
+msgid "Clock"
+msgstr "Erlojua"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:146
+msgid "Choose a time"
+msgstr "Aukeratu ordu bat"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:150
+msgid "Midnight"
+msgstr "Gauerdia"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:151
+msgid "6 a.m."
+msgstr "6 a.m."
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:152
+msgid "Noon"
+msgstr "Eguerdia"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:156
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:276
+msgid "Cancel"
+msgstr "Atzera"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:216
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:269
+msgid "Today"
+msgstr "Gaur"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:220
+msgid "Calendar"
+msgstr "Egutegia"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:267
+msgid "Yesterday"
+msgstr "Atzo"
+
+#: contrib/admin/static/admin/js/admin/DateTimeShortcuts.js:271
+msgid "Tomorrow"
+msgstr "Bihar"
+
+#: contrib/admin/static/admin/js/calendar.js:8
 msgid ""
 "January February March April May June July August September October November "
 "December"
@@ -88,66 +188,17 @@ msgstr ""
 "Urtarrila Otsaila Martxoa Apirila Maiatza Ekaina Uztaila Abuztua Iraila "
 "Urria Azaroa Abendua"
 
-#: media/js/calendar.js:25
+#: contrib/admin/static/admin/js/calendar.js:9
 msgid "S M T W T F S"
 msgstr "I A A A O O L"
 
-#: media/js/collapse.js:9 media/js/collapse.js.py:21
-#: media/js/collapse.min.js:1
+#: contrib/admin/static/admin/js/collapse.js:8
+#: contrib/admin/static/admin/js/collapse.js:19
+#: contrib/admin/static/admin/js/collapse.min.js:1
 msgid "Show"
 msgstr "Erakutsi"
 
-#: media/js/collapse.js:16 media/js/collapse.min.js:1
+#: contrib/admin/static/admin/js/collapse.js:16
+#: contrib/admin/static/admin/js/collapse.min.js:1
 msgid "Hide"
 msgstr "Izkutatu"
-
-#: media/js/dateparse.js:33
-msgid "Sunday Monday Tuesday Wednesday Thursday Friday Saturday"
-msgstr "Igandea Astelehene Asteartea Asteazkena Osteguna Ostirala Larunbata"
-
-#: media/js/admin/DateTimeShortcuts.js:49
-#: media/js/admin/DateTimeShortcuts.js:84
-msgid "Now"
-msgstr "Orain"
-
-#: media/js/admin/DateTimeShortcuts.js:53
-msgid "Clock"
-msgstr "Erlojua"
-
-#: media/js/admin/DateTimeShortcuts.js:80
-msgid "Choose a time"
-msgstr "Aukeratu ordu bat"
-
-#: media/js/admin/DateTimeShortcuts.js:85
-msgid "Midnight"
-msgstr "Gauerdia"
-
-#: media/js/admin/DateTimeShortcuts.js:86
-msgid "6 a.m."
-msgstr "6 a.m."
-
-#: media/js/admin/DateTimeShortcuts.js:87
-msgid "Noon"
-msgstr "Eguerdia"
-
-#: media/js/admin/DateTimeShortcuts.js:91
-#: media/js/admin/DateTimeShortcuts.js:188
-msgid "Cancel"
-msgstr "Atzera"
-
-#: media/js/admin/DateTimeShortcuts.js:133
-#: media/js/admin/DateTimeShortcuts.js:182
-msgid "Today"
-msgstr "Gaur"
-
-#: media/js/admin/DateTimeShortcuts.js:137
-msgid "Calendar"
-msgstr "Egutegia"
-
-#: media/js/admin/DateTimeShortcuts.js:180
-msgid "Yesterday"
-msgstr "Atzo"
-
-#: media/js/admin/DateTimeShortcuts.js:184
-msgid "Tomorrow"
-msgstr "Bihar"
