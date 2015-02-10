@@ -37,28 +37,12 @@ from django.contrib.auth import authenticate, login, logout
 
 # from django.core import serializers
 
-from layers.models import layertreenode, layersForm, foldersForm, layertreenodeSerializer
-from layers.models import Folder, FolderForm
-from layers.models import Radio, RadioForm
-from layers.models import Animation, AnimationForm
-# from layers.models import ArcGISCache, ArcGISCacheForm
-from layers.models import ArcGIS93Rest, ArcGIS93RestForm
-from layers.models import ArcIMS, ArcIMSForm
-from layers.models import Bing, BingForm
-from layers.models import GeoRSS, GeoRSSForm
-from layers.models import Google, GoogleForm
-from layers.models import Googlev3, Googlev3Form
-from layers.models import KaMap, KaMapForm
-from layers.models import KaMapCache, KaMapCacheForm
-# from layers.models import MapGuide, MapGuideForm
-from layers.models import MapServer, MapServerForm
-from layers.models import OSM, OSMForm
-from layers.models import TileCache, TileCacheForm
-from layers.models import TMS, TMSForm
-from layers.models import WMS, WMSForm
-from layers.models import WMTS, WMTSForm
-from layers.models import WorldWind, WorldWindForm
-from layers.models import XYZ, XYZForm
+from layers.serializers import layertreenodeSerializer
+
+from . import models
+from . import forms
+
+
 
 def tree( request ):
     return render_to_response( "layers/tree.html",
@@ -74,7 +58,7 @@ from rest_framework.parsers import JSONParser
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders it's content into JSON.
-    """
+    """i
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
@@ -82,10 +66,10 @@ class JSONResponse(HttpResponse):
         
 def treejson( request ):
     
-    objects = layertreenode.objects.all()
-    base_objects = layertreenode.base_objects.all()
+    objects = models.layertreenode.objects.all()
+    base_objects = models.layertreenode.base_objects.all()
     
-    print objects
+    #print objects
     #print base_objects
     #print layertreenode
     serializer = layertreenodeSerializer( objects )
@@ -95,7 +79,7 @@ def treejson( request ):
 
 def get( request, layer_id ):
     try:
-        layer = layertreenode.objects.get( pk = layer_id )
+        layer = models.layertreenode.objects.get( pk = layer_id )
     except layer.DoesNotExist:
         raise Http404
     return HttpResponse( str( layer ) )
@@ -107,41 +91,41 @@ def add( request ):
     if request.method == 'POST':
         
         if False: # request.POST['nodetype'] == 'ArcGISCache':
-            pass # form = ArcGISCacheForm( request.POST )
+            pass # form = forms.ArcGISCacheForm( request.POST )
         elif request.POST['nodetype'] == 'ArcGIS93Rest':
-            form = ArcGIS93RestForm( request.POST )
+            form = forms.ArcGIS93RestForm( request.POST )
         elif request.POST['nodetype'] == 'ArcIMS':
-            form = ArcIMSForm( request.POST )
+            form = forms.ArcIMSForm( request.POST )
         elif request.POST['nodetype'] == 'Bing':
-            form = BingForm( request.POST )
+            form = forms.BingForm( request.POST )
         elif request.POST['nodetype'] == 'GeoRSS':
-            form = GeoRSSForm( request.POST )
+            form = forms.GeoRSSForm( request.POST )
         elif request.POST['nodetype'] == 'Google':
-            form = GoogleForm( request.POST )
+            form = forms.GoogleForm( request.POST )
         elif request.POST['nodetype'] == 'Googlev3':
-            form = Googlev3Form( request.POST )
+            form = forms.Googlev3Form( request.POST )
         elif request.POST['nodetype'] == 'KaMap':
-            form = KaMapForm( request.POST )
+            form = forms.KaMapForm( request.POST )
         elif request.POST['nodetype'] == 'KaMapCache':
-            form = KaMapCacheForm( request.POST )
+            form = forms.KaMapCacheForm( request.POST )
         # elif request.POST['nodetype'] == 'MapGuide':
-        #    form = MapGuideForm( request.POST )
+        #    form = forms.MapGuideForm( request.POST )
         elif request.POST['nodetype'] == 'MapServer':
-            form = MapServerForm( request.POST )
+            form = forms.MapServerForm( request.POST )
         elif request.POST['nodetype'] == 'OSM':
-            form = OSMForm( request.POST )
+            form = forms.OSMForm( request.POST )
         elif request.POST['nodetype'] == 'TileCache':
-            form = TileCacheForm( request.POST )
+            form = forms.TileCacheForm( request.POST )
         elif request.POST['nodetype'] == 'TMS':
-            form = TMSForm( request.POST )
+            form = forms.TMSForm( request.POST )
         elif request.POST['nodetype'] == 'WMS':
-            form = WMSForm( request.POST )
+            form = forms.WMSForm( request.POST )
         elif request.POST['nodetype'] == 'WMTS':
-            form = WMTSForm( request.POST )
+            form = forms.WMTSForm( request.POST )
         elif request.POST['nodetype'] == 'WorldWind':
-            form = WorldWindForm( request.POST )
+            form = forms.WorldWindForm( request.POST )
         elif request.POST['nodetype'] == 'XYZ':
-            form = XYZForm( request.POST )
+            form = forms.XYZForm( request.POST )
         else:
             return HttpResponse( form.errors )
         
@@ -156,25 +140,25 @@ def add( request ):
 
         return render_to_response( 'layers/add.html',
             {
-                'layers_form': layersForm( **form_args ),
-                # 'ArcGISCache': ArcGISCacheForm( **form_args ),
-                'ArcGIS93Rest': ArcGIS93RestForm( **form_args ),
-                'ArcIMS': ArcIMSForm( **form_args ),
-                'Bing': BingForm( **form_args ),
-                'GeoRSS': GeoRSSForm( **form_args ),
-                'Google': GoogleForm( **form_args ),
-                'Googlev3': Googlev3Form( **form_args ),
-                'KaMap': KaMapForm( **form_args ),
-                'KaMapCache': KaMapCacheForm( **form_args ),
-                # 'MapGuide': MapGuideForm( **form_args ),
-                'MapServer': MapServerForm( **form_args ),
-                'OSM': OSMForm( **form_args ),
-                'TileCache': TileCacheForm( **form_args ),
-                'TMS': TMSForm( **form_args ),
-                'WMS': WMSForm( **form_args ),
-                'WMTS': WMTSForm( **form_args ),
-                'WorldWind': WorldWindForm( **form_args ),
-                'XYZ': XYZForm( **form_args ),
+                'layers_form': forms.layersForm( **form_args ),
+                # 'ArcGISCache': forms.ArcGISCacheForm( **form_args ),
+                'ArcGIS93Rest': forms.ArcGIS93RestForm( **form_args ),
+                'ArcIMS': forms.ArcIMSForm( **form_args ),
+                'Bing': forms.BingForm( **form_args ),
+                'GeoRSS': forms.GeoRSSForm( **form_args ),
+                'Google': forms.GoogleForm( **form_args ),
+                'Googlev3': forms.Googlev3Form( **form_args ),
+                'KaMap': forms.KaMapForm( **form_args ),
+                'KaMapCache': forms.KaMapCacheForm( **form_args ),
+                # 'MapGuide': forms.MapGuideForm( **form_args ),
+                'MapServer': forms.MapServerForm( **form_args ),
+                'OSM': forms.OSMForm( **form_args ),
+                'TileCache': forms.TileCacheForm( **form_args ),
+                'TMS': forms.TMSForm( **form_args ),
+                'WMS': forms.WMSForm( **form_args ),
+                'WMTS': forms.WMTSForm( **form_args ),
+                'WorldWind': forms.WorldWindForm( **form_args ),
+                'XYZ': forms.XYZForm( **form_args ),
 
             },
             context_instance = RequestContext( request )
@@ -185,11 +169,11 @@ def addfolder( request ):
     form_args = {}
     if request.method == 'POST':
         if request.POST['nodetype'] == 'Folder':
-            form = FolderForm( request.POST )
+            form = forms.FolderForm( request.POST )
         elif request.POST['nodetype'] == 'Radio':
-            form = RadioForm( request.POST )
+            form = forms.RadioForm( request.POST )
         elif request.POST['nodetype'] == 'Animation':
-            form = AnimationForm( request.POST )
+            form = forms.AnimationForm( request.POST )
 
         if form.is_valid():
             form.save( commit = True )
@@ -201,10 +185,10 @@ def addfolder( request ):
 
         return render_to_response( 'layers/addfolder.html',
             {
-                'layers_form': foldersForm( **form_args ),
-                'Folder': FolderForm( **form_args ),
-                'Radio': RadioForm( **form_args ),
-                'Animation': AnimationForm( **form_args ),
+                'layers_form': forms.foldersForm( **form_args ),
+                'Folder': forms.FolderForm( **form_args ),
+                'Radio': forms.RadioForm( **form_args ),
+                'Animation': forms.AnimationForm( **form_args ),
             },
             context_instance = RequestContext( request )
         )
