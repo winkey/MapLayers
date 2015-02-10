@@ -1,7 +1,7 @@
 ################################################################################
 #
 # Project: NewWorld
-# App:     
+# App:     Layers
 #
 # urls
 #
@@ -25,30 +25,14 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
-################################################################################
+################################################################################ 
 
 from django.conf.urls import patterns, include, url
-from django.contrib.auth.views import  login, logout
-import django
-
-from django.contrib import admin
-
-#import layers, maps
-
-
-if django.VERSION < (1,7):
-    admin.autodiscover()
-
 
 urlpatterns = patterns('',
-    url( r'^login/$', 'django.contrib.auth.views.login' ),
-    url( r'^logout/$', 'django.contrib.auth.views.logout' ),
-    url( r'^postlogin$', 'maps.views.postlogin'),
-    url( r'^postlogout$', 'maps.views.postlogout'),
-
-    url(r'^layers/', include('layers.urls')),
-    url(r'^map/', include('maps.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^(?P<layer_id>\d+)/$', 'views.get'),
+    #url(r'^add$', 'views.add'),
+    url(r'^tree$', 'layers.views.tree'),
+    url(r'^treejson$', 'layers.views.treejson'),
+    #url(r'^addfolder$', 'views.addfolder'),
 )
-
-
