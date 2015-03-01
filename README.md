@@ -13,18 +13,25 @@ set a new secret key
 
 run
 
-createdb 'NewWorld'                    
-psql NewWorld
+#!/bin/bash
+
+
+dropdb NewWorld
+createdb 'NewWorld'
+
+psql NewWorld << EOF
+
 CREATE EXTENSION postgis;
-CREATE EXTENSION postgis_topology;
-\q
+CREATE EXTENSION postgis_topology; \q
 
+EOF
 
-python manage.py syncdb
+#python manage.py syncdb
 
-python manage.py collectstatic
+python manage.py migrate contenttypes
+python manage.py migrate 
 
-python manage.py runserver
+#echo "restarting apache with sudo"
 
-point your browser at 127.0.0.1:8000/map
-
+#sudo /etc/init.d/apache2 restart
+touch wsgi.py
