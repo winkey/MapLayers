@@ -452,8 +452,7 @@ CREATE OR REPLACE FUNCTION layers_ctype2table(
 ) returns text AS
 $$
 
-   q
-;
+   select app_label || '_' || model FROM django_content_type where  id = $1;
 $$ LANGUAGE SQL;
 
 
