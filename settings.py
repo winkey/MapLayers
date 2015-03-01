@@ -153,6 +153,7 @@ INSTALLED_APPS = (
     'layers',
     'maps',
     #'mapfile',
+    'tilecache'
 
     #'colorpicker'
 )
