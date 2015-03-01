@@ -1,9 +1,9 @@
 ################################################################################
 #
 # Project: NewWorld
-# App:     Layers
+# App:     Mapfile
 #
-# models forms and serializers for layer info storage
+# models forms and serializers for mapfile storage
 #
 ################################################################################
 # Copyright (c) 2013,  Brian Case 
