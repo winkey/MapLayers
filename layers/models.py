@@ -77,6 +77,7 @@ FORMAT_CHOICES = (
 ################################################################################
 
 class layertreenode( PolymorphicMPTTModel ):
+    #id = models.BigIntegerField( primary_key=True )
     parent = PolymorphicTreeForeignKey( 'self', blank = True, null = True,
                                         related_name = 'children',
                                         verbose_name = _( 'parent' ) )
