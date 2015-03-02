@@ -3,7 +3,7 @@
 	"model": "mapfile.outputformat",
     "pk": 1,
     "fields": {
-      "name"": "png",
+      "name": "png",
       "driver": "GD/PNG",
       "extension": "png",
       "formatoption": "",
@@ -16,7 +16,7 @@
 	"model": "mapfile.outputformat",
     "pk": 2,
     "fields": {
-      "name"": "jpeg",
+      "name": "jpeg",
       "driver": "GD/JPEG",
       "extension": "jpg",
       "formatoption": "QUALITY=80",
@@ -29,7 +29,7 @@
 	"model": "mapfile.outputformat",
     "pk": 3,
     "fields": {
-      "name"": "GTiff",
+      "name": "GTiff",
       "driver": "GDAL/GTiff",
       "extension": "tif",
       "formatoption": "TILED=YES",
@@ -42,7 +42,7 @@
 	"model": "mapfile.outputformat",
     "pk": 4,
     "fields": {
-      "name"": "PNG24",
+      "name": "PNG24",
       "driver": "GDAL/PNG",
       "extension": "png",
       "formatoption": "",
@@ -50,7 +50,5 @@
       "mimetype": "image/png",
       "transparent": true
     }
-  },
-
-
-
+  }
+]

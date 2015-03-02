@@ -152,7 +152,7 @@ INSTALLED_APPS = (
     'mptt',
     'layers',
     'maps',
-    #'mapfile',
+    'mapfile',
     'tilecache'
 
     #'colorpicker'
