@@ -58,7 +58,7 @@ from rest_framework.parsers import JSONParser
 class JSONResponse(HttpResponse):
     """
     An HttpResponse that renders it's content into JSON.
-    """i
+    """
     def __init__(self, data, **kwargs):
         content = JSONRenderer().render(data)
         kwargs['content_type'] = 'application/json'
