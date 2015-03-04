@@ -1,8 +1,42 @@
 
+add wms layers to tilecache autpomagicly and delete them
+update the expired ts on tilecache too
 
 
 change layer pkeys to bigint
 
 
-add tilecache
+
+[16:50:25] <winkey> tghe forms need stuff like a default size to see
+
+[16:50:40] <winkey> stuff like name is like multiple lines
+[16:51:29] <winkey> the help text needs populated for everything
+[16:52:29] <winkey> and it thinks everything is required, it is not
+[17:03:47] <winkey> the array stuff works but the form is a text field
+<winkey> need rightclick menues in the layer tree to add delete etc..
+
+
+upload data
+
+make draw on screen actualy save data as new layers or features in a layer
+
+the time slider toolbar should display the current datetime 
+
+add move to  to the time slider so you can folow a event around the world over time
+
+raster data in db?
+
+add a print mechanism
+
+refresh the client when the layer tree changes, perhaps signals again in the map app
+
+only download the tree parts that are open
+
+add perms to the tree
+
+only return tree items you have perms to view
+
+add greyline app
+
+mapnik support?
 
