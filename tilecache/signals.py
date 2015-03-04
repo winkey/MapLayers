@@ -6,7 +6,7 @@
 # signals for tilecache config
 #
 ################################################################################
-# Copyright (c) 2013,  Brian Case 
+# Copyright (c) 2013-2014,  Brian Case 
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the 'Software'),
@@ -28,26 +28,72 @@
 ################################################################################ 
 
 from django.db.models.signals import post_save
-from django.db.models.signals import post_delete
-from 
+from django.db.models.signals import pre_delete
 
-from layers.models import layertreenode WMS
+from tilecache.models import config
+
+from layers.models import WMS, ArcIMS
+
+##### signal handlers #####
 
 
-def layertreenode_save_handler(sender, **kwargs):
-    ...
 
-def WMS_save_handler(sender, **kwargs):
-    ...
+def post_save_handler(sender, **kwargs):
 
-def layertreenode_delete_handler(sender, **kwargs):
-    ...
+    instance=kwargs['instance']
+    created=kwargs['created']
+    raw=kwargs['raw']
+    #using=kwargs['using']
+    update_fields=kwargs['update_fields']
 
-def WMS_delete_handler(sender, **kwargs):
-    ...
+    ##### if its new make a new row #####
 
-post_save.post_save(layertreenode_save_handler, layertreenode)
-post_save.post_save(WMS_save_handler, WMS)
-post_save.post_delete(layertreenode_delete_handler, layertreenode)
-post_save.post_delete(WMS_delete_handler, WMS)
+    if created == True:
+        c = config( )
+
+    ##### update of exsiting layer #####
+
+    else:
+        c = config.objects.get(lid=instance.layertreenode_ptr_id)
+
+    c.lid     = instance.layertreenode_ptr_id
+    c.name    = instance.layertreenode_ptr_id
+    c.url     = instance.url
+    
+    ##### set these here to get around default value bug in django #####
+
+    c.bbox = [ -180, -90, 180, 90 ]
+    c.size = [ 256, 256 ]
+    c.metaSize = [ 5, 5 ]
+    c.metaBuffer = [ 10, 10 ]
+
+    if instance.gutter is not None and instance.gutter > 0:
+        c.metaTile      = True
+        c.metaBuffer    = [ instance.gutter, instance.gutter ]
+        
+    if isinstance(instance, WMS):
+        c.layers = [ instance.layers ]
+    elif isinstance(obj, ArcIMS):
+        c.layers = [ instance.serviceName ]
+
+
+    c.save()
+
+
+def pre_delete_handler(sender, **kwargs):
+    instance=kwargs['instance']
+    #using=kwargs['using']
+    
+    c = config.objects.get(lid=instance.layertreenode_ptr_id)
+    c.delete()
+
+
+
+post_save.connect(post_save_handler, sender=WMS, weak=True, dispatch_uid="post_save_handler")
+post_save.connect(post_save_handler, sender=ArcIMS, weak=True, dispatch_uid="post_save_handler")
+
+
+pre_delete.connect(pre_delete_handler, sender=WMS, weak=True, dispatch_uid="post_delete_handler")
+pre_delete.connect(pre_delete_handler, sender=ArcIMS, weak=True, dispatch_uid="post_delete_handler")
+
 

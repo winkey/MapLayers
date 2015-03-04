@@ -32,7 +32,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.contrib.gis.db import models
 from django.utils.translation import ugettext_lazy as _
 
-
+import layers.models as layers
 
 ################################################################################
 #
@@ -45,7 +45,7 @@ class config( models.Model ):
     def __unicode__( self ):
         return self.question
 
-    lid                 = models.BigIntegerField( primary_key=True )
+    lid                 = models.BigIntegerField( unique=True )
     name                = models.TextField( null=False, unique=True )
 
     ArcXML = 'ArcXML'
@@ -73,8 +73,8 @@ class config( models.Model ):
     off_layers          = models.TextField( )
     projection          = models.TextField( )
     layers              = ArrayField( models.TextField( ) )
-    bbox                = ArrayField( models.FloatField( ), size=4, default=[ -180, -90, 180, 90 ] )
-    data_extent         = ArrayField( models.FloatField( ), size=4 )
+    bbox                = ArrayField( models.FloatField( ), size=4, default=[ -180, -90, 180, 90 ])
+    data_extent         = ArrayField( models.FloatField( ), size=4, null=True)
     size                = ArrayField( models.IntegerField(), size=2, default=[ 256, 256 ] )
     resolutions         = ArrayField( models.FloatField( ) )                                   ,
     levels              = models.FloatField( default=20 )
@@ -83,7 +83,7 @@ class config( models.Model ):
     debug               = models.NullBooleanField( default = False )
     description         = models.TextField( )
     watermarkimage      = models.TextField( )
-    watermarkopacity    = models.FloatField( )
+    watermarkopacity    = models.FloatField( null=True)
     extent_type         = models.TextField( )
     tms_type            = models.TextField( )
     units               = models.TextField( )
@@ -91,8 +91,11 @@ class config( models.Model ):
     paletted            = models.NullBooleanField( )
     spherical_mercator  = models.NullBooleanField( )
     metadata            = models.TextField( )
-    expired             = models.DateTimeField( )
+    expired             = models.DateTimeField( null=True)
     metaTile            = models.NullBooleanField( default = False )
     metaSize            = ArrayField( models.IntegerField(), size=2, default=[ 5, 5 ] )
     metaBuffer          = ArrayField( models.IntegerField(), size=2, default=[ 10, 10 ] )
+
+
+import tilecache.signals
 
