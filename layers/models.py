@@ -438,8 +438,8 @@ class MapServer( layertreenode ):
     gutter = models.IntegerField( null = True, blank = True )
     
     class Meta:
-        verbose_name = _( "WMS" )
-        verbose_name_plural = _( "WMSs" )
+        verbose_name = _( "Mapserver" )
+        verbose_name_plural = _( "Mapservers" )
 
 ################################################################################
 #
