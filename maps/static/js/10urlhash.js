@@ -238,7 +238,7 @@ function NewWorld_Setcenter() {
   
   if (!NewWorld.Map.map.getCenter() || NewWorld.Map.map.getCenter().lon == 0) {
     var proj = new OpenLayers.Projection("EPSG:4326");
-    NewWorld.Map.map.setCenter(NewWorld.Settings.center.transform(proj, NewWorld.Map.map.getProjectionObject()), NewWorld.Settings.zoom);
+    NewWorld.Map.map.setCenter(NewWorld.Settings.mycenter.transform(proj, NewWorld.Map.map.getProjectionObject()), NewWorld.Settings.zoom);
   }
   
 }

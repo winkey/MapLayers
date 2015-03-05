@@ -25,7 +25,7 @@ map:
     make draw on screen actualy save data as new layers or features in a layer
     add move to  to the time slider so you can folow a event around the world over time
     add a print mechanism
-    fix the topic of the map
+
     only download the tree parts that are open
     the help text needs populated for everything
     the time slider toolbar should display the current datetime 

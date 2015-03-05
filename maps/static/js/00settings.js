@@ -46,13 +46,11 @@ Ext.onReady(function() {
  ******************************************************************************/
 
 function NewWorld_Settings_Set(settings) {
-	
-    NewWorld.Settings.title = settings.title;
-    /*NewWorld.Settings.center = OpenLayers.Geometry.fromWKT(settings.center);
-     */
-    NewWorld.Settings.center = new OpenLayers.LonLat(0, 0);
-    NewWorld.Settings.zoom = settings.zoom;
-    NewWorld.Settings.tilecacheurl = settings.tilecacheurl;
+	NewWorld.Settings = settings[0].fields;
+    
+
+    c = OpenLayers.Geometry.fromWKT(NewWorld.Settings.center);
+    NewWorld.Settings.mycenter = new OpenLayers.LonLat(c.x, c.y);
     
 
 }

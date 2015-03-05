@@ -4,8 +4,9 @@
     "pk": 1,
     "fields": {
       "title": "NewWorld",
-      "zoom": "4",
-      "tilecacheurl": "http://hypercube.telascience.org/tilecache/tilecache.py"
+      "zoom": "5",
+      "tilecacheurl": "http://hypercube.telascience.org/tilecache/tilecache.py",
+      "center": "POINT(-96.51198932266146 37.7121262837109)"
     }
   }
 ]

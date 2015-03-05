@@ -43,7 +43,7 @@ class Settings( models.Model ):
         return self.question
 
     title = models.CharField( max_length = 2048, help_text = "Display name for the map" )
-    # center = models.PointField( srid = 4326 )
+    center = models.PointField( srid = 4326 )
     zoom = models.IntegerField() # /*min_value = 0, max_value = 24 )
     tilecacheurl = models.CharField( max_length = 2048, help_text = "Display name for the map" )
 
