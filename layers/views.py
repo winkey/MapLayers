@@ -46,7 +46,7 @@ from . import forms
 
 def tree( request ):
     return render_to_response( "layers/tree.html",
-                          {'nodes':layertreenode.objects.all()},
+                          {'nodes':models.layertreenode.objects.all()},
                           context_instance = RequestContext( request ) )
 
 
