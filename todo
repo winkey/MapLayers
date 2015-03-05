@@ -1,50 +1,51 @@
 
 
-update the expired ts on tilecache too
-
-
-change layer pkeys to bigint
+tilecache:
 
 
 
-[16:50:25] <winkey> tghe forms need stuff like a default size to see
+layers:
+    change layer pkeys to bigint
+    move choices inside the class
+    only return tree items you have perms to view
+    real forms for adding data
+    the help text needs populated for everything
+    add perms to the tree
 
-[16:50:40] <winkey> stuff like name is like multiple lines
-[16:51:29] <winkey> the help text needs populated for everything
-[16:52:29] <winkey> and it thinks everything is required, it is not
-[17:03:47] <winkey> the array stuff works but the form is a text field
-<winkey> need rightclick menues in the layer tree to add delete etc..
+mapfile:
+    color picker
+    real forms for adding data
+    the array stuff works but the form is a text field
+    allow nulls
+    the help text needs populated for everything
 
 
-upload data
+map:
+    need rightclick menues in the layer tree to add delete etc..
+    make draw on screen actualy save data as new layers or features in a layer
+    add move to  to the time slider so you can folow a event around the world over time
+    add a print mechanism
+    fix the topic of the map
+    only download the tree parts that are open
+    the help text needs populated for everything
+    the time slider toolbar should display the current datetime 
+    refresh the client when the layer tree changes, perhaps signals again in the map app
+    real forms for adding data
 
-make draw on screen actualy save data as new layers or features in a layer
 
-the time slider toolbar should display the current datetime 
 
-add move to  to the time slider so you can folow a event around the world over time
-
+upload data mech
 raster data in db?
 
-add a print mechanism
-
-refresh the client when the layer tree changes, perhaps signals again in the map app
-
-only download the tree parts that are open
-
-add perms to the tree
-
-only return tree items you have perms to view
-
+css
 add greyline app
 
 mapnik support?
 
-real forms for adding data
 
-color picker
 
-upload data mech
 
-fix the topic of the map
+
+
+
 
