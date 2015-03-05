@@ -3,7 +3,7 @@
 # Project: NewWorld
 # App:     Mapfile
 #
-# models forms and serializers for mapfile storage
+# models and serializers for mapfile storage
 #
 ################################################################################
 # Copyright (c) 2013,  Brian Case 
@@ -39,14 +39,11 @@ from rest_framework import serializers
 
 #####
 
-from django.forms import ModelForm
-from django import forms
+
 from django.contrib.auth.models import User, Group
 
 from colorpicker.fields import ColorField
 
-from mapfile import forms as myforms
-#from django import forms.models
 
 
 ################################################################################
@@ -486,30 +483,51 @@ from mapfile import forms as myforms
 #
 #################################################################################
 
-STYLE_GEOMTRANSFORM_CHOICES = (
-    ('bbox', 'bbox'),
-    ('end', 'end'),
-    ('labelpnt', 'labelpnt'),
-    ('labelpoly', 'labelpoly'),
-    ('start', 'start'),
-    ('vertices', 'vertices'),
-    ('bbox', 'bbox'),
-    #<expression>: Applies the given expression to the geometry
-)
-
-STYLE_LINECAP_CHOICES = (
-    ('butt', 'butt'),
-    ('round', 'round'),
-    ('square', 'square'),
-)
-
-STYLE_LINEJOIN_CHOICES = (
-    ('round', 'round'),
-    ('miter', 'miter'),
-    ('bevel', 'bevel'),
-)
 
 class style(models.Model):
+
+    GEOMTRANSFORM_BBOX = 'bbox'
+    GEOMTRANSFORM_END = 'end'
+    GEOMTRANSFORM_LABELPNT = 'labelpnt'
+    GEOMTRANSFORM_LABELPOLY = 'labelpoly'
+    GEOMTRANSFORM_START = 'start'
+    GEOMTRANSFORM_VERTICES = 'vertices'
+    #<expression>: Applies the given expression to the geometry
+
+    GEOMTRANSFORM_CHOICES = (
+        (GEOMTRANSFORM_BBOX, GEOMTRANSFORM_BBOX),
+        (GEOMTRANSFORM_END, GEOMTRANSFORM_END),
+        (GEOMTRANSFORM_LABELPNT, GEOMTRANSFORM_LABELPNT),
+        (GEOMTRANSFORM_LABELPOLY, GEOMTRANSFORM_LABELPOLY),
+        (GEOMTRANSFORM_START, GEOMTRANSFORM_START),
+        (GEOMTRANSFORM_VERTICES, GEOMTRANSFORM_VERTICES),
+        #<expression>: Applies the given expression to the geometry
+    )
+
+
+    LINECAP_BUTT = 'butt'
+    LINECAP_ROUND = 'round'
+    LINECAP_SQUARE = 'square'
+
+    LINECAP_CHOICES = (
+        (LINECAP_BUTT, LINECAP_BUTT),
+        (LINECAP_ROUND, LINECAP_ROUND),
+        (LINECAP_SQUARE, LINECAP_SQUARE),
+    )
+
+    LINEJOIN_ROUND = 'round'
+    LINEJOIN_MITER= 'miter'
+    LINEJOIN_BEVEL = 'bevel'
+
+    LINEJOIN_CHOICES = (
+        (LINEJOIN_ROUND, LINEJOIN_ROUND),
+        (LINEJOIN_MITER, LINEJOIN_MITER),
+        (LINEJOIN_BEVEL, LINEJOIN_BEVEL),
+    )
+
+
+
+
     angle               = models.FloatField(                 default = 0,
                                                              help_text='Angle, given in degrees, to draw the line work. Default is 0. For symbols of Type HATCH, this is the angle of the hatched lines.')
     #d angleitem        = models.TextField(                   )
@@ -517,10 +535,9 @@ class style(models.Model):
     #d backgroundcolor     = ArrayField( models.IntegerField(), size=3)*/
     color               = ArrayField( models.IntegerField(), size=3)
     gap                 = models.FloatField()
-    geotransform        = models.TextField(                  choices = STYLE_GEOMTRANSFORM_CHOICES)
+    geotransform        = models.TextField(                  choices = GEOMTRANSFORM_CHOICES)
     initialgap          = models.FloatField()
-    linecap             = models.TextField(                  choices = STYLE_LINECAP_CHOICES)
-    linejoin            = models.TextField(                  choices = STYLE_LINEJOIN_CHOICES)
+    linecap             = models.TextField(                  choices = LINECAP_CHOICES)
     linejoinmaxsize     = models.IntegerField()
     maxscaledenom       = models.FloatField()
     maaxsize            = models.FloatField()
@@ -545,10 +562,6 @@ class style(models.Model):
         verbose_name = _( "style" )
         verbose_name_plural = _( "style" )
 
-class styleForm( ModelForm ):
-
-    class Meta:
-        model = style
 
 ################################################################################
 ## leader (child of class)
@@ -573,11 +586,6 @@ class leader(models.Model):
         verbose_name = _( "leader" )
         verbose_name_plural = _( "leader" )
 
-class leaderForm( ModelForm ):
-
-    style           = forms.models.ModelMultipleChoiceField(  style.objects, widget=myforms.MultipleSelectWithPop)
-    class Meta:
-        model = leader
 
 
 
@@ -871,25 +879,41 @@ class leaderForm( ModelForm ):
 #################################################################################
 
 
-LABEL_POSITION_CHOICES = (
-    ('ul', 'ul'),
-    ('uc', 'uc'),
-    ('ur', 'ur'),
-    ('cl', 'cl'),
-    ('cc', 'cc'),
-    ('cr', 'cr'),
-    ('ll', 'll'),
-    ('lc', 'lc'),
-    ('lr', 'lr'),
-    ('auto', 'auto'),
-)
-
-LABEL_TYPE_CHOICES = (
-    ('bitmap', 'bitmap'),
-    ('truetype', 'truetype'),
-);
 
 class label(models.Model):
+
+    POSITION_UL = 'ul'
+    POSITION_UC = 'uc'
+    POSITION_UR = 'ur'
+    POSITION_CL = 'cl'
+    POSITION_CC = 'cc'
+    POSITION_CR = 'cr'
+    POSITION_LL = 'll'
+    POSITION_LC = 'lc'
+    POSITION_LR = 'lr'
+    POSITION_AUTO = 'auto'
+
+    POSITION_CHOICES = (
+        (POSITION_UL, POSITION_UL),
+        (POSITION_UC, POSITION_UC),
+        (POSITION_UR, POSITION_UR),
+        (POSITION_CL, POSITION_CL),
+        (POSITION_CC, POSITION_CC),
+        (POSITION_CR, POSITION_CR),
+        (POSITION_LL, POSITION_LL),
+        (POSITION_LC, POSITION_LC),
+        (POSITION_LR, POSITION_LR),
+        (POSITION_AUTO, POSITION_AUTO),
+    )
+
+    TYPE_BITMAP = 'bitmap'
+    TYPE_TRUETYPE = 'truetype'
+
+    TYPE_CHOICES = (
+        (TYPE_BITMAP, TYPE_BITMAP),
+        (TYPE_TRUETYPE, TYPE_TRUETYPE),
+    );
+
     align               = models.TextField(                  )
     angle               = models.TextField(                  )
     antialias           = models.BooleanField(               default=False)
@@ -917,7 +941,7 @@ class label(models.Model):
     ourtlinecolor       = ArrayField( models.IntegerField(), size=3)
     outlinewidth        = models.IntegerField()
     partials            = models.NullBooleanField(           default=True)
-    position            = models.TextField(                  choices = LABEL_POSITION_CHOICES,
+    position            = models.TextField(                  choices = POSITION_CHOICES,
                                                              default = 'auto')
     proprity            = models.TextField(                  )
     repeatdistance      = models.IntegerField()
@@ -926,18 +950,13 @@ class label(models.Model):
     size                = models.IntegerField()
     style               = models.ManyToManyField(style)
     text                = models.TextField(                  )
-    type                = models.TextField(                  choices = LABEL_TYPE_CHOICES )
+    type                = models.TextField(                  choices = TYPE_CHOICES )
     wrap                = models.TextField(                  max_length=1)
 
     class Meta:
         verbose_name = _( "label" )
         verbose_name_plural = _( "label" )
 
-class labelForm( ModelForm ):
-
-    style           = forms.models.ModelMultipleChoiceField(  style.objects, widget=myforms.MultipleSelectWithPop)
-    class Meta:
-        model = label
 
 
 ################################################################################
@@ -975,10 +994,7 @@ class validation(models.Model):
         verbose_name = _( "validation" )
         verbose_name_plural = _( "validation" )
 
-class validationForm( ModelForm ):
 
-    class Meta:
-        model = validation
 
 
 ################################################################################
@@ -1150,15 +1166,6 @@ class Class(models.Model):
         verbose_name = _( "Class" )
         verbose_name_plural = _( "Class" )
 
-class ClassForm( ModelForm ):
-
-    label           = forms.models.ModelChoiceField(          label.objects, widget=myforms.SelectWithPop)
-    leader          = forms.models.ModelChoiceField(          leader.objects, widget=myforms.SelectWithPop)
-    style           = forms.models.ModelMultipleChoiceField(  style.objects, widget=myforms.MultipleSelectWithPop)
-    validation      = forms.models.ModelMultipleChoiceField(  validation.objects, widget=myforms.MultipleSelectWithPop)
-    class Meta:
-        model = Class
-
 
 ################################################################################
 ## cluster (child of layer)
@@ -1205,11 +1212,6 @@ class cluster(models.Model):
         verbose_name = _( "cluster" )
         verbose_name_plural = _( "cluster" )
 
-class clusterForm( ModelForm ):
-
-    class Meta:
-        model = cluster
-
 
 ################################################################################
 ## feature (child of layer)
@@ -1225,10 +1227,6 @@ class feature(models.Model):
         verbose_name = _( "feature" )
         verbose_name_plural = _( "feature" )
 
-class featureForm( ModelForm ):
-    
-    class Meta:
-        model = feature
 
 ################################################################################
 ## grid (child of layer)
@@ -1275,10 +1273,6 @@ class grid(models.Model):
         verbose_name = _( "grid" )
         verbose_name_plural = _( "grid" )
 
-class gridForm( ModelForm ):
-
-    class Meta:
-        model = grid
 
 
 ################################################################################
@@ -1330,20 +1324,33 @@ class gridForm( ModelForm ):
 #
 ################################################################################
 
-JOIN_CONNECTIONTYPE_CHOICES = (
-    ('csv', 'csv'),
-    ('mysql', 'mysql'),
-    ('postgresql', 'postgresql'),
-)
 
-JOIN_TYPE_CHOICES = (
-    ('ONE-TO-ONE', 'ONE-TO-ONE'),
-    ('ONE-TO-MANY', 'ONE-TO-MANY'),
-)
 
 class join(models.Model):
+
+
+    CONNECTIONTYPE_CSV = 'csv'
+    CONNECTIONTYPE_MYSQL = 'mysql'
+    CONNECTIONTYPE_POSTGRESQL = 'postgresql'
+
+    CONNECTIONTYPE_CHOICES = (
+        (CONNECTIONTYPE_CSV, CONNECTIONTYPE_CSV),
+        (CONNECTIONTYPE_MYSQL, CONNECTIONTYPE_MYSQL),
+        (CONNECTIONTYPE_POSTGRESQL, CONNECTIONTYPE_POSTGRESQL),
+    )
+
+
+    TYPE_ONE_TO_ONE = 'ONE-TO-ONE'
+    TYPE_ONE_TO_MANY = 'ONE-TO-MANY'
+
+
+    TYPE_CHOICES = (
+        (TYPE_ONE_TO_ONE, TYPE_ONE_TO_ONE),
+        (TYPE_ONE_TO_MANY, TYPE_ONE_TO_MANY),
+    )
+
     connection          = models.TextField(                  )
-    connectiontype      = models.TextField(                  choices = JOIN_CONNECTIONTYPE_CHOICES)
+    connectiontype      = models.TextField(                  choices = CONNECTIONTYPE_CHOICES)
     footer              = models.TextField(                  )
     From                = models.TextField(                  )
     header              = models.TextField(                  )
@@ -1351,17 +1358,13 @@ class join(models.Model):
     table               = models.TextField(                  )
     template            = models.TextField(                  )
     to                  = models.TextField(                  )
-    Type                = models.TextField(                  choices = JOIN_TYPE_CHOICES,
-                                                             default = 'ONE-TO-ONE')
+    Type                = models.TextField(                  choices = TYPE_CHOICES,
+                                                             default = TYPE_ONE_TO_ONE)
 
     class Meta:
         verbose_name = _( "join" )
         verbose_name_plural = _( "join" )
 
-class joinForm( ModelForm ):
-
-    class Meta:
-        model = join
 
 ################################################################################
 # metadata (child of web and layer)
@@ -1475,42 +1478,44 @@ class projection(models.Model):
         verbose_name = _( "projection" )
         verbose_name_plural = _( "projection" )
 
-class projectionForm( ModelForm ):
-
-    class Meta:
-        model = projection
-
 
 
 ################################################################################
 # transform (child of layer)
 ################################################################################
 
-TRANSFORM_POSITION_CHOICES = (
-    ('ul', 'ul'),
-    ('uc', 'uc'),
-    ('ur', 'ur'),
-    ('cl', 'cl'),
-    ('cc', 'cc'),
-    ('cr', 'cr'),
-    ('ll', 'll'),
-    ('lc', 'lc'),
-    ('lr', 'lr'),
-)
 
 class transform(models.Model):
+    POSITION_UL = 'ul'
+    POSITION_UC = 'uc'
+    POSITION_UR = 'ur'
+    POSITION_CL = 'cl'
+    POSITION_CC = 'cc'
+    POSITION_CR = 'cr'
+    POSITION_LL = 'll'
+    POSITION_LC = 'lc'
+    POSITION_LR = 'lr'
+
+    POSITION_CHOICES = (
+        (POSITION_UL, POSITION_UL),
+        (POSITION_UC, POSITION_UC),
+        (POSITION_UR, POSITION_UR),
+        (POSITION_CL, POSITION_CL),
+        (POSITION_CC, POSITION_CC),
+        (POSITION_CR, POSITION_CR),
+        (POSITION_LL, POSITION_LL),
+        (POSITION_LC, POSITION_LC),
+        (POSITION_LR, POSITION_LR),
+    )
+
     transform           = models.BooleanField(               default = True)
-    position            = models.TextField(                  choices = TRANSFORM_POSITION_CHOICES,
-                                                             default = 'lr')
+    position            = models.TextField(                  choices = POSITION_CHOICES,
+                                                             default = POSITION_LR)
 
     class Meta:
         verbose_name = _( "transform" )
         verbose_name_plural = _( "transform" )
 
-class transformForm( ModelForm ):
-
-    class Meta:
-        model = transform
 
 
 ################################################################################
@@ -2053,67 +2058,110 @@ class transformForm( ModelForm ):
 #
 ################################################################################
 
-LAYER_CONNECTIONTYPE_CHOICES = (
-    ('local', 'local'),
-    ('ogr', 'ogr'),
-    ('oraclespatial', 'oraclespatial'),
-    ('plugin', 'plugin'),
-    ('postgis', 'postgis'),
-    ('sde', 'sde'),
-    ('union', 'union'),
-    ('uvraster', 'uvraster'),
-    ('wfs', 'wfs'),
-    ('wms', 'wms'),
-)
-
-LAYER_SIZEUNITS_CHOICES = (
-    ('feet', 'feet'),
-    ('inches', 'inches'),
-    ('kilometers', 'kilometers'),
-    ('meters', 'meters'),
-    ('miles', 'miles'),
-    ('nauticalmiles', 'nauticalmiles'),
-    ('pixels', 'pixels'),
-)
-
-LAYER_STATUS_CHOICES = (
-    ('off', 'off'),
-    ('on', 'on'),
-    ('default', 'perm on'),
-)
-
-LAYER_TYPE_CHOICES = (
-    ('chart', 'chart'),
-    ('circle', 'circle'),
-    ('line', 'line'),
-    ('point', 'point'),
-    ('polygon', 'polygon'),
-    ('raster', 'raster'),
-    ('query', 'query'),
-)
-
-LAYER_UNITS_CHOICES = (
-    ('dd', 'dd'),
-    ('feet', 'feet'),
-    ('inches', 'inches'),
-    ('kilometers', 'kilometers'),
-    ('meters', 'meters'),
-    ('miles', 'miles'),
-    ('nauticalmiles', 'nauticalmiles'),
-    ('percentages', 'percentages'),
-    ('pixels', 'pixels'),
-)
-
-
-
 class layer(models.Model):
+
+
+    CONNECTIONTYPE_LOCAL = 'local'
+    CONNECTIONTYPE_OGR = 'ogr'
+    CONNECTIONTYPE_ORACLESPATIAL = 'oraclespatial'
+    CONNECTIONTYPE_PLUGIN = 'plugin'
+    CONNECTIONTYPE_POSTGIS = 'postgis'
+    CONNECTIONTYPE_SDE = 'sde'
+    CONNECTIONTYPE_UNION = 'union'
+    CONNECTIONTYPE_UVRASTER = 'uvraster'
+    CONNECTIONTYPE_WFS = 'wfs'
+    CONNECTIONTYPE_WMS = 'wms'
+
+
+    CONNECTIONTYPE_CHOICES = (
+        (CONNECTIONTYPE_LOCAL, CONNECTIONTYPE_LOCAL),
+        (CONNECTIONTYPE_OGR, CONNECTIONTYPE_OGR),
+        (CONNECTIONTYPE_ORACLESPATIAL, CONNECTIONTYPE_ORACLESPATIAL),
+        (CONNECTIONTYPE_PLUGIN, CONNECTIONTYPE_PLUGIN),
+        (CONNECTIONTYPE_POSTGIS, CONNECTIONTYPE_POSTGIS),
+        (CONNECTIONTYPE_SDE, CONNECTIONTYPE_SDE),
+        (CONNECTIONTYPE_UNION, CONNECTIONTYPE_UNION),
+        (CONNECTIONTYPE_UVRASTER, CONNECTIONTYPE_UVRASTER),
+        (CONNECTIONTYPE_WFS, CONNECTIONTYPE_WFS),
+        (CONNECTIONTYPE_WMS, CONNECTIONTYPE_WMS),
+    )
+
+    SIZEUNITS_FEET = 'feet'
+    SIZEUNITS_INCHES = 'inches'
+    SIZEUNITS_KILOMETERS = 'kilometers'
+    SIZEUNITS_METERS = 'meters'
+    SIZEUNITS_MILES = 'miles'
+    SIZEUNITS_NAUTICALMILES = 'nauticalmiles'
+    SIZEUNITS_PIXELS = 'pixels'
+
+    SIZEUNITS_CHOICES = (
+        (SIZEUNITS_FEET, SIZEUNITS_FEET),
+        (SIZEUNITS_INCHES, SIZEUNITS_INCHES),
+        (SIZEUNITS_KILOMETERS, SIZEUNITS_KILOMETERS),
+        (SIZEUNITS_METERS, SIZEUNITS_METERS),
+        (SIZEUNITS_MILES, SIZEUNITS_MILES),
+        (SIZEUNITS_NAUTICALMILES, SIZEUNITS_NAUTICALMILES),
+        (SIZEUNITS_PIXELS, SIZEUNITS_PIXELS),
+    )
+
+    STATUS_OFF = 'off'
+    STATUS_ON = 'on'
+    STATUS_DEFAULT = 'default'
+
+    STATUS_CHOICES = (
+        (STATUS_OFF, STATUS_OFF),
+        (STATUS_ON, STATUS_ON),
+        (STATUS_DEFAULT, STATUS_DEFAULT),
+    )
+
+    TYPE_CHART = 'chart'
+    TYPE_CIRCLE = 'circle'
+    TYPE_LINE = 'line'
+    TYPE_POINT = 'point'
+    TYPE_POLYGON = 'polygon'
+    TYPE_RASTER = 'raster'
+    TYPE_QUERY = 'query'
+
+    TYPE_CHOICES = (
+        (TYPE_CHART, TYPE_CHART),
+        (TYPE_CIRCLE, TYPE_CIRCLE),
+        (TYPE_LINE, TYPE_LINE),
+        (TYPE_POINT, TYPE_POINT),
+        (TYPE_POLYGON, TYPE_POLYGON),
+        (TYPE_RASTER, TYPE_RASTER),
+        (TYPE_QUERY, TYPE_QUERY),
+    )
+
+
+    UNITS_DD = 'dd'
+    UNITS_FEET = 'feet'
+    UNITS_INCHES = 'inches'
+    UNITS_KILOMETERS = 'kilometers'
+    UNITS_METERS = 'meters'
+    UNITS_MILES = 'miles'
+    UNITS_NAUTICALMILES = 'nauticalmiles'
+    UNITS_PERCENTAGES = 'percentages'
+    UNITS_PIXELS = 'pixels'
+
+    UNITS_CHOICES = (
+        (UNITS_DD, UNITS_DD),
+        (UNITS_FEET, UNITS_FEET),
+        (UNITS_INCHES, UNITS_INCHES),
+        (UNITS_KILOMETERS, UNITS_KILOMETERS),
+        (UNITS_METERS, UNITS_METERS),
+        (UNITS_MILES, UNITS_MILES),
+        (UNITS_NAUTICALMILES, UNITS_NAUTICALMILES),
+        (UNITS_PERCENTAGES, UNITS_PERCENTAGES),
+        (UNITS_PIXELS, UNITS_PIXELS),
+    )
+
     Class               = models.ForeignKey('Class')
     classgroup          = models.TextField(                  )
     classitem           = models.TextField(                  )
     cluster             = models.ForeignKey('cluster')
     connection          = models.TextField(                  )
-    connectiontype      = models.TextField(                  choices = LAYER_CONNECTIONTYPE_CHOICES,
-                                                             default = 'local')
+    connectiontype      = models.TextField(                  choices = CONNECTIONTYPE_CHOICES,
+                                                             default = CONNECTIONTYPE_LOCAL)
     data                = models.TextField(                  )
     #  DEBUG [off|on|0|1|2|3|4|5] */
     #d dump                = models.NullBooleanField()
@@ -2148,10 +2196,10 @@ class layer(models.Model):
     processing          = ArrayField( ArrayField(models.TextField(), size=2) )
     projection          = models.ForeignKey('projection')
     requires            = models.TextField(                  )
-    sizeunits           = models.TextField(                  choices = LAYER_SIZEUNITS_CHOICES,
-                                                             default = 'pixels')
-    status              = models.TextField(                  choices = LAYER_STATUS_CHOICES,
-                                                             default = 'default')
+    sizeunits           = models.TextField(                  choices = SIZEUNITS_CHOICES,
+                                                             default = SIZEUNITS_PIXELS)
+    status              = models.TextField(                  choices = STATUS_CHOICES,
+                                                             default = STATUS_DEFAULT)
     styleitem           = models.TextField(                  )
     symbolscaledenom    = models.FloatField()
     template            = models.TextField(                  )
@@ -2161,26 +2209,17 @@ class layer(models.Model):
     toleranceunits      = models.TextField(                  )
     #d transparency        = models.NullBooleanField()*/
     transform           = models.ForeignKey('transform')
-    Type                = models.TextField(                  choices = LAYER_TYPE_CHOICES,
-                                                             default = 'raster')
-    units               = models.TextField(                  choices = LAYER_UNITS_CHOICES,
-                                                             default='miles')
+    Type                = models.TextField(                  choices = TYPE_CHOICES,
+                                                             default = TYPE_RASTER)
+    units               = models.TextField(                  choices = UNITS_CHOICES,
+                                                             default=UNITS_MILES)
     validation          = models.ManyToManyField(validation)
 
     class Meta:
         verbose_name = _( "layer" )
         verbose_name_plural = _( "layer" )
 
-class layerForm( ModelForm ):
-    Class           = forms.models.ModelChoiceField(          Class.objects, widget=myforms.SelectWithPop)
-    cluster         = forms.models.ModelChoiceField(          cluster.objects, widget=myforms.SelectWithPop)
-    feature         = forms.models.ModelMultipleChoiceField(  feature.objects, widget=myforms.MultipleSelectWithPop)
-    grid            = forms.models.ModelChoiceField(          grid.objects, widget=myforms.SelectWithPop)
-    join            = forms.models.ModelChoiceField(          join.objects, widget=myforms.SelectWithPop)
-    projection      = forms.models.ModelChoiceField(          projection.objects, widget=myforms.SelectWithPop)
-    transform       = forms.models.ModelChoiceField(          transform.objects, widget=myforms.SelectWithPop)
-    class Meta:
-        model = layer
+
 
 ################################################################################
 # legend (child of map)
@@ -2232,33 +2271,48 @@ class layerForm( ModelForm ):
 #
 ################################################################################
 
-LEGEND_POSITION_CHOICES = (
-    ('ul', 'ul'),
-    ('uc', 'uc'),
-    ('ur', 'ur'),
-    ('ll', 'll'),
-    ('lc', 'lc'),
-    ('lr', 'lr'),
-)
 
-LEGEND_STATUS_CHOICES = (
-    ('off', 'off'),
-    ('on', 'on'),
-    ('embed', 'embed'),
-)
 
 class legend(models.Model):
+
+    STATUS_OFF = 'off'
+    STATUS_ON = 'on'
+    STATUS_EMBED = 'embed'
+
+    STATUS_CHOICES = (
+        (STATUS_OFF, STATUS_OFF),
+        (STATUS_ON, STATUS_ON),
+        (STATUS_EMBED, STATUS_EMBED),
+    )
+
+    POSITION_UL = 'ul'
+    POSITION_UC = 'uc'
+    POSITION_UR = 'ur'
+    POSITION_LL = 'll'
+    POSITION_LC = 'lc'
+    POSITION_LR = 'lr'
+
+    POSITION_CHOICES = (
+        (POSITION_UL, POSITION_UL),
+        (POSITION_UC, POSITION_UC),
+        (POSITION_UR, POSITION_UR),
+        (POSITION_LL, POSITION_LL),
+        (POSITION_LC, POSITION_LC),
+        (POSITION_LR, POSITION_LR),
+    )
+
+
     imagecolor          = ArrayField( models.IntegerField(), size=3)
     #d interlace           = models.NullBooleanField()
     keysize             = ArrayField( models.IntegerField(), size=2)
     keyspacing          = ArrayField( models.IntegerField(), size=2)
     label               = models.ManyToManyField(label)
     outlinecolor        = ArrayField( models.IntegerField(), size=3)
-    position            = models.TextField(                  choices = LEGEND_POSITION_CHOICES,
-                                                             default = 'lr')
+    position            = models.TextField(                  choices = POSITION_CHOICES,
+                                                             default = POSITION_LR)
     postlabelcache      = models.BooleanField(               default = False)
-    status              = models.TextField(                  choices = LEGEND_STATUS_CHOICES,
-                                                             default = 'off')
+    status              = models.TextField(                  choices = STATUS_CHOICES,
+                                                             default = STATUS_OFF)
     template            = models.TextField(                  )
     #d transparent         = models.NullBooleanField()
 
@@ -2266,10 +2320,6 @@ class legend(models.Model):
         verbose_name = _( "legend" )
         verbose_name_plural = _( "legend" )
 
-class legendForm( ModelForm ):
-    label           = forms.models.ModelMultipleChoiceField(  label.objects, widget=myforms.MultipleSelectWithPop)
-    class Meta:
-        model = legend
 
 ################################################################################
 # querymap (child of map)
@@ -2294,27 +2344,29 @@ class legendForm( ModelForm ):
 #
 ################################################################################
 
-QUERYMAP_STYLE_CHOICES = (
-    ('normal', 'normal'),
-    ('hilite', 'hilite'),
-    ('selected', 'selected'),
-)
-
 class querymap(models.Model):
+
+
+    STYLE_NORMAL = 'normal'
+    STYLE_HILITE = 'hilite'
+    STYLE_SELECTED = 'selected'
+
+    STYLE_CHOICES = (
+        (STYLE_NORMAL, STYLE_NORMAL),
+        (STYLE_HILITE, STYLE_HILITE),
+        (STYLE_SELECTED, STYLE_SELECTED),
+    )
+
     color               = ArrayField( models.IntegerField(), size=3)
     size                = ArrayField( models.IntegerField(), size=2)
     status              = models.BooleanField(               default=False)
-    style               = models.TextField(                  choices = QUERYMAP_STYLE_CHOICES,
-                                                             default='normal')
+    style               = models.TextField(                  choices = STYLE_CHOICES,
+                                                             default=STYLE_NORMAL)
 
     class Meta:
         verbose_name = _( "querymap" )
         verbose_name_plural = _( "querymap" )
 
-class querymapForm( ModelForm ):
-
-    class Meta:
-        model = querymap
 
 ################################################################################
 # reference (child of map)
@@ -2370,9 +2422,6 @@ class reference(models.Model):
         verbose_name = _( "reference" )
         verbose_name_plural = _( "reference" )
 
-class referenceForm( ModelForm ):
-    class Meta:
-        model = reference
 
 ################################################################################
 # scalebar (child of map)
@@ -2434,39 +2483,65 @@ class referenceForm( ModelForm ):
 ################################################################################
 
 
-SCALEBAR_ALIGN_CHOICES = (
-    ('left', 'left'),
-    ('center', 'center'),
-    ('right', 'right'),
-)
 
-SCALEBAR_POSITION_CHOICES = (
-    ('ul', 'ul'),
-    ('uc', 'uc'),
-    ('ur', 'ur'),
-    ('ll', 'll'),
-    ('lc', 'lc'),
-    ('lr', 'lr'),
-)
-
-SCALEBAR_STATUS_CHOICES = (
-    ('off', 'off'),
-    ('on', 'on'),
-    ('embed', 'embed'),
-)
-
-SCALEBAR_UNITS_CHOICES = (
-    ('feet', 'feet'),
-    ('inches', 'inches'),
-    ('kilometers', 'kilometers'),
-    ('meters', 'meters'),
-    ('miles', 'miles'),
-    ('nauticalmiles', 'nauticalmiles'),
-)
 
 class scalebar(models.Model):
-    align               = models.TextField(                  choices = SCALEBAR_ALIGN_CHOICES,
-                                                             default = 'center')
+
+    ALIGN_LEFT = 'left'
+    ALIGN_CENTER = 'center'
+    ALIGN_RIGHT = 'right'
+
+
+    ALIGN_CHOICES = (
+        (ALIGN_LEFT, ALIGN_LEFT),
+        (ALIGN_CENTER, ALIGN_CENTER),
+        (ALIGN_RIGHT, ALIGN_RIGHT),
+    )
+
+    UNITS_FEET = 'feet'
+    UNITS_INCHES = 'inches'
+    UNITS_KILOMETERS = 'kilometers'
+    UNITS_METERS = 'meters'
+    UNITS_MILES = 'miles'
+    UNITS_NAUTICALMILES = 'nauticalmiles'
+
+    UNITS_CHOICES = (
+        (UNITS_FEET, UNITS_FEET),
+        (UNITS_INCHES, UNITS_INCHES),
+        (UNITS_KILOMETERS, UNITS_KILOMETERS),
+        (UNITS_METERS, UNITS_METERS),
+        (UNITS_MILES, UNITS_MILES),
+        (UNITS_NAUTICALMILES, UNITS_NAUTICALMILES),
+    )
+
+    STATUS_OFF = 'off'
+    STATUS_ON = 'on'
+    STATUS_EMBED = 'embed'
+
+    STATUS_CHOICES = (
+        (STATUS_OFF, STATUS_OFF),
+        (STATUS_ON, STATUS_ON),
+        (STATUS_EMBED, STATUS_EMBED),
+    )
+
+    POSITION_UL = 'ul'
+    POSITION_UC = 'uc'
+    POSITION_UR = 'ur'
+    POSITION_LL = 'll'
+    POSITION_LC = 'lc'
+    POSITION_LR = 'lr'
+
+    POSITION_CHOICES = (
+        (POSITION_UL, POSITION_UL),
+        (POSITION_UC, POSITION_UC),
+        (POSITION_UR, POSITION_UR),
+        (POSITION_LL, POSITION_LL),
+        (POSITION_LC, POSITION_LC),
+        (POSITION_LR, POSITION_LR),
+    )
+
+    align               = models.TextField(                  choices = ALIGN_CHOICES,
+                                                             default = ALIGN_CENTER)
     backgroundcolor     = ArrayField( models.IntegerField(), size=3)
     color               = ArrayField( models.IntegerField(), size=3)
     imagecolor          = ArrayField( models.IntegerField(), size=3)
@@ -2474,25 +2549,22 @@ class scalebar(models.Model):
     intervals           = models.IntegerField()
     label               = models.ManyToManyField(label)
     outlinecolor        = ArrayField( models.IntegerField(), size=3)
-    position            = models.TextField(                  choices = SCALEBAR_POSITION_CHOICES,
-                                                             default='lr')
+    position            = models.TextField(                  choices = POSITION_CHOICES,
+                                                             default=POSITION_LR)
     postlabelcache      = models.BooleanField(               default=False)
     size                = ArrayField( models.IntegerField(), size=2)
-    status              = models.TextField(                  choices = SCALEBAR_STATUS_CHOICES,
-                                                             default='off' )
+    status              = models.TextField(                  choices = STATUS_CHOICES,
+                                                             default=STATUS_OFF )
     style               = models.IntegerField()
     #d transparent         = models.NullBooleanField()
-    units               = models.TextField(                  choices = SCALEBAR_UNITS_CHOICES,
-                                                             default='miles')
+    units               = models.TextField(                  choices = UNITS_CHOICES,
+                                                             default=UNITS_MILES)
 
     class Meta:
         verbose_name = _( "scalebar" )
         verbose_name_plural = _( "scalebar" )
 
-class scalebarForm( ModelForm ):
-    label           = forms.models.ModelMultipleChoiceField(  label.objects, widget=myforms.MultipleSelectWithPop)
-    class Meta:
-        model = scalebar
+
 
 ################################################################################
 # symbol (child of map)
@@ -2576,16 +2648,26 @@ class scalebarForm( ModelForm ):
 #
 ################################################################################
 
-SYMBOL_TYPE_CHOICES = (
-    ('ellipse', 'ellipse'),
-    ('hatch', 'hatch'),
-    ('pixmap', 'pixmap'),
-    ('svg', 'svg'),
-    ('truetype', 'truetype'),
-    ('vector', 'vector'),
-)
+
 
 class symbol(models.Model):
+
+    TYPE_ELLIPSE = 'ellipse'
+    TYPE_HATCH = 'hatch'
+    TYPE_PIXMAP = 'pixmap'
+    TYPE_SVG = 'svg'
+    TYPE_TRUETYPE = 'truetype'
+    TYPE_VECTOR = 'vector'
+
+
+    TYPE_CHOICES = (
+        (TYPE_ELLIPSE, TYPE_ELLIPSE),
+        (TYPE_HATCH, TYPE_HATCH),
+        (TYPE_PIXMAP, TYPE_PIXMAP),
+        (TYPE_SVG, TYPE_SVG),
+        (TYPE_TRUETYPE, TYPE_TRUETYPE),
+        (TYPE_VECTOR, TYPE_VECTOR),
+    )
     anchorpoint         = ArrayField( models.IntegerField(), size=2)
     antialias           = models.BooleanField(               default=False)
     character           = models.TextField(                  max_length=1)
@@ -2595,15 +2677,11 @@ class symbol(models.Model):
     name                = models.TextField(                  )
     points              = ArrayField(ArrayField( models.IntegerField(), size=2))
     transparent         = models.TextField(                  )
-    Type                = models.TextField(                  choices = SYMBOL_TYPE_CHOICES)
+    Type                = models.TextField(                  choices = TYPE_CHOICES)
 
     class Meta:
         verbose_name = _( "symbol" )
         verbose_name_plural = _( "symbol" )
-
-class symbolForm( ModelForm ):
-    class Meta:
-        model = symbol
 
 
 ################################################################################
@@ -2782,10 +2860,6 @@ class web(models.Model):
         verbose_name = _( "web" )
         verbose_name_plural = _( "web" )
 
-class webForm( ModelForm ):
-    validation      = forms.models.ModelMultipleChoiceField(  validation.objects, widget=myforms.MultipleSelectWithPop)
-    class Meta:
-        model = web
 
 ################################################################################
 # outputformat (child of map)
@@ -2878,21 +2952,33 @@ class webForm( ModelForm ):
 #    Indicates whether transparency should be enabled for this format. Note that transparency does not work for IMAGEMODE RGB output. Not all formats support transparency (optional). When transparency is enabled for the typical case of 8-bit pseudocolored map generation, the IMAGECOLOR color will be marked as transparent in the output file palette. Any other map components drawn in this color will also be transparent, so for map generation with transparency it is best to use an otherwise unused color as the background color. 
 ################################################################################
 
-OUTPUTFORMAT_IMAGEMODE_CHOICES = (
-    ('PC256', 'PC256'),
-    ('RGB', 'RGB'),
-    ('RGBA', 'RGBA'),
-    ('INT16', 'INT16'),
-    ('FLOAT32', 'FLOAT32'),
-    ('BYTE', 'BYTE'),
-    ('FEATURE', 'FEATURE'),
-    ('NULL', 'NULL'),
-)
+
 class outputformat(models.Model):
+
+
+    IMAGEMODE_PC256 = 'PC256'
+    IMAGEMODE_RGB = 'RGB'
+    IMAGEMODE_RGBA = 'RGBA'
+    IMAGEMODE_INT16 = 'INT16'
+    IMAGEMODE_FLOAT32 = 'FLOAT32'
+    IMAGEMODE_BYTE = 'BYTE'
+    IMAGEMODE_FEATURE = 'FEATURE'
+    IMAGEMODE_NULL = 'NULL'
+
+    IMAGEMODE_CHOICES = (
+        (IMAGEMODE_PC256, IMAGEMODE_PC256),
+        (IMAGEMODE_RGB, IMAGEMODE_RGB),
+        (IMAGEMODE_RGBA, IMAGEMODE_RGBA),
+        (IMAGEMODE_INT16, IMAGEMODE_INT16),
+        (IMAGEMODE_FLOAT32, IMAGEMODE_FLOAT32),
+        (IMAGEMODE_BYTE, IMAGEMODE_BYTE),
+        (IMAGEMODE_FEATURE, IMAGEMODE_FEATURE),
+        (IMAGEMODE_NULL, IMAGEMODE_NULL),
+    )
     name                = models.TextField(                  )
     driver              = models.TextField(                  )
     extension           = models.TextField(                  )
-    imagemode           = models.TextField(                   choices=OUTPUTFORMAT_IMAGEMODE_CHOICES)
+    imagemode           = models.TextField(                   choices=IMAGEMODE_CHOICES)
     formatoption        = ArrayField( models.TextField()     )
     mimetype            = models.TextField(                  )
     transparent         = models.NullBooleanField()
@@ -2904,10 +2990,6 @@ class outputformat(models.Model):
         verbose_name = _( "outputformat" )
         verbose_name_plural = _( "outputformat" )
 
-class outputformatForm( ModelForm ):
-
-    class Meta:
-        model = outputformat
 
 # todo a symbolset table in the database, upload form, and choices for the symbolset in the map model
 #todo imagetype should have choices based on the outputformat table
@@ -3117,36 +3199,52 @@ class outputformatForm( ModelForm ):
 #    Signals the start of a WEB object. 
 ################################################################################
 
-Map_UNITS_CHOICES = (
-    ( 'Decimal Degrees', 'Decimal Degrees' ),
-    ( 'feet' ,           'feet' ),
-    ( 'inches',          'inches' ),
-    #( 'kilometers',      'kilometers' ),
-    ( 'meters',          'meters' ),
-    ( 'miles',          'miles' ),
-    ( 'nauticalmiles',  'nauticalmiles' ),
-    ( 'pixels',        'pixels' ),
-)
-
-Map_STATUS_CHOICES = (
-    ( 'ON',        'ON' ),
-    ( 'OFF',       'OFF' ),
-    ( 'DEFAULT',   'DEFAULT' )
-)
-
-Map_DEBUG_CHOICES = (
-    ( 'OFF',       'OFF' ),
-    ( 'ON',        'ON' ),
-)
 
 class Map(models.Model):
     
+    STATUS_OFF = 'OFF'
+    STATUS_ON = 'ON'
+    STATUS_DEFAULT = 'DEFAULT'
+
+    STATUS_CHOICES = (
+        (STATUS_OFF, STATUS_OFF),
+        (STATUS_ON, STATUS_ON),
+        (STATUS_DEFAULT, STATUS_DEFAULT),
+    )
+
+    DEBUG_OFF = 'OFF'
+    DEBUG_ON = 'ON'
+    
+    DEBUG_CHOICES = (
+        (DEBUG_OFF, DEBUG_OFF),
+        (DEBUG_ON, DEBUG_ON),
+    )
+
+    UNITS_DD = 'dd'
+    UNITS_FEET = 'feet'
+    UNITS_INCHES = 'inches'
+    #UNITS_KILOMETERS = 'kilometers'
+    UNITS_METERS = 'meters'
+    UNITS_MILES = 'miles'
+    UNITS_NAUTICALMILES = 'nauticalmiles'
+    UNITS_PIXELS = 'pixels'
+
+    UNITS_CHOICES = (
+        (UNITS_DD, UNITS_DD),
+        (UNITS_FEET, UNITS_FEET),
+        (UNITS_INCHES, UNITS_INCHES),
+        #(UNITS_KILOMETERS, UNITS_KILOMETERS),
+        (UNITS_METERS, UNITS_METERS),
+        (UNITS_MILES, UNITS_MILES),
+        (UNITS_NAUTICALMILES, UNITS_NAUTICALMILES),
+        (UNITS_PIXELS, UNITS_PIXELS),
+    )
     angle               = models.FloatField(                 help_text='Angle, given in degrees, to rotate the map in a clockwise direction.',
                                                              default = 0.0)
     config              = ArrayField( ArrayField(models.TextField(), size=2) )
     datapattern         = models.TextField(                  )
-    debug               = models.IntegerField(               Map_DEBUG_CHOICES,
-                                                             default = 'OFF')
+    debug               = models.IntegerField(               DEBUG_CHOICES,
+                                                             default = DEBUG_OFF)
     defresolution       = models.IntegerField(               help_text='Sets the reference resolution (pixels per inch) used for symbology.',
                                                              default = 72)
     extent              = ArrayField( models.FloatField(), size=4)
@@ -3174,14 +3272,14 @@ class Map(models.Model):
     size                = ArrayField( models.IntegerField(), help_text='Size in pixels of the output image (i.e. the map).',
                                                              size=2,
                                                              default=[256,256])
-    status              = models.IntegerField(               Map_STATUS_CHOICES,
-                                                             default = 'ON')
+    status              = models.IntegerField(               STATUS_CHOICES,
+                                                             default = STATUS_ON)
     symbolset           = models.TextField(                  )
     symbol              = models.ManyToManyField(symbol)
     templatepattern     = models.TextField(                  )
     #d transparent      = models.NullBooleanField()
     units               = models.IntegerField(               help_text='Units of the map coordinates. Used for scale computations',
-                                                             choices = Map_UNITS_CHOICES,
+                                                             choices = UNITS_CHOICES,
                                                              )
     web                 = models.ForeignKey('web')
 
@@ -3191,20 +3289,7 @@ class Map(models.Model):
         verbose_name_plural = _( "Map" )
 
 
-class MapForm( ModelForm ):
-    layer           = forms.models.ModelMultipleChoiceField(  layer.objects, widget=myforms.MultipleSelectWithPop)
-    legend          = forms.models.ModelChoiceField(          legend.objects, widget=myforms.SelectWithPop)
-    outputformat    = forms.models.ModelMultipleChoiceField(  outputformat.objects, widget=myforms.MultipleSelectWithPop)
-    projection      = forms.models.ModelChoiceField(          projection.objects, widget=myforms.SelectWithPop)
-    querymap        = forms.models.ModelChoiceField(          querymap.objects, widget=myforms.SelectWithPop)
-    reference       = forms.models.ModelChoiceField(          reference.objects, widget=myforms.SelectWithPop)
-    scalebar        = forms.models.ModelChoiceField(          scalebar.objects, widget=myforms.SelectWithPop)
-    symbol          = forms.models.ModelMultipleChoiceField(  symbol.objects, widget=myforms.MultipleSelectWithPop)
-    web             = forms.models.ModelChoiceField(          web.objects, widget=myforms.SelectWithPop)
 
-    class Meta:
-        model = Map
-        
 
 
 ################################################################################
