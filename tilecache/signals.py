@@ -34,6 +34,8 @@ from tilecache.models import config
 
 from layers.models import WMS, ArcIMS
 
+import datetime
+
 ##### signal handlers #####
 
 
@@ -60,6 +62,8 @@ def post_save_handler(sender, **kwargs):
     c.name    = instance.layertreenode_ptr_id
     c.url     = instance.url
     
+    c.expired= datetime.datetime.now()
+
     ##### set these here to get around default value bug in django #####
 
     c.bbox = [ -180, -90, 180, 90 ]
