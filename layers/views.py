@@ -64,15 +64,47 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
         
+
+
 def treejson( request ):
-    
-    objects = models.layertreenode.objects.all()
-    base_objects = models.layertreenode.base_objects.all()
-    
-    #print objects
-    #print base_objects
-    #print layertreenode
-    serializer = layertreenodeSerializer( objects )
+
+    layers = models.layertreenode.objects.all()
+    newlayers = []
+    for layer in layers:
+        if layer.tile_cache:
+            if isinstance(layer, models.WMS) or isinstance(layer, models.ArcIMS):
+
+                tc = models.TileCache( id                       = layer.id,
+                                       polymorphic_ctype_id     = layer.polymorphic_ctype_id,
+                                       lft                      = layer.lft,
+                                       rght                     = layer.rght,
+                                       tree_id                  = layer.tree_id,
+                                       level                    = layer.level,
+                                       parent_id                = layer.parent_id,
+                                       nodetype                 = 'TileCache',
+                                       added                    = layer.added,
+                                       modified                 = layer.modified,
+                                       owner_id                 = layer.owner_id,
+                                       groups_id                = layer.groups_id,
+                                       timestamp                = layer.timestamp,
+                                       begin_timespan           = layer.begin_timespan,
+                                       end_timespan             = layer.end_timespan,
+                                       tile_cache               = layer.tile_cache,
+                                       tooltip                  = layer.tooltip,
+                                       metadata                 = layer.metadata,
+                                       name                     = layer.name,
+                                       url                      = '../tilecache/',
+                                       layername                = layer.layertreenode_ptr_id,
+                                       opacity                  = layer.opacity,
+                                       attribution              = layer.attribution,
+                                       isBaseLayer              = layer.isBaseLayer)
+                newlayers.append(tc)
+            else:
+                newlayers.append(layer)
+        else:
+            newlayers.append(layer)
+
+    serializer = layertreenodeSerializer( newlayers )
 
     return JSONResponse(serializer.data)
 
