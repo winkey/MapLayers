@@ -373,7 +373,15 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 		                                        );
 		        break;
 		        
-	        case 'WMS':
+	        case 'TileCache':
+		        layer = new OpenLayers.Layer.TileCache( NodeData.name,
+		                                                NodeData.url,
+		        						                NodeData.layername,
+		                                                NodeData.options
+		                                              );
+	            break;
+	        
+            case 'WMS':
 		        layer = new OpenLayers.Layer.WMS( NodeData.name,
 		                                          NodeData.url,
 		        						          NodeData.params,
