@@ -1,19 +1,31 @@
 needs
 
-django 1.3
+note for now it all comes with
+
+django_tag_parser-2.0.1-py2.7.egg-info
+future-0.14.3-py2.7.egg-info 
+
+django 1.7
+django_mptt-0.6.1-py2.7.egg-info
+django_polymorphic-0.6.1-py2.7.egg-info
+django_polymorphic_tree-1.0.1-py2.7.egg-info
+
+tilecache
+mapserver
+
+rest_framework
 
 
 
 edit setings.py 
+    set the timezone
+    set a new secret key
 
-set the timezone
-
-set a new secret key
-
+edit tilecache/tilecache.cfg
 
 run
 
-#!/bin/bash
+
 
 
 dropdb NewWorld
@@ -26,12 +38,10 @@ CREATE EXTENSION postgis_topology; \q
 
 EOF
 
-#python manage.py syncdb
-
 python manage.py migrate contenttypes
 python manage.py migrate 
 
-#echo "restarting apache with sudo"
+python manage.py collectstatic
 
-#sudo /etc/init.d/apache2 restart
-touch wsgi.py
+python manage.py createsuperuser
+

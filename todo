@@ -1,8 +1,7 @@
 
 
 tilecache:
-
-
+    add the cache
 
 layers:
     change layer pkeys to bigint
@@ -31,10 +30,11 @@ map:
     the time slider toolbar should display the current datetime 
     refresh the client when the layer tree changes, perhaps signals again in the map app
     real forms for adding data
+    time slider should update the url hash, bookmarks should include the time
 
-
-
+some sort of vector data aplication
 upload data mech
+
 raster data in db?
 
 css
@@ -42,6 +42,8 @@ add greyline app
 
 mapnik support?
 
+
+venv!
 
 
 
