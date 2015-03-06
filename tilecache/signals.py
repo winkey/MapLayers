@@ -77,7 +77,7 @@ def post_save_handler(sender, **kwargs):
         
     if isinstance(instance, WMS):
         c.layers = [ instance.layers ]
-    elif isinstance(obj, ArcIMS):
+    elif isinstance(instance, ArcIMS):
         c.layers = [ instance.serviceName ]
 
 
