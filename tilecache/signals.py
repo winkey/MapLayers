@@ -58,28 +58,47 @@ def post_save_handler(sender, **kwargs):
     else:
         c = config.objects.get(lid=instance.layertreenode_ptr_id)
 
-    c.lid     = instance.layertreenode_ptr_id
-    c.name    = instance.layertreenode_ptr_id
-    c.url     = instance.url
+    c.lid               = instance.layertreenode_ptr_id
+    c.name              = instance.layertreenode_ptr_id
+    c.url               = instance.url
+    c.srs               = 'EPSG:900913'
+    c.expired           = datetime.datetime.now()
+    c.extension         = 'png'
+    c.tms_type          = 'google'
+    c.levels            = 24
+    c.spherical_mercator= True
+    c.resolutions       = [ 156543.03390000000000000000, 78271.51695000000000000000,
+                             39135.75847500000000000000, 19567.87923750000000000000,
+                              9783.93961875000000000000,  4891.96980937500000000000,
+                              2445.98490468750000000000,  1222.99245234375000000000,
+                               611.49622617187500000000,   305.74811308593750000000,
+                               152.87405654296875000000,    76.43702827148437500000,
+                                38.21851413574218750000,    19.10925706787109375000,
+                                 9.55462853393554687500,     4.77731426696777343750,
+                                 2.38865713348388671875,     1.19432856674194335937,
+                                  .59716428337097167968,      .29858214168548583984,
+                                  .14929107084274291992,      .07464553542137145996,
+                                  .03732276771068572998,      .01866138385534286499,
+                                  .00933069192767143249 ]
     
-    c.expired= datetime.datetime.now()
-
+    c.bbox = [ -10346242.7549695,5224626.24288968,-9656475.01868158,5964781.03196305 ]
+    
     ##### set these here to get around default value bug in django #####
-
-    c.bbox = [ -180, -90, 180, 90 ]
+    
     c.size = [ 256, 256 ]
-    c.metaSize = [ 5, 5 ]
-    c.metaBuffer = [ 10, 10 ]
-
+    c.metasize = [ 5, 5 ]
+    c.metabuffer = [ 10, 10 ]
+    
     if instance.gutter is not None and instance.gutter > 0:
         c.metaTile      = True
         c.metaBuffer    = [ instance.gutter, instance.gutter ]
         
     if isinstance(instance, WMS):
         c.layers = [ instance.layers ]
+        c.type = config.WMS
     elif isinstance(instance, ArcIMS):
         c.layers = [ instance.serviceName ]
-
+        c.type = config.ArcIMS
 
     c.save()
 

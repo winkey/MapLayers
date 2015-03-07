@@ -76,7 +76,7 @@ class config( models.Model ):
     bbox                = ArrayField( models.FloatField( ), size=4, default=[ -180, -90, 180, 90 ])
     data_extent         = ArrayField( models.FloatField( ), size=4, null=True)
     size                = ArrayField( models.IntegerField(), size=2, default=[ 256, 256 ] )
-    resolutions         = ArrayField( models.FloatField( ) )                                   ,
+    resolutions         = ArrayField( models.FloatField( ), null=True)
     levels              = models.FloatField( default=20 )
     extension           = models.TextField( default = 'png' )
     srs                 = models.TextField( default = 'EPSG:4326' )
@@ -92,9 +92,9 @@ class config( models.Model ):
     spherical_mercator  = models.NullBooleanField( )
     metadata            = models.TextField( )
     expired             = models.DateTimeField( null=True)
-    metaTile            = models.NullBooleanField( default = False )
-    metaSize            = ArrayField( models.IntegerField(), size=2, default=[ 5, 5 ] )
-    metaBuffer          = ArrayField( models.IntegerField(), size=2, default=[ 10, 10 ] )
+    metatile            = models.NullBooleanField( default = False )
+    metasize            = ArrayField( models.IntegerField(), size=2, default=[ 5, 5 ] )
+    metabuffer          = ArrayField( models.IntegerField(), size=2, default=[ 10, 10 ] )
 
 
 import tilecache.signals

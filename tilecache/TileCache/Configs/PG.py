@@ -478,6 +478,7 @@ UNLISTEN %s_update;
     
     def read(self, configs, reload = None, name = None):
         
+        returnlist = []
         #sys.stderr.write( "PG.read\n" )
         if name == None:
             sql = '''
@@ -562,7 +563,7 @@ WHERE name = '%s';
             cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
             cur.execute(sql)
             
-            returnlist = []
+
             while True:
                 row = cur.fetchone()
                 if row == None:

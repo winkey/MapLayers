@@ -6,7 +6,7 @@
 # urls
 #
 ################################################################################
-# Copyright (c) 2013,  Brian Case 
+# Copyright (c) 2013-2015,  Brian Case
 #
 # Permission is hereby granted, free of charge, to any person obtaining a
 # copy of this software and associated documentation files (the "Software"),
@@ -30,9 +30,8 @@
 from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
-    #url(r'^(?P<layer_id>\d+)/$', 'views.get'),
-    #url(r'^add$', 'views.add'),
-    url(r'^tree$', 'layers.views.tree'),
-    url(r'^treejson$', 'layers.views.treejson'),
-    #url(r'^addfolder$', 'views.addfolder'),
+    url(r'^tree$',      'layers.views.tree'),
+    url(r'^treejson$',  'layers.views.treejson')
 )
+
+
