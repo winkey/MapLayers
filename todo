@@ -2,6 +2,7 @@
 
 tilecache:
     add the cache
+    add a bg job that rms the tiles when a layer is deleted, note this is high priority
 
 layers:
     change layer pkeys to bigint
@@ -13,10 +14,15 @@ layers:
 
 mapfile:
     color picker
+    editor to draw symbols
     real forms for adding data
     the array stuff works but the form is a text field
     allow nulls
     the help text needs populated for everything
+    map/config should be a table or array or something
+    map dont seem to have layer id
+    many of the sub tables can have multiple there is only one now
+
 
 
 map:
@@ -31,6 +37,7 @@ map:
     refresh the client when the layer tree changes, perhaps signals again in the map app
     real forms for adding data
     time slider should update the url hash, bookmarks should include the time
+
 
 some sort of vector data aplication
 upload data mech
