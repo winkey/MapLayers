@@ -474,7 +474,6 @@ DECLARE
     result layers_layertreenode;
     tname text;
     c integer := 0;
-    integer pid = $2;
 BEGIN
 
     if pid 
