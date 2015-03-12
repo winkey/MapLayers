@@ -541,7 +541,7 @@ $$
 
 WITH parent(id, level) AS (
     select id, level
-    FROM search_layers($1, 1)
+    FROM search_layers($1, 0)
 )
 SELECT add_layers_Folder( level + 1, id, $2, $3, $4, $5, $6 )
 FROM PARENT
@@ -574,7 +574,7 @@ $$
 
 WITH parent(id, level) AS (
     select id, level
-    FROM search_layers($1, 1)
+    FROM search_layers($1, 0)
 )
 SELECT add_layers_Radio( level + 1, id, $2, $3, $4, $5, $6 )
 FROM PARENT
@@ -607,7 +607,7 @@ $$
 
 WITH parent(id, level) AS (
     select id, level
-    FROM search_layers($1, 1)
+    FROM search_layers($1, 0)
 )
 SELECT add_layers_animation( level + 1, id, $2, $3, $4, $5, $6 )
 FROM PARENT
@@ -666,7 +666,7 @@ $$
 
 WITH parent(id, level) AS (
     select id, level
-    FROM search_layers($1, 1)
+    FROM search_layers($1, 0)
 )
 SELECT add_layers_wms( level + 1, id, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19 )
 FROM parent
@@ -737,7 +737,7 @@ $$
 
 WITH parent(id) AS (
     select id
-    FROM search_layers($1, 1)
+    FROM search_layers($1, 0)
 )
 SELECT layers_delete_all_contents( id )
 FROM parent
