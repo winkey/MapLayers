@@ -474,11 +474,13 @@ DECLARE
     result layers_layertreenode;
     tname text;
     c integer := 0;
+    integer pid = $2;
 BEGIN
 
+    if pid 
 /**** loop over the layers with the parent id we were passed *****/
 
-    FOR layer_row IN EXECUTE 'SELECT * FROM layers_layertreenode WHERE parent_id = $1' USING $2 LOOP
+    FOR layer_row IN EXECUTE 'SELECT * FROM layers_layertreenode WHERE parent_id = $1 OR $1 = 0 AND parent_id IS NULL' USING $2 LOOP
         
 /****   get the name of the table for the layer data *****/
 
@@ -607,7 +609,7 @@ $$
 
 WITH parent(id, level) AS (
     select id, level
-    FROM search_layers($1, 0)
+    FROM search_layers($1, )
 )
 SELECT add_layers_animation( level + 1, id, $2, $3, $4, $5, $6 )
 FROM PARENT
