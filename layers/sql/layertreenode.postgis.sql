@@ -476,7 +476,6 @@ DECLARE
     c integer := 0;
 BEGIN
 
-    if pid 
 /**** loop over the layers with the parent id we were passed *****/
 
     FOR layer_row IN EXECUTE 'SELECT * FROM layers_layertreenode WHERE parent_id = $1 OR $1 = 0 AND parent_id IS NULL' USING $2 LOOP
