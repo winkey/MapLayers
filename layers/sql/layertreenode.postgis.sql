@@ -607,7 +607,7 @@ $$
 
 WITH parent(id, level) AS (
     select id, level
-    FROM search_layers($1, )
+    FROM search_layers($1, 0)
 )
 SELECT add_layers_animation( level + 1, id, $2, $3, $4, $5, $6 )
 FROM PARENT
