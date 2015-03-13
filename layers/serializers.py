@@ -87,6 +87,9 @@ class layertreenodeSerializer( serializers.ModelSerializer ):
         elif isinstance( obj, Animation ) or obj.nodetype == 'Animation' :
             print 'is Animation\n'
             serializer = AnimationSerializer( obj )
+        elif isinstance( obj, Link ) or obj.nodetype == 'Link' :
+            print 'is Link\n'
+            serializer = LinkSerializer( obj )
         # elif isinstance( obj, ArcGISCache ) or obj.nodetype == 'ArcGISCache' :
         #    print 'is ArcGISCache\n'
         #    serializer = ArcGISCacheSerializer( obj )
@@ -180,6 +183,17 @@ class AnimationSerializer( serializers.ModelSerializer ):
     
     class Meta:
         model = Animation
+
+################################################################################
+#
+# @brief serializer for the Link folder
+#
+################################################################################
+
+class LinkSerializer( serializers.ModelSerializer ):
+    
+    class Meta:
+        model = Link
 
 ################################################################################
 #

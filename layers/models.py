@@ -40,6 +40,7 @@ FOLDER_TYPE_CHOICES = (
     ( 'Folder', 'Folder' ),
     ( 'Radio', 'Radio' ),
     ( 'Animation', 'Animation' ),
+    ( 'Link', 'Link' ),
  )
 
 LAYER_TYPE_CHOICES = ( 
@@ -167,6 +168,20 @@ class Animation( layertreenode ):
     class Meta:
         verbose_name = _( "Animation" )
         verbose_name_plural = _( "Animations" )
+
+################################################################################
+#
+# @brief class, form, and serializer for the Link folder
+#
+################################################################################
+
+class Link( layertreenode ):
+    name = models.CharField( max_length = 2048, help_text = "Display name" )
+    target = models.BigIntegerField( )
+
+    class Meta:
+        verbose_name = _( "Link" )
+        verbose_name_plural = _( "Link" )
 
 ################################################################################
 #

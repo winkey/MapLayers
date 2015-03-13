@@ -168,7 +168,31 @@ function NewWorld_Tree_FindLayers(root, layers) {
     }    
 }
 
+/******************************************************************************
+    recursive function to parse the tree to find a node by its id
 
+    i dont think we can use this
+******************************************************************************/
+
+function NewWorld_Tree_FindNode_by id(root, id) {
+
+    var nodes = root.childNodes;
+    
+    if (nodes && id) {
+        
+        /***** loop over the nodes children *****/
+            
+        var iNode;
+        for ( iNode = 0; iNode < nodes.length ; iNode++ ) {
+           
+            var node = nodes[iNode];
+            
+            if ( node.attributes.id == id) {
+                return node
+            }
+        }
+    }    
+}
 
 /******************************************************************************
  *\
@@ -252,6 +276,26 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	            });
 	            	            
 	            break;
+
+	        case 'Link':
+	        	
+	        	folder = new Ext.tree.TreeNode({
+	            	leaf: false,
+		           	text: NodeData.name,
+	            	expanded: true,
+	            	//checked: false,
+	            	id: NodeData.id,
+	            	parent: NodeData.parent,
+	            	lft: NodeData.lft,
+					rght: NodeData.rght,
+					tree_id: NodeData.tree_id,
+					level: NodeData.level,
+					nodetype: NodeData.nodetype,
+                    Checkable: false,
+                    target: NodeData.target
+	            });
+	            
+                break;
 	            
 	        case 'ArcGISCache':
 	            continue;

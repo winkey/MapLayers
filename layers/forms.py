@@ -90,6 +90,18 @@ class AnimationForm( ModelForm ):
 
 ################################################################################
 #
+# @brief form for the link folder
+#
+################################################################################
+
+class LinkForm( ModelForm ):
+
+    class Meta:
+        model = models.Link
+        exclude = ( 'nodetype', 'parent', 'added', 'modified' )
+
+################################################################################
+#
 # @brief form for the ArcGISCache layer
 #
 ################################################################################
