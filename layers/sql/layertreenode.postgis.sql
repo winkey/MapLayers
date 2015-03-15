@@ -249,7 +249,7 @@ SELECT
     $6       ,
     $7
 FROM django_content_type dct
-WHERE dct.name = 'Folder' and app_label = 'layers'
+WHERE dct.name = 'Animation' and app_label = 'layers'
 RETURNING id
 )
 INSERT
@@ -261,6 +261,88 @@ INTO layers_animation
 SELECT
         ln.id ,
         $5
+FROM layernode ln
+;
+
+$$ LANGUAGE SQL;
+
+/*******************************************************************************
+@brief function to add a link folder
+
+ @param level       depth of the tree node, root is 0
+ @param parent      the parent id of the node to add the node too
+ @param owner_id    the owner id of this new node (CAN BE NULL)
+ @param groups_id   the group id of this new node (CAN BE NULL)
+ @param name        the name of the node to add
+ @param tooltip
+ @param metadata
+ @param target
+ @return nothing
+
+ @details function for adding a link node to the layer tree
+
+*******************************************************************************/
+
+CREATE OR REPLACE FUNCTION add_layers_link(
+    integer,
+    integer,
+    integer,
+    integer,
+    text,
+    text,
+    text,
+    bigint
+) RETURNS void AS
+$$
+  
+WITH layernode AS
+(
+INSERT
+INTO layers_layertreenode
+    (
+        polymorphic_ctype_id ,
+        lft                  ,
+        rght                 ,
+        tree_id              ,
+        level                ,
+        parent_id            ,
+        nodetype             ,
+        added                ,
+        modified            ,
+        owner_id             ,
+        groups_id            ,
+        tooltip              ,
+        metadata
+    )
+SELECT
+    dct.id   ,
+    0        ,
+    0        ,
+    1        ,
+    $1       ,
+    $2       ,
+    'Folder' ,
+    now()    ,
+    now()    ,
+    $3       ,
+    $4       ,
+    $6       ,
+    $7
+FROM django_content_type dct
+WHERE dct.name = 'Link' and app_label = 'layers'
+RETURNING id
+)
+INSERT
+INTO layers_Link
+    (
+        layertreenode_ptr_id ,
+        name,
+        target
+    )
+SELECT
+        ln.id ,
+        $5,
+        $8
 FROM layernode ln
 ;
 
@@ -610,6 +692,40 @@ WITH parent(id, level) AS (
     FROM search_layers($1, 0)
 )
 SELECT add_layers_animation( level + 1, id, $2, $3, $4, $5, $6 )
+FROM PARENT
+;
+
+$$ LANGUAGE SQL;
+
+/*******************************************************************************
+
+ @param parent          an aray that describes the parent by name
+ @param owner_id    the owner id of this new node (CAN BE NULL)
+ @param groups_id   the group id of this new node (CAN BE NULL)
+ @param name        the name of the node to add
+ @param tooltip
+ @param metadata
+ @param target
+ @return nothing
+*******************************************************************************/
+
+CREATE OR REPLACE FUNCTION layers_add_link_by_name
+(
+    text[],
+    integer,
+    integer,
+    text,
+    text,
+    text,
+    bigint
+) RETURNS void AS
+$$
+
+WITH parent(id, level) AS (
+    select id, level
+    FROM search_layers($1, 0)
+)
+SELECT add_layers_link( level + 1, id, $2, $3, $4, $5, $6, $7 )
 FROM PARENT
 ;
 
