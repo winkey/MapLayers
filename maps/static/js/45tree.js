@@ -30,6 +30,24 @@
 Ext.onReady(function() {
 	NewWorld.Tree = new Object();
 });
+
+
+/**************************************************************************//**
+ *
+ * @brief function to fetch the layer tree 
+ * 
+******************************************************************************/
+
+function NewWorld_Tree_GetBranch(id, parent) {
+	
+	$.getJSON( "../layers/treebranch?id="+id, {},
+		function(data) {
+			 NewWorld_Tree_Parse( data, parent );
+			 finishup();
+	    }
+	);
+}
+
 /*****************************************************************************
  function for the trees checkchange
 *****************************************************************************/
@@ -98,6 +116,31 @@ function NewWorld_Tree_CheckChange(node, checked) {
     
 }
 
+/*****************************************************************************
+ function for the tree node expansion
+*****************************************************************************/
+
+function NewWorld_Tree_ExpandNode(node) {
+
+
+    /***** search for unexpanded parents *****/
+
+    AddLayerToHashOpen(node.attributes.id);
+    
+}
+
+/*****************************************************************************
+ function for the tree node Collapse
+*****************************************************************************/
+
+function NewWorld_Tree_CollapseNode(node) {
+
+    /***** search children for expanded layers *****/
+
+    RemoveLayerFromHashOpen(node.attributes.id);
+
+    
+}
 
 /*****************************************************************************
  function for the trees context menu
@@ -174,7 +217,7 @@ function NewWorld_Tree_FindLayers(root, layers) {
     i dont think we can use this
 ******************************************************************************/
 
-function NewWorld_Tree_FindNode_by id(root, id) {
+function NewWorld_Tree_FindNode_by_id(root, id) {
 
     var nodes = root.childNodes;
     
@@ -215,11 +258,11 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	
 	/***** loop over the array of tree data *****/
 	
-	while (NodesArray.length > 0 &&
-		     ( NodesArray[0].parent == null ||
-		   	   NodesArray[0].parent == ParentNode.attributes.id
-		     )
-		  ) {
+	while (NodesArray.length > 0 ) {// &&
+//		     ( NodesArray[0].parent == null ||
+	//	   	   NodesArray[0].parent == ParentNode.attributes.id
+		//     )
+		  //) {
 		
 		var layer = null;
 		var folder = null;
@@ -237,7 +280,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	        	folder = new Ext.tree.TreeNode({
 	            	leaf: false,
 		           	text: NodeData.name,
-	            	expanded: true,
+	            	expanded: false,
 	            	//checked: false,
 	            	id: NodeData.id,
 	            	parent: NodeData.parent,
@@ -263,7 +306,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	            folder = new Ext.tree.TreeNode({
 	            	leaf: false,
 		           	text: NodeData.name,
-	            	expanded: true,
+	            	expanded: false,
 	            	checked: false,
 	            	id: NodeData.id,
 	            	parent: NodeData.parent,
@@ -282,7 +325,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 	        	folder = new Ext.tree.TreeNode({
 	            	leaf: false,
 		           	text: NodeData.name,
-	            	expanded: true,
+	            	expanded: false,
 	            	//checked: false,
 	            	id: NodeData.id,
 	            	parent: NodeData.parent,
@@ -543,6 +586,8 @@ function NewWorld_Tree_Create() {
 		    listeners: {
 		        checkchange: NewWorld_Tree_CheckChange,
 		        contextmenu: NewWorld_Tree_ContextMenu,
+                expandnode: NewWorld_Tree_ExpandNode,
+                collapsenode: NewWorld_Tree_CollapseNode,
 		        scope: this
 		    },
 		    baseLayerContextMenu: NewWorld_Menu_baseLayerContextMenu,
