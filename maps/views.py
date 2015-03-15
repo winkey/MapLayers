@@ -68,4 +68,11 @@ def isLoggedin( request ):
         result['isLoggedin'] = True
         
     return HttpResponse( json.dumps( result ), content_type = 'application/json' )
-        
+
+def kmlrepeater( request ):
+    kml = request.POST.get('kml')
+
+    return HttpResponse( kml, content_type = 'application/vnd.google-earth.kml', Content_Disposition = "attachment; filename=map.kml", Content_Title = 'map')
+
+
+

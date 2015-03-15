@@ -187,7 +187,7 @@ function writekml() {
 
     var kmlform = document.createElement("form");
     kmlform.method="post" ;
-    kmlform.action = urlkmlrepeater;
+    kmlform.action = "./kmlrepeater";
     kmlform.target = 'kmlframe';
     
     var kmlinput = document.createElement("input");
