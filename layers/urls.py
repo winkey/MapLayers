@@ -31,7 +31,9 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
     url(r'^tree$',      'layers.views.tree'),
-    url(r'^treejson$',  'layers.views.treejson')
+    url(r'^treejson$',  'layers.views.treejson'),
+    url(r'^treeinit$',  'layers.views.treeinit'),
+    url(r'^treebranch$',  'layers.views.treebranch')
 )
 
 

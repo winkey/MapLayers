@@ -65,12 +65,10 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
         
 
+def subtc (qs):
 
-def treejson( request ):
-
-    layers = models.layertreenode.objects.all()
     newlayers = []
-    for layer in layers:
+    for layer in qs:
         if layer.tile_cache:
             if isinstance(layer, models.WMS) or isinstance(layer, models.ArcIMS):
 
@@ -103,6 +101,69 @@ def treejson( request ):
                 newlayers.append(layer)
         else:
             newlayers.append(layer)
+
+    return newlayers
+
+def treejson( request ):
+
+    layers = models.layertreenode.objects.all()
+    newlayers = subtc( layers )
+
+    serializer = layertreenodeSerializer( newlayers )
+
+    return JSONResponse(serializer.data)
+
+#get_queryset_ancestors(queryset, include_self=False)
+#Returns a queryset containing the ancestors of all nodes in the given queryset.
+#If include_self=True, nodes in queryset will also be included in the result.
+
+#Take a look at get_queryset_ancestors. If you already know the starting (topmost) node and the ending (leaf) node, then this may do what you need:
+
+#qs = MyMPTTModel.objects.filter(id = leaf_node_id)
+#MyMPTTModel.objects.get_queryset_ancestors(qs).filter(lft__gte = starting_node_lft)
+
+#or, if you have something against lefthandedness...
+
+#MyMPTTModel.objects.get_queryset_ancestors(qs).filter(rght__lte = starting_node_rght)
+import gc
+def treeinit( request ):
+
+    myopen = request.GET.get('open')
+    mylayers = request.GET.get('layers')
+
+
+    if myopen and not mylayers:
+        qs = models.layertreenode.objects.all().filter( parent_id__in = myopen.split(",") ).distinct('id')
+
+    elif mylayers and not myopen:
+        qs = models.layertreenode.objects.all().filter( id__in = mylayers.split(",") ).distinct('id')
+    
+    elif mylayers and myopen:
+        qs = (models.layertreenode.objects.all().filter( parent_id__in = myopen.split(",") ) | 
+              models.layertreenode.objects.all().filter( id__in = mylayers.split(",") ).distinct('id') )
+
+    else:
+        qs = models.layertreenode.objects.all().filter( id = 1 )
+
+    print gc.get_referrers( models.layertreenode.objects)   
+    print 'qs'
+    print qs
+    layers = models.layertreenode.objects.all().get_queryset_ancestors(qs, include_self=True).distinct('id')
+    print 'layers'
+    print layers
+    newlayers = subtc( qs )
+
+    serializer = layertreenodeSerializer( newlayers )
+
+    return JSONResponse(serializer.data)
+
+
+def treebranch( request ):
+
+    myid = request.GET.get('id')
+
+    layers = models.layertreenode.objects.all().filter( parent = myid )
+    newlayers = subtc( layers )
 
     serializer = layertreenodeSerializer( newlayers )
 
