@@ -1,8 +1,10 @@
 
 
 tilecache:
-    add the cache
-    add a bg job that rms the tiles when a layer is deleted, note this is high priority
+
+    add a bg job that rms the tiles when a layer is deleted
+    add a second config table and layers for 4326 for view in google earth
+
 
 layers:
     change layer pkeys to bigint
@@ -11,6 +13,9 @@ layers:
     real forms for adding data
     the help text needs populated for everything
     add perms to the tree
+
+    make the layer tree view take an arg of a id to return return its children 
+
 
 mapfile:
     color picker
@@ -24,19 +29,39 @@ mapfile:
     many of the sub tables can have multiple there is only one now
 
 
-
 map:
-    need rightclick menues in the layer tree to add delete etc..
     make draw on screen actualy save data as new layers or features in a layer
     add move to  to the time slider so you can folow a event around the world over time
     add a print mechanism
 
-    only download the tree parts that are open
+
     the help text needs populated for everything
     the time slider toolbar should display the current datetime 
     refresh the client when the layer tree changes, perhaps signals again in the map app
     real forms for adding data
     time slider should update the url hash, bookmarks should include the time
+
+    only download the tree parts that are open<---- this is in the next parts
+
+    tree.js
+        need rightclick menues in the layer tree to add delete etc..
+
+        js: add another item to the url hash "open", a commah seperated list of open folders in the tree,
+        this should be sent to the view to request the initital tree
+        js: make the open folder thing add its id to the url hash
+
+        js: as folders are opened they should request a tree for that folder from the view and be added to the tree
+
+        js: a link should request its target right away
+            a animation should request its target right away
+
+        js: how do we update the tree when the data is updated?
+
+    kml.js
+        make the view in google earth button do timestamps/timezones
+        fix kml js code, it likly dont read our tree corectly
+    
+    test kmlrepeater
 
 
 some sort of vector data aplication
