@@ -150,6 +150,39 @@ function RemoveLayerFromHashLayers(lid) {
 
 /**************************************************************************//**
  *
+ *  @brief build the layer open list of all layers minus this one
+*****************************************************************************/
+
+function RemoveLayerFromHashOpen(lid) {
+    var pair;
+    var newlayers = '';
+    var needcomma = false;
+    
+    var layers = getHashVariable('open');
+    if (layers) {
+        var lids = layers.split(',')
+        var i;
+        for ( i = 0; i < lids.length; i++ ) {
+            if (lid != lids[i]) {
+                if (needcomma) {
+                    newlayers += ',' + lids[i];
+                } else {
+                    newlayers += lids[i];
+                    needcomma = true;
+                }
+            }
+        }
+    }
+    
+    /***** set the layers in the url *****/
+        
+    ReplaceHashVariable('open', newlayers);
+        
+}
+
+
+/**************************************************************************//**
+ *
  *  @brief build the layer list of all layers plus this one
 *****************************************************************************/
 
@@ -191,6 +224,51 @@ function AddLayerToHashLayers(lid) {
     ReplaceHashVariable('layers', newlayers);
     
 }
+
+/**************************************************************************//**
+ *
+ *  @brief build the open list of all layers plus this one
+*****************************************************************************/
+
+function AddLayerToHashOpen(lid) {
+
+    var newlayers = ''; 
+    var needcomma = false;
+    var done = false;
+
+    var layers = getHashVariable('open');
+    if (layers) {
+        var lids = layers.split(',')
+        var i;
+        for ( i = 0; i < lids.length; i++ ) {
+            if (needcomma) {
+                newlayers += ',' + lids[i];
+            } else {
+                newlayers += lids[i];
+                needcomma = true;
+            }
+            if (lid == lids[i]) {
+                done = true;
+            }
+        }
+    }
+        
+    if (!done) {
+        if (needcomma) {
+            newlayers += ',' + lid;
+        } else {
+            newlayers += lid;
+            needcomma = true;
+        }
+        done = true;
+    }
+    
+    /***** set the layers in the url *****/
+    
+    ReplaceHashVariable('open', newlayers);
+    
+}
+
 
 /******************************************************************************
 openlayers move event function
