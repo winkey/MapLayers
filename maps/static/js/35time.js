@@ -314,13 +314,17 @@ function NewWorld_Time_expire_remaining() {
     if (NewWorld.Time.backwards) {
     
         for (node = NewWorld.Time.BegCurrentNode ; node ; node = node.prev) {
-            node.data.treenode.layer.setVisibility(false);
+            if (node.data.treenode.layer.getVisibility() ) {
+                node.data.treenode.layer.setVisibility(false);
+            }
         }
         
     } else {
         
         for (node = NewWorld.Time.EndCurrentNode ; node ; node = node.next) {
-            node.data.treenode.layer.setVisibility(false);
+            if (node.data.treenode.layer.getVisibility() ) {
+                node.data.treenode.layer.setVisibility(false);
+            }
         }
     }
 
