@@ -43,7 +43,7 @@ dojo.ready(function() {
 
 function NewWorld_OLMap_Create() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_OLMap_Create()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_OLMap_Create()");
 
     NewWorld.Map.map = new OpenLayers.Map({
         div:                "MapPane",

@@ -269,7 +269,7 @@ function MoveListner() {
 function NewWorld_Setcenter() {
       
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Setcenter()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Setcenter()");
 
     /***** get lat lon and zoom from the url *****/
     

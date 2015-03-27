@@ -44,7 +44,7 @@ dojo.ready(function() {
 
 function NewWorld_Kml_parsetree(item, indent) {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Kml_parsetree(item, indent) ", item, indent);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Kml_parsetree(item, indent) ", item, indent);
 
     var children = NewWorld.Tree.Store.getChildren(item);
     
@@ -157,7 +157,7 @@ function NewWorld_Kml_parsetree(item, indent) {
 
 function NewWorld_Kml_writekml() {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Kml_writekml()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Kml_writekml()");
 
     var zoom = NewWorld.Map.map.getZoom();
     

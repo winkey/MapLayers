@@ -94,7 +94,7 @@ function NewWorld_Time_Node(treenode, timestamp) {
 function NewWorld_Time_CreateSlider() {
     
     //fixme grab the hash vars!
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_CreateSlider()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_CreateSlider()");
 
     
     NewWorld.Time.toolbar = new dijit.Toolbar({}, "timebar");
@@ -267,7 +267,7 @@ function NewWorld_Time_CreateSlider() {
 
 function NewWorld_Time_setVisible(bool) {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_setVisible(bool)", bool);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_setVisible(bool)", bool);
     
     if (bool) { 
         NewWorld.Time.hidetoggler.show();
@@ -286,7 +286,7 @@ function NewWorld_Time_setVisible(bool) {
 
 function NewWorld_Time_Speedslider_change( newValueb ) {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Speedslider_change( newValue )",newValue);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Speedslider_change( newValue )",newValue);
     
     /***** set the new value *****/
 
@@ -307,7 +307,7 @@ function NewWorld_Time_Speedslider_change( newValueb ) {
 
 function NewWorld_Time_expire_remaining() {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_expire_remaining()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_expire_remaining()");
     
     var node;
 
@@ -346,7 +346,7 @@ function NewWorld_Time_expire_remaining() {
 function NewWorld_Time_Switch(list, CurrentNode, ts, forward, action ) {
     var node;
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Switch(list, CurrentNode, ts, forward, action)", list, CurrentNode, ts, forward, action);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Switch(list, CurrentNode, ts, forward, action)", list, CurrentNode, ts, forward, action);
     
     if (forward) {
         /***** if the currentspannode is null, reset to head *****/
@@ -395,7 +395,7 @@ function NewWorld_Time_Switch(list, CurrentNode, ts, forward, action ) {
 
 function NewWorld_Time_Advance() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Advance() ", NewWorld.Time.time);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Advance() ", NewWorld.Time.time);
 
     /***** we turn off before we turn on so you dont ever see 2 *****/
 
@@ -454,7 +454,7 @@ function NewWorld_Time_Advance() {
 
 function NewWorld_Time_Retard() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Retard() ", NewWorld.Time.time);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Retard() ", NewWorld.Time.time);
     
     /***** we turn off before we turn on so you dont ever see 2 *****/
 
@@ -510,7 +510,7 @@ function NewWorld_Time_Retard() {
 
 function NewWorld_Time_Timeslider_change( newValue ) {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Timeslider_change( newValue)", newValue);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Timeslider_change( newValue)", newValue);
     
     if (NewWorld.Time.IgnoreSliderChange) return;
     
@@ -562,7 +562,7 @@ function NewWorld_Time_Timeslider_change( newValue ) {
 
 function NewWorld_Time_Incrbox_change( newValue ) {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Incrbox_change( newValue )", newValue );
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Incrbox_change( newValue )", newValue );
     
     /***** set the new value *****/
     var incr = NewWorld.Time.incrStore.query({name:newValue})[0];
@@ -587,7 +587,7 @@ function NewWorld_Time_Incrbox_change( newValue ) {
 
 function NewWorld_Time_Interval_Update() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Update() ");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Update() ");
 
     var stopped = false;
     var looped = false;
@@ -708,7 +708,7 @@ function NewWorld_Time_Interval_Update() {
 
 function NewWorld_Time_Interval_Play() {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Play()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Play()");
     
     NewWorld.Time.firstplay = true;
     
@@ -733,7 +733,7 @@ function NewWorld_Time_Interval_Play() {
 
 function NewWorld_Time_Interval_Pause() {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Pause()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Pause()");
     
     if (NewWorld.Time.timer != null) {
         clearInterval(NewWorld.Time.timer);
@@ -760,7 +760,7 @@ function NewWorld_Time_Interval_Pause() {
 
 function NewWorld_Time_setends(begin, end) {
         
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_setends(begin, end)", begin, end);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_setends(begin, end)", begin, end);
     
     NewWorld.Time.IgnoreSliderChange = true;
     
@@ -863,7 +863,7 @@ function NewWorld_Time_Insert_Node_Before(list, newnode, ts) {
 
 function NewWorld_Time_addnode(treenode) {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_addnode(treenode)", treenode);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_addnode(treenode)", treenode);
     
     var timestamp = null;
     var begin = null;
@@ -972,7 +972,7 @@ function NewWorld_Time_removenode_sub (list, treenode) {
 
 function NewWorld_Time_removenode(treenode) {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Time_removenode(treenode)", treenode);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_removenode(treenode)", treenode);
     
     var node = null;
     var bext = null;

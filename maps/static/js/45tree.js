@@ -64,7 +64,7 @@ function NewWorld_Tree_GetBranch(id, parent) {
 
 function NewWorld_Tree_CheckChange(item, checked) {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Tree_CheckChange(item, checked)", item, checked);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Tree_CheckChange(item, checked)", item, checked);
     
     /***** if turn on a temp folder item it has a controll, activate it *****/
 
@@ -187,7 +187,7 @@ function NewWorld_Tree_CollapseNode(item, node) {
 
 function NewWorld_Tree_Find_and_Open_Layers( layers, expand) {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Tree_FindLayers(layers)", layers);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Tree_FindLayers(layers)", layers);
 
     /***** loop over the layers in the url *****/
 
@@ -593,7 +593,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
 
 function NewWorld_Tree_Create_Templayer(Lname, Layer, Controll) {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Tree_Create_Templayer(Lname, Layer, Controll :", Lname, Layer, Controll);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Tree_Create_Templayer(Lname, Layer, Controll :", Lname, Layer, Controll);
 
     var newNode = ({
         leaf: true,
@@ -677,7 +677,7 @@ function NewWorld_Tree_CreateTreeNode (args) {
     
 function NewWorld_Tree_Create( rootid) {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Tree_Create(rootid) :", rootid);
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Tree_Create(rootid) :", rootid);
 
     NewWorld.Tree.Store = new dojo.store.Memory({
         data: [],
@@ -720,7 +720,7 @@ function NewWorld_Tree_Create( rootid) {
 
 function NewWorld_Tree_Create_stage_2 () {
     
-    if (NewWorld.Settings.debug) console.log("NewWorld_Tree_Create_stage_2()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Tree_Create_stage_2()");
 
     /***** make the tree itself *****/
     

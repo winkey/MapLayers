@@ -45,7 +45,7 @@ dojo.ready(function() {
 
 function NewWorld_Settings_Set(settings) {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Settings_Set()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Settings_Set()");
 
     NewWorld.Settings = settings[0].fields;
     NewWorld.Settings.debug=true;

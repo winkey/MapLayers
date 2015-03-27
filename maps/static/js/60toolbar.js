@@ -43,7 +43,7 @@ dojo.require("dijit/MenuItem");
 
 function NewWorld_toolbar_Create() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_toolbar_Create()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_toolbar_Create()");
     
     NewWorld.toolbar = new dijit.Toolbar({}, "toolbar");
 

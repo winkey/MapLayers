@@ -36,7 +36,7 @@ dojo.ready(function() {
 
 function NewWorld_Draw_init() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Draw_init()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_init()");
 
     NewWorld.Draw.NavControl = new OpenLayers.Control.Navigation();
     NewWorld.Map.ActiveControl = NewWorld.Draw.NavControl;
@@ -46,7 +46,7 @@ function NewWorld_Draw_init() {
 
 function NewWorld_Draw_DoNav() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Draw_DoNav()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_DoNav()");
 
     if ( NewWorld.Map.ActiveControl != NewWorld.Draw.NavControl ) {
 
@@ -60,7 +60,7 @@ function NewWorld_Draw_DoNav() {
 
 function NewWorld_Draw_NewPoint() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewPoint()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewPoint()");
 
     /***** create the layer *****/
 
@@ -85,7 +85,7 @@ function NewWorld_Draw_NewPoint() {
 
 function NewWorld_Draw_NewLine() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewLine()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewLine()");
 
     /***** create the layer *****/
 
@@ -115,7 +115,7 @@ function NewWorld_Draw_NewLine() {
 
 function NewWorld_Draw_NewPoly() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewPoly()");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewPoly()");
 
     /***** create the layer *****/
 
@@ -148,7 +148,7 @@ function NewWorld_Draw_NewPoly() {
 
 function NewWorld_Draw_NewBox() {
 
-    if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewBox() :");
+    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewBox() :");
 
     /***** create the layer *****/
 
