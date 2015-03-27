@@ -27,34 +27,50 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+function NewWorld_TreeMenu_Create() {
+
+    var menu = new dijit.Menu();
+    menu.bindDomNode(NewWorld.Tree.tree.domNode);
+
+    /* we need this part for some reason */ 
+    menu.addChild(new dijit.MenuItem({
+        label: "Simple menu item"
+    }));
 
 
-function NewWorld_Menu_baseLayerContextMenu() {
-  /***** rightclick menu baseLayerContextMenu *****/
-      
-  var baseLayerContextMenu = new Ext.menu.Menu({
-    items: [{
-      text: "Adjust Transparency",
-      iconCls: 'default-icon-menu',
-      handler: function() {
-        var node = tree.getSelectionModel().getSelectedNode();
-        if(node && node.layer) {
-          NewWorld_Widgets_TransparencySlider(node.layer);
-        }
-      },
-      scope: this
-    }]
-  });
+        dojo.connect(treeControl, "onClick",treeControl, function(item,nodeWidget,e){
+            console.log("is expandable?: ", nodeWidget.isExpandable, e.target);
+            
+            if( nodeWidget.isExpandable ) {
+                    this._onExpandoClick({node:nodeWidget});
+            }
+            console.log("item : ", item);
+        
+        });
+        
+        dojo.connect(menu, "_openMyself", this, function(e) {
+            treenode = dijit.getEnclosingWidget(e.target);            
+            // prepare the menu
+            dojo.forEach(menu.getChildren(), function(child){
+                menu.removeChild(child);
+                
+                /*if (treenode.item.layer {
+                    menu.addChild(new dijit.MenuItem({
+                        label: "Zoom to Layer Extent"
+                    onClick: function() {
+                        this.map.zoomToExtent(treenode.layer.myExtent);
+                    }
+                }));*/
+            }, this);
 
-	return baseLayerContextMenu;
-}	
-
-function NewWorld_Menu_rasterOverlayContextMenu() {
-  /***** rightclick menu rasterOverlayContextMenu *****/
-  
-  var rasterOverlayContextMenu = new Ext.menu.Menu({
-    items: [
-      {
+        });
+        
+        menu.startup();
+}
+/*
+    NewWorld.Menues = new Object();
+    
+    NewWorld.Menues.Adj_Transparency = {
         text: "Adjust Transparency",
         iconCls: 'default-icon-menu',
         handler: function() {
@@ -63,33 +79,71 @@ function NewWorld_Menu_rasterOverlayContextMenu() {
             NewWorld_Widgets_TransparencySlider(node.layer);
           }
         },
-      scope: this
-      },
-      {
-        text: "Get Layer URL",
-        iconCls: 'default-icon-menu',
+        scope: this
+    };
+
+    NewWorld.Menues.Zoom_Extent = {
+        text: "Zoom to Layer Extent",
+        iconCls: "icon-zoom-visible",
         handler: function() {
           var node = tree.getSelectionModel().getSelectedNode();
-          if(node && node.layer && node.layer.getFullRequestString) {
-            Ext.MessageBox.alert(node.layer.name + ' - ' + node.layer.CLASS_NAME,
-            node.layer.getFullRequestString());
+          if(node && node.layer) {
+            this.map.zoomToExtent(node.layer.myExtent);
           }
         },
         scope: this
-      },
-      {
-        text: "Zoom to Layer Extent",
-	    iconCls: "icon-zoom-visible",
-        handler: function() {
-	      var node = tree.getSelectionModel().getSelectedNode();
-          if(node && node.layer) {
-	        this.map.zoomToExtent(node.layer.myExtent);//restrictedExtent);
-	      }
-	    },
-        scope: this
-      }
-    ]
-  });
+    };
 
-	return rasterOverlayContextMenu;
-} 
+    NewWorld.Menues.Del = {
+        text: "Delete",
+        iconCls: "icon-zoom-visible",
+        handler: function() {
+          var node = tree.getSelectionModel().getSelectedNode();
+          if(node. ) {
+            this.map.zoomToExtent(node.layer.myExtent);
+          }
+        },
+        scope: this
+    };
+
+});
+*/
+function NewWorld_Menu_ContextMenu(node, e) {
+
+    var menu;
+
+    /***** is it a layer or a folder? *****/
+
+    if (node.attributes.leaf) {
+        
+        /***** base layer? *****/
+
+        if ( NodeData.options.isBaseLayer == true ||
+             NodeData.nodetype == 'Google'
+           ) {
+        
+            menu = Ext.menu.Menu({
+                items: [
+                    NewWorld.Menues.Adj_Transparency
+                ]
+            });
+        } else {
+            menu = Ext.menu.Menu({
+                items: [
+                    NewWorld.Menues.Adj_Transparency,
+                    NewWorld.Menues.Zoom_Extent
+                ]
+            });
+        }
+
+    /***** folder node *****/
+
+    } else {
+
+        
+    }
+
+}
+    
+      
+

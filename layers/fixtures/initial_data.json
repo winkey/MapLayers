@@ -23,7 +23,7 @@
     "model": "layers.layertreenode",
     "pk": 2,
     "fields": {
-      "polymorphic_ctype": 19,
+      "polymorphic_ctype": 23,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,

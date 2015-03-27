@@ -34,9 +34,16 @@
  * 
 ******************************************************************************/
 
-var getHashVariableRet;
+dojo.require("dojo");
 
-function getHashVariable(Variable) {
+dojo.ready(function() {
+    NewWorld.Hash = new Object();
+
+});
+
+
+
+function NewWorld_Hash_Get(Variable) {
     
     var hash = document.location.hash
     if ( hash && hash != '') {
@@ -48,8 +55,8 @@ function getHashVariable(Variable) {
     for ( i = 0; i < vars.length; i++ ) {
         pair = vars[i].split('=');
         if (pair[0] == Variable) {
-            getHashVariableRet = (pair[1]);
-            return (getHashVariableRet);
+            NewWorld.Hash.GetRet = (pair[1]);
+            return (NewWorld.Hash.GetRet);
         }
     }
     
@@ -62,7 +69,7 @@ function getHashVariable(Variable) {
  * 
 ******************************************************************************/
 
-function ReplaceHashVariable(Variable, contents) {
+function NewWorld_Hash_Replace(Variable, contents) {
     var newhash=''
     var needamp = false;
     var done = false;
@@ -121,12 +128,12 @@ function ReplaceHashVariable(Variable, contents) {
  *  @brief build the layer list of all layers minus this one
 *****************************************************************************/
 
-function RemoveLayerFromHashLayers(lid) {
+function NewWorld_Hash_Removelayer(hashname, lid) {
     var pair;
     var newlayers = '';
     var needcomma = false;
     
-    var layers = getHashVariable('layers');
+    var layers = NewWorld_Hash_Get(hashname);
     if (layers) {
         var lids = layers.split(',')
         var i;
@@ -144,39 +151,7 @@ function RemoveLayerFromHashLayers(lid) {
     
     /***** set the layers in the url *****/
         
-    ReplaceHashVariable('layers', newlayers);
-        
-}
-
-/**************************************************************************//**
- *
- *  @brief build the layer open list of all layers minus this one
-*****************************************************************************/
-
-function RemoveLayerFromHashOpen(lid) {
-    var pair;
-    var newlayers = '';
-    var needcomma = false;
-    
-    var layers = getHashVariable('open');
-    if (layers) {
-        var lids = layers.split(',')
-        var i;
-        for ( i = 0; i < lids.length; i++ ) {
-            if (lid != lids[i]) {
-                if (needcomma) {
-                    newlayers += ',' + lids[i];
-                } else {
-                    newlayers += lids[i];
-                    needcomma = true;
-                }
-            }
-        }
-    }
-    
-    /***** set the layers in the url *****/
-        
-    ReplaceHashVariable('open', newlayers);
+    NewWorld_Hash_Replace(hashname, newlayers);
         
 }
 
@@ -186,13 +161,13 @@ function RemoveLayerFromHashOpen(lid) {
  *  @brief build the layer list of all layers plus this one
 *****************************************************************************/
 
-function AddLayerToHashLayers(lid) {
+function NewWorld_Hash_Addlayer(hashname, lid) {
 
     var newlayers = ''; 
     var needcomma = false;
     var done = false;
 
-    var layers = getHashVariable('layers');
+    var layers = NewWorld_Hash_Get(hashname);
     if (layers) {
         var lids = layers.split(',')
         var i;
@@ -221,7 +196,7 @@ function AddLayerToHashLayers(lid) {
     
     /***** set the layers in the url *****/
     
-    ReplaceHashVariable('layers', newlayers);
+    NewWorld_Hash_Replace(hashname, newlayers);
     
 }
 
@@ -236,7 +211,7 @@ function AddLayerToHashOpen(lid) {
     var needcomma = false;
     var done = false;
 
-    var layers = getHashVariable('open');
+    var layers = NewWorld_Hash_Get('open');
     if (layers) {
         var lids = layers.split(',')
         var i;
@@ -265,7 +240,7 @@ function AddLayerToHashOpen(lid) {
     
     /***** set the layers in the url *****/
     
-    ReplaceHashVariable('open', newlayers);
+    NewWorld_Hash_Replace('open', newlayers);
     
 }
 
@@ -276,13 +251,13 @@ openlayers move event function
 
 function MoveListner() {
     var zoom = this.getZoom();
-    ReplaceHashVariable('zoom', zoom);
+    NewWorld_Hash_Replace('zoom', zoom);
     
     var center = this.getCenter();
     var proj = new OpenLayers.Projection("EPSG:4326");
     newcenter = center.transform(NewWorld.Map.map.getProjectionObject(), proj);
-    ReplaceHashVariable('lon', newcenter.lon);
-    ReplaceHashVariable('lat', newcenter.lat);
+    NewWorld_Hash_Replace('lon', newcenter.lon);
+    NewWorld_Hash_Replace('lat', newcenter.lat);
 
 }
 
@@ -292,31 +267,34 @@ function MoveListner() {
 ******************************************************************************/
 
 function NewWorld_Setcenter() {
+      
 
- /***** get lat lon and zoom from the url *****/
-  
-  var pair;
-  var slat = getHashVariable('lat');
-  var slon = getHashVariable('lon');
-  var szoom = getHashVariable('zoom');
-  
-  /***** if lat and lon are set in the url, override default *****/
-  
-  if ( slat && slat != "" && slon && slon != "" ) {
-    NewWorld.Settings.center = new OpenLayers.LonLat(slon, slat);
-  }
-  
-  /***** if zoom is set in the url, override default *****/
+    if (NewWorld.Settings.debug) console.log("NewWorld_Setcenter()");
 
-  if ( szoom && szoom != "" ) {
-    NewWorld.Settings.zoom = szoom;
-  }
-  
-  /***** if map center and zoom arent set, set them *****/
-  
-  if (!NewWorld.Map.map.getCenter() || NewWorld.Map.map.getCenter().lon == 0) {
-    var proj = new OpenLayers.Projection("EPSG:4326");
-    NewWorld.Map.map.setCenter(NewWorld.Settings.mycenter.transform(proj, NewWorld.Map.map.getProjectionObject()), NewWorld.Settings.zoom);
-  }
-  
+    /***** get lat lon and zoom from the url *****/
+    
+    var pair;
+    var slat = NewWorld_Hash_Get('lat');
+    var slon = NewWorld_Hash_Get('lon');
+    var szoom = NewWorld_Hash_Get('zoom');
+    
+    /***** if lat and lon are set in the url, override default *****/
+    
+    if ( slat && slat != "" && slon && slon != "" ) {
+        NewWorld.Settings.center = new OpenLayers.LonLat(slon, slat);
+    }
+    
+    /***** if zoom is set in the url, override default *****/
+
+    if ( szoom && szoom != "" ) {
+        NewWorld.Settings.zoom = szoom;
+    }
+    
+    /***** if map center and zoom arent set, set them *****/
+    
+    if (!NewWorld.Map.map.getCenter() || NewWorld.Map.map.getCenter().lon == 0) {
+        var proj = new OpenLayers.Projection("EPSG:4326");
+        NewWorld.Map.map.setCenter(NewWorld.Settings.mycenter.transform(proj, NewWorld.Map.map.getProjectionObject()), NewWorld.Settings.zoom);
+    }
+    
 }

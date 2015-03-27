@@ -27,47 +27,51 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
-Ext.onReady(function() {
-	NewWorld.login = new Object();
-	NewWorld.login.loginbutton = {};
-	
+
+dojo.require("dojo");
+
+dojo.ready(function() {
+
+    NewWorld.login = new Object();
+    NewWorld.login.loginbutton = {};
+    
 });
 
 function NewWorld_login() {
-	
-	window.open(
-    	"../login/",
-    	'login',
-    	'height=200,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
+    
+    window.open(
+        "../login/",
+        'login',
+        'height=200,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
     );
-	
+    
 
 }
 function NewWorld_login_Finish() {
-	NewWorld.login.isLoggedin = true;
-	NewWorld.login.loginbutton.setText('logout'); 
-	NewWorld.login.loginbutton.setHandler(NewWorld_logout);
-	
-	/***** need to get a fresh tree *****/ 
-	/***** parse hash layer list *****/ 
-	
+    NewWorld.login.isLoggedin = true;
+    NewWorld.login.loginbutton.set('label', 'Logout')
+    NewWorld.login.loginbutton.set('onClick', NewWorld_logout)
+
+    /***** need to get a fresh tree *****/ 
+    /***** parse hash layer list *****/ 
+    
 }
-	
+    
 function NewWorld_logout() {
-	
-	window.open(
-    	"../logout/",
-    	'logout',
-    	'height=200,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
+    
+    window.open(
+        "../logout/",
+        'logout',
+        'height=200,width=300,left=10,top=10,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=no,directories=no,status=no'
     );
-	
-	
+    
+    
 }
 function NewWorld_logout_Finish() {
-	NewWorld.login.isLoggedin = false;
-	NewWorld.login.loginbutton.setText('login'); 
-	NewWorld.login.loginbutton.setHandler(NewWorld_login); 
-	
-	/***** need to get a fresh tree *****/
-	/***** parse hash layer list *****/
+    NewWorld.login.isLoggedin = false;
+    NewWorld.login.loginbutton.set('label', 'Login')
+    NewWorld.login.loginbutton.set('onClick', NewWorld_login)
+    
+    /***** need to get a fresh tree *****/
+    /***** parse hash layer list *****/
 }

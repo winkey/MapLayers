@@ -46,22 +46,30 @@ map:
     tree.js
         need rightclick menues in the layer tree to add delete etc..
 
-        js: add another item to the url hash "open", a commah seperated list of open folders in the tree,
-        this should be sent to the view to request the initital tree
-        js: make the open folder thing add its id to the url hash
-
+        js    
         js: as folders are opened they should request a tree for that folder from the view and be added to the tree
+        
 
         js: a link should request its target right away
             a animation should request its target right away
 
         js: how do we update the tree when the data is updated?
 
-    kml.js
+        kml.js
         make the view in google earth button do timestamps/timezones
         fix kml js code, it likly dont read our tree corectly
-    
+        all the time settings should be in the url has as long as there is data in the list
+        
     test kmlrepeater
+
+bookmark app:
+    bookmarks are all the url hash vars stored in a seperate table
+
+[14:14:20] <winkey> https://pypi.python.org/pypi/OWSLib
+[14:14:53] <winkey> i think a add all layers on wms feature would be neat
+[14:15:11] <winkey>  Author: Tom Kralidis
+[14:16:16] <winkey> or a window that lists them as checkboxes
+[14:16:57] <winkey> mayby a thing that adds them as a siggle or as a seperate
 
 
 some sort of vector data aplication
@@ -70,6 +78,7 @@ upload data mech
 raster data in db?
 
 css
+
 add greyline app
 
 mapnik support?
@@ -78,8 +87,27 @@ mapnik support?
 venv!
 
 
+use django-pipeline to minimise javascript when you collectstatic
+
+implement  http://pycsw.org/
+
+
+aprs
+
+instamaper
 
 
 
+SLD styles
+qgis 
 
+\
+
+mapfileFS mount options
+atime  <------  off, checksumming off
+
+https://bitbucket.org/sage2/sage2/wiki/SAGE2%20Application%20API
+
+
+[22:27:11] <tk> winkey: TogglePane + BC could easily do that probably (I say TogglePane because it has code for handling the collapsing IIRC
 

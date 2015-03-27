@@ -1,7 +1,7 @@
 /*******************************************************************************
  *
  * Project: NewWorld
- * App:     javascript ext toolbar
+ * App:     javascript dojo toolbar
  *
  * 
  *
@@ -27,84 +27,112 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+dojo.require("dijit.Toolbar");
+dojo.require("dijit.ToolbarSeparator");
+dojo.require("dijit.form.Button");
+dojo.require("dijit.form.CheckBox");
+dojo.require("dijit/form/DropDownButton");
+dojo.require("dijit/DropDownMenu");
+dojo.require("dijit/MenuItem");
+
 
 /*******************************************************************************
    toolbar
 *******************************************************************************/
 
 
-function NewWorld_toolbar_Create(vector) {
+function NewWorld_toolbar_Create() {
 
-	if (NewWorld.login.isLoggedin == true) {
-		NewWorld.login.loginbutton = new Ext.Toolbar.Button({
-	        text: 'logout',
-	        handler: NewWorld_logout
-		});
-	} else {
-		NewWorld.login.loginbutton = new Ext.Toolbar.Button({
-	        text: 'login',
-	        handler: NewWorld_login
-		});
-	}
-	
-  var maptbar = [
-    NewWorld.login.loginbutton,
-    "->",
-    new Ext.Toolbar.Button({
-        text: 'Open in Google Earth',
-        handler: writekml
-	}),
-    "->",
-    new GeoExt.Action({
-      control: new OpenLayers.Control.Navigation(),
-      map: NewWorld.Map.map,
-      toggleGroup: "edit",
-      pressed: true,
-      allowDepress: false,
-      text: "Navigate"
-    }),
-    new GeoExt.Action({
-        text: "Draw Poly",
-        control: new OpenLayers.Control.DrawFeature(
-            vector, OpenLayers.Handler.Polygon
-        ),
-        map: NewWorld.Map.map,
-        // button options
-        toggleGroup: "edit",
-        allowDepress: false,
-        tooltip: "Draw Polygon",
-        // check item options
-        group: "draw"
-    }),
-    new GeoExt.Action({
-        text: "Draw Line",
-        control: new OpenLayers.Control.DrawFeature(
-            vector, OpenLayers.Handler.Path
-        ),
-        map: NewWorld.Map.map,
-        // button options
-        toggleGroup: "edit",
-        allowDepress: false,
-        tooltip: "Draw Linestring",
-        // check item options
-        group: "draw"
-    }),
-    new GeoExt.Action({
-        text: "Draw Point",
-        control: new OpenLayers.Control.DrawFeature(
-            vector, OpenLayers.Handler.Point
-        ),
-        map: NewWorld.Map.map,
-        // button options
-        toggleGroup: "edit",
-        allowDepress: false,
-        tooltip: "Draw Point",
-        // check item options
-        group: "draw"
+    if (NewWorld.Settings.debug) console.log("NewWorld_toolbar_Create()");
+    
+    NewWorld.toolbar = new dijit.Toolbar({}, "toolbar");
+
+
+    /***** LOGIN BUTTON *****/
+
+    var label="";
+
+    NewWorld.login.loginbutton = new dijit.form.Button({
+            label: "Login",
+            showLabel: true,
+            onClick: NewWorld_login
+        });
+
+    if ( NewWorld.login.isLoggedin) {
+        NewWorld.login.loginbutton.set('label', 'Logout')
+        NewWorld.login.loginbutton.set('onClick', NewWorld_logout)
+    }        
+
+    NewWorld.toolbar.addChild(NewWorld.login.loginbutton)
+    NewWorld.login.loginbutton.startup();
+
+    NewWorld.toolbar.addChild(new dijit.ToolbarSeparator({}));
+
+    var gebutton = new dijit.form.Button({
+        label: "Open in Google Earth",
+        showLabel: true,
+        onClick: NewWorld_Kml_writekml
+    });
+
+    NewWorld.toolbar.addChild(gebutton)
+    gebutton.startup();
+
+    NewWorld.toolbar.addChild(new dijit.ToolbarSeparator({}));
+
+    var NavButton = new dijit.form.Button({
+        label: "Navigate",
+        showLabel: true,
+        onClick: NewWorld_Draw_DoNav
+    });
+
+    NewWorld.toolbar.addChild(NavButton);
+    NavButton.startup();
+
+    
+    var DrawMenu = new dijit.DropDownMenu({ style: "display: none;"});
+
+    PointMenu = new dijit.MenuItem({
+        label: "New Point Layer",
+        onClick: NewWorld_Draw_NewPoint
+    });
+    DrawMenu.addChild(PointMenu);
+
+
+    var LineMenu = new dijit.MenuItem({
+        label: "New Line Layer",
+        onClick: NewWorld_Draw_NewLine
+    });
+    DrawMenu.addChild(LineMenu);
+
+    var PolyMenu = new dijit.MenuItem({
+        label: "New Polygon Layer",
+        onClick: NewWorld_Draw_NewPoly
+    });
+    DrawMenu.addChild(PolyMenu);
+
+    var BoxMenu = new dijit.MenuItem({
+        label: "New Box Layer",
+        onClick: NewWorld_Draw_NewBox
+    });
+    DrawMenu.addChild(BoxMenu);
+
+    
+
+    DrawMenu.startup();
+
+    var DrawButton = new dijit.form.DropDownButton({
+        label: "Draw",
+        dropDown: DrawMenu,
     })
-  ];
+    
+    NewWorld.toolbar.addChild(DrawButton);
+    DrawButton.startup();
 
-	return maptbar;
+
+    NewWorld.toolbar.placeAt("ToolbarPane")
+    NewWorld.toolbar.startup();
+
 }
 
+    
 

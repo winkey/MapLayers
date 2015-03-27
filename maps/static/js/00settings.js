@@ -27,15 +27,13 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
-Ext.onReady(function() {
-	NewWorld = new Object(); 
-	NewWorld.Settings = new Object();
+dojo.require("dojo");
 
-	/***** fixme this needs to be a django app *****/
+dojo.ready(function() {
+    NewWorld = new Object(); 
+    NewWorld.Settings = new Object();
 
-	urlkmlrepeater = "http://hyperquad.telascience.org/cgi-bin/kmlrepeater";
-	
-	
+    NewWorld.Settings.debug=true;
 });
 
 
@@ -46,10 +44,13 @@ Ext.onReady(function() {
  ******************************************************************************/
 
 function NewWorld_Settings_Set(settings) {
-	NewWorld.Settings = settings[0].fields;
-    
 
-    c = OpenLayers.Geometry.fromWKT(NewWorld.Settings.center);
+    if (NewWorld.Settings.debug) console.log("NewWorld_Settings_Set()");
+
+    NewWorld.Settings = settings[0].fields;
+    NewWorld.Settings.debug=true;
+
+    var c = OpenLayers.Geometry.fromWKT(NewWorld.Settings.center);
     NewWorld.Settings.mycenter = new OpenLayers.LonLat(c.x, c.y);
     
 

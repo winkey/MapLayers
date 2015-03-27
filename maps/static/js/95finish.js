@@ -27,38 +27,30 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
+dojo.require("dojo");
+
 function finishup() {
 
 
 
-	
-	
-  	NewWorld_Setcenter();
+    
+    NewWorld_Setcenter();
+    NewWorld_Draw_init();
 
-
-/*******************************************************************************
-   vector drawing layers
-*******************************************************************************/
-
-    var vector = new OpenLayers.Layer.Vector("vector");
-    /*map.addLayer(vector);*/
-	var maptbar = NewWorld_toolbar_Create(vector);
-
- 	NewWorld_Mappanel_Create(maptbar);
-
-    var tree = NewWorld_Tree_Create()
-
-    NewWorld_Viewport_Create( tree);
-
-
-
-    /***** get layer list from the url *****/
+    NewWorld_toolbar_Create();
+    NewWorld_Time_CreateSlider();
+    dijit.registry.byId("borderContainer").resize();
+      /***** get layer list from the url *****/
   
-    var pair;
-    var slayers = getHashVariable('layers');
-  
-    if ( slayers && slayers != "") {
-        NewWorld_Tree_FindLayers(NewWorld.Tree.layerRoot, slayers);
+    
+    var layers = NewWorld_Hash_Get('layers');
+    var open =  NewWorld_Hash_Get('open');
+
+    if ( open && open != "") {
+        NewWorld_Tree_Find_and_Open_Layers( open, true);
+    }
+    if ( layers && layers != "") {
+        NewWorld_Tree_Find_and_Open_Layers( layers, false);
     }
   
 
@@ -68,9 +60,9 @@ function finishup() {
   
     NewWorld.Map.map.events.register('moveend', NewWorld.Map.map, MoveListner);
   
-	/***** set the topic on the window *****/
-	
-	document.title = NewWorld.Settings.title;
+    /***** set the topic on the window *****/
+    
+    document.title = NewWorld.Settings.title;
 };
 
 
@@ -84,13 +76,14 @@ function finishup() {
 ******************************************************************************/
 
 function NewWorld_Tree_GetJson() {
-	
-	$.getJSON( "../layers/treejson", {},
-		function(data) {
-			 NewWorld_Tree_Parse( data, null );
-			 finishup();
-	    }
-	);
+    
+    $.getJSON( "../layers/treejson", {},
+        function(data) {
+            NewWorld_Tree_Parse( data, null );
+            NewWorld_Tree_Create_stage_2();
+            finishup();
+        }
+    );
 }
 
 /**************************************************************************//**
@@ -101,14 +94,18 @@ function NewWorld_Tree_GetJson() {
 
 
 function NewWorld_Login_GetJson() {
-	
-	$.getJSON( "isLoggedin", {}, 
-		function(data) {
-			NewWorld.login.isLoggedin = data.isLoggedin;
-			NewWorld_OLMap_Create();
-			NewWorld_Tree_GetJson();
-		}
-	);
+    
+    $.getJSON( "isLoggedin", {}, 
+        function(data) {
+            NewWorld.login.isLoggedin = data.isLoggedin;
+
+            NewWorld_OLMap_Create();
+
+
+
+            NewWorld_Tree_GetJson();
+        }
+    );
 }
 
 /**************************************************************************//**
@@ -119,15 +116,20 @@ function NewWorld_Login_GetJson() {
 
 
 function NewWorld_Settings_GetJson() {
-	
-	$.getJSON( "settings", {}, 
-		function(data) {
-			NewWorld_Settings_Set(data);
-			NewWorld_Login_GetJson();
-		}
-	);
+    
+    $.getJSON( "settings", {}, 
+        function(data) {
+            NewWorld_Settings_Set(data);
+            NewWorld_Login_GetJson();
+        }
+    );
 }
 
-Ext.onReady(function() {
-	NewWorld_Settings_GetJson();
+
+
+dojo.ready(function() {
+
+
+
+    NewWorld_Settings_GetJson();
 });

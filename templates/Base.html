@@ -4,19 +4,58 @@
         <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
         <title>NewWorld</title>
         
-        <script type="text/javascript" src="{{ STATIC_URL }}ext-3.4.0/adapter/ext/ext-base.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}ext-3.4.0/ext-all.js"></script>
 
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}ext-3.4.0/resources/css/ext-all.css" />
-        <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}ext-3.4.0/examples/shared/examples.css" />
+      	<link rel="stylesheet" href="{{ STATIC_URL }}dojo-release-1.10.4/dijit/themes/claro/claro.css">
+
+	    <style type="text/css">
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    overflow:hidden;
+}
+
+#borderContainer  {
+    width: 100%;
+    height: 100%;
+}
+
+
+#TimebarPane, #ToolbarPane, #dijit_Toolbar_0, #dijit_Toolbar_1, #MapPane, #center {
+    margin: 0;
+    padding: 0;
+}
+
+#TreePane, #center {
+    border: 1px solid blue;
+}
+
+#TreePane {
+    height: 100%;
+    overflow: auto;
+    font-size: 70%;
+}
+
+#dijit_Tree_0 {
+    overflow: visible;
+}
+
+#dijit_form_HorizontalSlider_0 {
+	display: inline-block;
+
+}
+
+
+	    </style>
 
         <script type="text/javascript" src="{{ STATIC_URL }}OpenLayers-2.13.1/OpenLayers.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/GeoExt.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.min.js"></script>
 
         <script type="text/javascript" src="http://maps.google.com/maps?file=api&amp;v=2&amp;key=sensor=false&amp;key=AIzaSyCmJdmJAzT4LTjfP6e8_PLkNTAws7vSpnI"
             ></script>
-        
+
+       	<script>dojoConfig = {parseOnLoad: true}</script>
+        <script src="{{ STATIC_URL }}dojo-release-1.10.4/dojo/dojo.js.uncompressed.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/moment.min.js"></script>
 
         <script type="text/javascript" src="{{ STATIC_URL }}js/00settings.js"></script>
@@ -29,16 +68,33 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/45tree.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/50kml.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/55login.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/58draw.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/60toolbar.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/65mappanel.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/75viewport.js"></script>
+
         <script type="text/javascript" src="{{ STATIC_URL }}js/95finish.js"></script>
+
+
+	
+	<script>
+require(["dojo/parser", "dijit/layout/ContentPane", "dijit/layout/BorderContainer"]);
+	</script>
+
     </head>
-    <body>
-    <div id="permalink"></div>
-    <div id="mappanel"></div>
-    <iframe style="width:0px;height:0px;border:0px;" id="kmliframe"  name="kmliframe" >
-    </iframe>
-    </body>
+
+<body class="claro">
+
+    <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="design:'sidebar', gutters:false, liveSplitters:true" id="borderContainer">
+        <div id="TreePane" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="splitter:true, region:'leading'" style="width: 200px;">
+        <form id=TreeForm> </form>
+        </div>
+
+        <div id="center" class="Frame" data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="region:'center'">
+            <div id="ToolbarPane" class="Row" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top'"></div>
+            <div id="MapPane" class="Row Expand" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'center'"></div>
+            <div id="TimebarPane" class="Row" data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'bottom'"></div>
+        </div>
+    </div>
+    <iframe style="width:0px;height:0px;border:0px;" id="kmliframe"  name="kmliframe" ></iframe>
+</body>
 </html>
 
