@@ -314,7 +314,7 @@ function NewWorld_Time_expire_remaining() {
     if (NewWorld.Time.backwards) {
     
         for (node = NewWorld.Time.BegCurrentNode ; node ; node = node.prev) {
-            if (node.data.treenode.layer.getVisibility() ) {
+            if (node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(false);
             }
         }
@@ -322,17 +322,26 @@ function NewWorld_Time_expire_remaining() {
     } else {
         
         for (node = NewWorld.Time.EndCurrentNode ; node ; node = node.next) {
-            if (node.data.treenode.layer.getVisibility() ) {
+            if (node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(false);
             }
         }
     }
 
     if (NewWorld.Time.TSCurrentNode) {
-        NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+        if (node.data.treenode.layer.getVisibility()) {
+            NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+        }
     }
 
 }
+
+/******************************************************************************
+ * 
+ * 
+ * 
+ * 
+******************************************************************************/
 
 function NewWorld_Time_Switch(list, CurrentNode, ts, forward, action ) {
     var node;
@@ -343,8 +352,8 @@ function NewWorld_Time_Switch(list, CurrentNode, ts, forward, action ) {
         /***** if the currentspannode is null, reset to head *****/
         /***** i dont think this can happen *****/
 
-        if (CurrentNode == null)
-            CurrentNode = list.head;
+        //if (CurrentNode == null)
+        //    CurrentNode = list.head;
         
         /***** starting at the current begin node loop *****/
 
@@ -359,8 +368,8 @@ function NewWorld_Time_Switch(list, CurrentNode, ts, forward, action ) {
         /***** if the currentspannode is null, reset to tail *****/
         /***** i dont think this can happen *****/
 
-        if (CurrentNode == null)
-            CurrentNode = list.tail;
+        //if (CurrentNode == null)
+        //    CurrentNode = list.tail;
         
         /***** starting at the current begin node loop *****/
 
@@ -396,7 +405,10 @@ function NewWorld_Time_Advance() {
         NewWorld.Time.time,
         true,
         function (node) {
-            node.data.treenode.layer.setVisibility(false);
+            console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
+            if (node.data.treenode.layer.getVisibility()) {
+                node.data.treenode.layer.setVisibility(false);
+            }
         }
     );
 
@@ -406,7 +418,10 @@ function NewWorld_Time_Advance() {
         NewWorld.Time.time,
         true,
         function (node) {
-            node.data.treenode.layer.setVisibility(true);
+            console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
+            if (!node.data.treenode.layer.getVisibility()) {
+                node.data.treenode.layer.setVisibility(true);
+            }
         }
     );
     
@@ -416,8 +431,12 @@ function NewWorld_Time_Advance() {
         NewWorld.Time.time,
         true,
         function (node) {
-            NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
-            node.data.treenode.layer.setVisibility(true);
+            if (node.data.treenode.layer.getVisibility()) {
+                NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+            }
+            if (!node.data.treenode.layer.getVisibility()) {
+                node.data.treenode.layer.setVisibility(true);
+            }
             NewWorld.Time.TSCurrentNode = node;
         }
     );
@@ -445,7 +464,9 @@ function NewWorld_Time_Retard() {
         NewWorld.Time.time,
         false,
         function (node) {
-            node.data.treenode.layer.setVisibility(false);
+            if (node.data.treenode.layer.getVisibility()) {
+                node.data.treenode.layer.setVisibility(false);
+            }
         }
     );
 
@@ -455,7 +476,9 @@ function NewWorld_Time_Retard() {
         NewWorld.Time.time,
         false,
         function (node) {
-            node.data.treenode.layer.setVisibility(true);
+            if (!node.data.treenode.layer.getVisibility()) {
+                node.data.treenode.layer.setVisibility(true);
+            }
         }
     );
     
@@ -465,8 +488,12 @@ function NewWorld_Time_Retard() {
         NewWorld.Time.time,
         false,
         function (node) {
-            NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
-            node.data.treenode.layer.setVisibility(true);
+            if (node.data.treenode.layer.getVisibility) {
+                NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+            }
+            if (!node.data.treenode.layer.getVisibility()) {
+                node.data.treenode.layer.setVisibility(true);
+            }
             NewWorld.Time.TSCurrentNode = node;
         }
     );
@@ -789,6 +816,13 @@ function NewWorld_Time_setends(begin, end) {
     NewWorld.Time.IgnoreSliderChange = false;
 }
 
+/******************************************************************************
+ * 
+ * 
+ * 
+ * 
+******************************************************************************/
+
 //fixme this is slow mo, use a circular list and test the dir to go
 // actualy theres something else wrong our test data is in backwars so the loop N#EVER iterates
 // so we need to fixme anyway
@@ -909,6 +943,13 @@ function NewWorld_Time_addnode(treenode) {
     );
     
 }
+
+/******************************************************************************
+ * 
+ * 
+ * 
+ * 
+******************************************************************************/
 
 function NewWorld_Time_removenode_sub (list, treenode) {
 

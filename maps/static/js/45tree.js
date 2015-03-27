@@ -319,7 +319,7 @@ function NewWorld_Tree_Parse( NodesArray, ParentNode) {
             timestamp:NodeData.timestamp,
             begin_timespan:NodeData.begin_timespan,
             end_timespan:NodeData.end_timespan
-        });                                          
+        });
             //                                    w                     s                   e            n
             //'myExtent': new OpenLayers.Bounds(-9852248.59963804, 3527237.61654759, -9447717.68891644, 4172836.22079423)
         /***** is this the root node? *****/

@@ -30,56 +30,67 @@ mapfile:
 
 
 map:
-    make draw on screen actualy save data as new layers or features in a layer
-    add move to  to the time slider so you can folow a event around the world over time
+
     add a print mechanism
-
-
     the help text needs populated for everything
     the time slider toolbar should display the current datetime 
     refresh the client when the layer tree changes, perhaps signals again in the map app
-    real forms for adding data
-    time slider should update the url hash, bookmarks should include the time
+    do the admin so you can do intial settings
 
-    only download the tree parts that are open<---- this is in the next parts
 
-    tree.js
-        need rightclick menues in the layer tree to add delete etc..
-
-        js    
-        js: as folders are opened they should request a tree for that folder from the view and be added to the tree
-        
-
-        js: a link should request its target right away
-            a animation should request its target right away
-
-        js: how do we update the tree when the data is updated?
-
-        kml.js
-        make the view in google earth button do timestamps/timezones
-        fix kml js code, it likly dont read our tree corectly
-        all the time settings should be in the url has as long as there is data in the list
         
     test kmlrepeater
 
+javascript:
+    only download the tree parts that are open<---- this is in the next parts
+    as folders are opened they should request a tree for that folder from the view and be added to the tree
+    a link should request its target right away
+    a animation should request its target right away
+    js: how do we update the tree when the data is updated?
+
+    need rightclick menues in the layer tree to add delete etc..
+
+    time slider should update the url hash, bookmarks should include the time
+    make the view in google earth button do timestamps/timezones
+    all the time settings should be in the url has as long as there is data in the list
+
+    make draw on screen actualy save data as new layers or features in a layer
+    add move to  to the time slider so you can folow a event around the world over time
+
+    TogglePane + BC could easily do that probably (I say TogglePane because it has code for handling the collapsing IIRC
+
+    split timeslider
+
+    https://bitbucket.org/sage2/sage2/wiki/SAGE2%20Application%20API
+
+
 bookmark app:
+
+    we could call them views, and 
     bookmarks are all the url hash vars stored in a seperate table
 
-[14:14:20] <winkey> https://pypi.python.org/pypi/OWSLib
-[14:14:53] <winkey> i think a add all layers on wms feature would be neat
-[14:15:11] <winkey>  Author: Tom Kralidis
-[14:16:16] <winkey> or a window that lists them as checkboxes
-[14:16:57] <winkey> mayby a thing that adds them as a siggle or as a seperate
+
+owslib app:
+    [14:14:20] <winkey> https://pypi.python.org/pypi/OWSLib
+    [14:14:53] <winkey> i think a add all layers on wms feature would be neat
+    [14:15:11] <winkey>  Author: Tom Kralidis
+    [14:16:16] <winkey> or a window that lists them as checkboxes
+    [14:16:57] <winkey> mayby a thing that adds them as a siggle or as a seperate
+
+    or something like the wms inspector for js on the client side?
+
+vector app:
+    some sort of vector data aplication
+    upload data mech
 
 
-some sort of vector data aplication
-upload data mech
+raster app:
+    raster data in db?
 
-raster data in db?
 
-css
 
-add greyline app
+greyline app:
+    this could just be a client side thing, its a circle
 
 mapnik support?
 
@@ -106,8 +117,7 @@ qgis
 mapfileFS mount options
 atime  <------  off, checksumming off
 
-https://bitbucket.org/sage2/sage2/wiki/SAGE2%20Application%20API
 
 
-[22:27:11] <tk> winkey: TogglePane + BC could easily do that probably (I say TogglePane because it has code for handling the collapsing IIRC
+
 
