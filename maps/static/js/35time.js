@@ -405,7 +405,7 @@ function NewWorld_Time_Advance() {
         NewWorld.Time.time,
         true,
         function (node) {
-            console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
+            //console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
             if (node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(false);
             }
@@ -418,7 +418,7 @@ function NewWorld_Time_Advance() {
         NewWorld.Time.time,
         true,
         function (node) {
-            console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
+            //console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
             if (!node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(true);
             }
