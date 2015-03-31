@@ -7,6 +7,11 @@ tilecache:
 
 
 layers:
+    need getancestors for the lay loading view!!!!
+
+    save views
+
+
     change layer pkeys to bigint
     move choices inside the class
     only return tree items you have perms to view
@@ -16,6 +21,8 @@ layers:
 
     make the layer tree view take an arg of a id to return return its children 
 
+    add a refresh option to the layers, both a list of times, and an interval
+    add center and zoom for layers
 
 mapfile:
     color picker
@@ -41,27 +48,42 @@ map:
         
     test kmlrepeater
 
-javascript:
-    only download the tree parts that are open<---- this is in the next parts
-    as folders are opened they should request a tree for that folder from the view and be added to the tree
+
+tree.js
+    implement lazy loading, initial request needs to fetch open and layers data aswell!!!!!
     a link should request its target right away
     a animation should request its target right away
+    base layers need to be requested right away
+    perms
+    when layers get turned on, center and zoom if set
+
     js: how do we update the tree when the data is updated?
 
+    drag and drop
+
+    autohide the tree with TogglePane + BC 
+
+[18:48:22] <winkey> so the lazy loading tree stuff? can it call custom code on each json node it pulls?
+[18:49:03] <winkey> or will i have to roll my own
+[18:50:47] <winkey> that and i have a link node type
+
+    
+menues.js
     need rightclick menues in the layer tree to add delete etc..
 
+time.js
     time slider should update the url hash, bookmarks should include the time
     make the view in google earth button do timestamps/timezones
     all the time settings should be in the url has as long as there is data in the list
-
-    make draw on screen actualy save data as new layers or features in a layer
-    add move to  to the time slider so you can folow a event around the world over time
-
-    TogglePane + BC could easily do that probably (I say TogglePane because it has code for handling the collapsing IIRC
-
+    add center and zoom when a layer becomes "active"
     split timeslider
-
+    
+     do a node of each begm end, ts then loop and retest to the current time
+    
+    tooltips
     https://bitbucket.org/sage2/sage2/wiki/SAGE2%20Application%20API
+
+
 
 
 bookmark app:
@@ -107,15 +129,83 @@ aprs
 
 instamaper
 
-
-
 SLD styles
-qgis 
+qgis  plugin
 
-\
 
 mapfileFS mount options
 atime  <------  off, checksumming off
+
+
+************************* lazy load the tree ***********************************
+
+http://dojotoolkit.org/reference-guide/1.10/dojo/store/Cache.html
+
+
+restStore = new JsonRest(...);
+memoryStore = new Memory();
+store = new Cache(restStore, memoryStore);
+
+store.get(1) -> Returns the object with an id of 1 by making a GET request
+store.get(1) -> Returns the object, using the local memory cache
+store.put({id:2, name:"two"}) -> Stores the object in both master and cache store
+store.get(2) -> Returns the object, using the local memory cache
+
+
+[18:48:22] <winkey> so the lazy loading tree stuff? can it call custom code on each json node it pulls?
+[18:49:03] <winkey> or will i have to roll my own
+[18:50:47] <winkey> that and i have a link node type
+[22:58:08] <tk> winkey: not sure what exactly you mean... lazy loading is usually handled by the store behind the model....
+[07:13:21] <winkey> tk i need to translate it before it goes in the store
+[11:28:01] <tk> winkey: kinda sounds like you just want to implement a custom store :P
+[11:54:35] <winkey> tk so your saying theres no callbacks or events for when it gets the data?
+[11:56:50] <winkey> there has to be something, how does the model get notified
+[12:02:10] <winkey> Store.Transaction.commit()?
+[12:20:30] <winkey> i see
+[12:20:39] <tk> winkey: would have to dig around and I wont have time today, but... I dont believe there is a callback, you could monkey patch it maybe... but you are basically changing the underlying store mechanism
+[12:20:44] <tk> ie: how it interprets its data
+[12:20:48] <winkey> the obstor overrides the query code
+[12:21:09] <tk> oh there is...
+[12:21:16] <kgf> what exactly is the question
+[12:21:18] <tk> _fetch so mething I think that would...
+[12:21:27] <tk> kgf: changing an item before it hits the store
+[12:21:37] <tk> from a lazy load store
+[12:21:43] <winkey> lazy loading tree
+[12:21:48] <kgf> Request? dojo/store? dstore?
+[12:23:09] <winkey> i want to get ahold of the new store item, before the obstore does its notifys, and change the item
+[12:23:28] <kgf> oh, so like when an item is added/put?
+[12:24:37] <winkey> when it pulls the item from the server, i need to add some other objects and stuff to the item
+[12:25:10] <kgf> okay, and again, what store implementation is this
+[12:25:14] <winkey> looking at the json rest store
+[12:26:02] <winkey> i assume thats correct to do a lazy loading tree
+[12:26:30] <kgf> well that depends entirely on how your server behaves
+[12:26:37] <kgf> I mean, as to whether JsonRest is "correct"
+[12:26:46] <kgf> anyway, you'd probably have to extend the query method
+12:29:38] <kgf> totally shooting from the hip / untested here: https://gist.github.com/kfranqueiro/61727e43d4110c7b9d32
+[12:29:51] <kgf> oh look a typo
+[13:49:47] <winkey> little fuzzy on where/when the jsonrest stores the client side info
+[13:52:56] <kgf> it doesn't really hold on to it
+[13:53:04] <winkey> ack
+[13:53:15] <kgf> the tree / model might, but that's up to it
+[13:54:23] <winkey> so i need to extend the memory store to do the lazyload then
+[13:55:21] <winkey> i assume in mutch the same way your example did
+[13:56:08] <kgf> memory expects to have all data up-front to process client-side, so that's pretty much the polar opposite of lazy-loading...
+[13:56:25] <kgf> not sure what problem you are actually trying to solve
+[13:56:40] <winkey> i need to keep a store for whats been loaded
+[13:58:00] <winkey> each item will have other objects in it that will be added and removed from the content as there chosen in the tree
+[13:38:33] <winkey> kgf perfect thanks
+[13:38:56] <winkey> i assume you then put the obstore on top
+[13:43:30] <winkey> this.inherited(arguments);, so thats how thats done
+[18:15:52] <winkey> kgf http://dojotoolkit.org/reference-guide/1.10/dojo/store/Cache.html
+[18:17:18] <winkey> so i extend the json store and put the cache ontop i think
+[18:23:08] <winkey> and then put the obstore ontop of the cache
+
+
+
+
+
+
+
 
 
 
