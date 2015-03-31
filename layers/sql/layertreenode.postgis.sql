@@ -321,7 +321,7 @@ SELECT
     1        ,
     $1       ,
     $2       ,
-    'Folder' ,
+    'Link'   ,
     now()    ,
     now()    ,
     $3       ,
@@ -345,6 +345,53 @@ SELECT
         $8
 FROM layernode ln
 ;
+
+$$ LANGUAGE SQL;
+
+/*******************************************************************************
+@brief function to update a link folder
+
+ @param id       depth of the tree node, root is 0
+ @param name        the name of the node to add
+ @param tooltip
+ @param metadata
+ @param target
+ @return nothing
+
+ @details function for updateing a link node to the layer tree
+
+*******************************************************************************/
+
+CREATE OR REPLACE FUNCTION update_layers_link(
+    integer,
+    text,
+    text,
+    text,
+    bigint
+) RETURNS void AS
+$$
+
+UPDATE layers_layertreenode
+SET
+    (
+        tooltip ,
+        metadata
+    ) = (
+        $3  ,
+        $4
+    )
+WHERE id = $1;
+
+UPDATE layers_Link
+SET
+    (
+        name,
+        target
+    ) = (
+        $2  ,
+        $5
+    )
+WHERE layertreenode_ptr_id = $1;
 
 $$ LANGUAGE SQL;
 
@@ -726,6 +773,36 @@ WITH parent(id, level) AS (
     FROM search_layers($1, 0)
 )
 SELECT add_layers_link( level + 1, id, $2, $3, $4, $5, $6, $7 )
+FROM PARENT
+;
+
+$$ LANGUAGE SQL;
+
+/*******************************************************************************
+
+ @param parent          an aray that describes the parent by name
+ @param name        the name of the node to add
+ @param tooltip
+ @param metadata
+ @param target
+ @return nothing
+*******************************************************************************/
+
+CREATE OR REPLACE FUNCTION layers_update_link_by_name
+(
+    text[],
+    text,
+    text,
+    text,
+    bigint
+) RETURNS void AS
+$$
+
+WITH parent(id, level) AS (
+    select id, level
+    FROM search_layers($1, 0)
+)
+SELECT update_layers_link( id, $2, $3, $4, $5 )
 FROM PARENT
 ;
 
