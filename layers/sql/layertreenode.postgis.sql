@@ -241,7 +241,7 @@ SELECT
     1        ,
     $1       ,
     $2       ,
-    'Folder' ,
+    'Animation' ,
     now()    ,
     now()    ,
     $3       ,
