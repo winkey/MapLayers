@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript draw vector layers
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -29,38 +29,38 @@
 
 
 dojo.ready(function() {
-    NewWorld.Draw = new Object();
+    MapLayers.Draw = new Object();
 
 
 });
 
-function NewWorld_Draw_init() {
+function MapLayers_Draw_init() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_init()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_init()");
 
-    NewWorld.Draw.NavControl = new OpenLayers.Control.Navigation();
-    NewWorld.Map.ActiveControl = NewWorld.Draw.NavControl;
-    NewWorld.Draw.Layers = [];
-    NewWorld.Map.map.addControl(NewWorld.Map.ActiveControl);
+    MapLayers.Draw.NavControl = new OpenLayers.Control.Navigation();
+    MapLayers.Map.ActiveControl = MapLayers.Draw.NavControl;
+    MapLayers.Draw.Layers = [];
+    MapLayers.Map.map.addControl(MapLayers.Map.ActiveControl);
 }
 
-function NewWorld_Draw_DoNav() {
+function MapLayers_Draw_DoNav() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_DoNav()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_DoNav()");
 
-    if ( NewWorld.Map.ActiveControl != NewWorld.Draw.NavControl ) {
+    if ( MapLayers.Map.ActiveControl != MapLayers.Draw.NavControl ) {
 
-        if (NewWorld.Map.ActiveControl) {
-            NewWorld.Map.ActiveControl.deactivate();
+        if (MapLayers.Map.ActiveControl) {
+            MapLayers.Map.ActiveControl.deactivate();
         }
-        NewWorld.Map.ActiveControl = NewWorld.Draw.NavControl;
-        NewWorld.Map.ActiveControl.activate();
+        MapLayers.Map.ActiveControl = MapLayers.Draw.NavControl;
+        MapLayers.Map.ActiveControl.activate();
     }
 }
 
-function NewWorld_Draw_NewPoint() {
+function MapLayers_Draw_NewPoint() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewPoint()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewPoint()");
 
     /***** create the layer *****/
 
@@ -68,24 +68,24 @@ function NewWorld_Draw_NewPoint() {
 
     /***** create the Control *****/
 
-    NewWorld.Map.map.addLayers([Layer]);
+    MapLayers.Map.map.addLayers([Layer]);
     var Control = new OpenLayers.Control.DrawFeature(Layer, OpenLayers.Handler.Point);
-    NewWorld.Map.map.addControl(Control);
+    MapLayers.Map.map.addControl(Control);
 
-    if (NewWorld.Map.ActiveControl) {
-        NewWorld.Map.ActiveControl.deactivate();
+    if (MapLayers.Map.ActiveControl) {
+        MapLayers.Map.ActiveControl.deactivate();
     }
-    NewWorld.Map.ActiveControl = Control;
-    NewWorld.Map.ActiveControl.activate();
+    MapLayers.Map.ActiveControl = Control;
+    MapLayers.Map.ActiveControl.activate();
     
     /***** create the tree item *****/
 
-    NewWorld_Tree_Create_Templayer("Point Layer", Layer, Control)
+    MapLayers_Tree_Create_Templayer("Point Layer", Layer, Control)
 }
 
-function NewWorld_Draw_NewLine() {
+function MapLayers_Draw_NewLine() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewLine()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewLine()");
 
     /***** create the layer *****/
 
@@ -93,29 +93,29 @@ function NewWorld_Draw_NewLine() {
 
     /***** add the layer to the map *****/
 
-    NewWorld.Map.map.addLayer(Layer)
+    MapLayers.Map.map.addLayer(Layer)
 
     /***** create the Control *****/
 
-    NewWorld.Map.map.addLayers([Layer]);
+    MapLayers.Map.map.addLayers([Layer]);
     var Control = new OpenLayers.Control.DrawFeature(Layer, OpenLayers.Handler.Path);
-    NewWorld.Map.map.addControl(Control);
+    MapLayers.Map.map.addControl(Control);
 
-    if (NewWorld.Map.ActiveControl) {
-        NewWorld.Map.ActiveControl.deactivate();
+    if (MapLayers.Map.ActiveControl) {
+        MapLayers.Map.ActiveControl.deactivate();
     }
-    NewWorld.Map.ActiveControl = Control;
-    NewWorld.Map.ActiveControl.activate();
+    MapLayers.Map.ActiveControl = Control;
+    MapLayers.Map.ActiveControl.activate();
     
     
     /***** create the tree item *****/
 
-    NewWorld_Tree_Create_Templayer("Line Layer", Layer, Control)
+    MapLayers_Tree_Create_Templayer("Line Layer", Layer, Control)
 }
 
-function NewWorld_Draw_NewPoly() {
+function MapLayers_Draw_NewPoly() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewPoly()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewPoly()");
 
     /***** create the layer *****/
 
@@ -123,32 +123,32 @@ function NewWorld_Draw_NewPoly() {
 
     /***** add the layer to the map *****/
 
-    NewWorld.Map.map.addLayer(Layer)
+    MapLayers.Map.map.addLayer(Layer)
 
     /***** create the Control *****/
 
-    NewWorld.Map.map.addLayers([Layer]);
+    MapLayers.Map.map.addLayers([Layer]);
     var Control = new OpenLayers.Control.DrawFeature(Layer, OpenLayers.Handler.Polygon);
 
-    NewWorld.Map.map.addControl(Control);
+    MapLayers.Map.map.addControl(Control);
 
 
-    if (NewWorld.Map.ActiveControl) {
-        NewWorld.Map.ActiveControl.deactivate();
+    if (MapLayers.Map.ActiveControl) {
+        MapLayers.Map.ActiveControl.deactivate();
     }
-    NewWorld.Map.ActiveControl = Control;
-    NewWorld.Map.ActiveControl.activate();
+    MapLayers.Map.ActiveControl = Control;
+    MapLayers.Map.ActiveControl.activate();
     
 
     
     /***** create the tree item *****/
 
-    NewWorld_Tree_Create_Templayer("Polygon Layer", Layer, Control)
+    MapLayers_Tree_Create_Templayer("Polygon Layer", Layer, Control)
 }
 
-function NewWorld_Draw_NewBox() {
+function MapLayers_Draw_NewBox() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Draw_NewBox() :");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewBox() :");
 
     /***** create the layer *****/
 
@@ -156,11 +156,11 @@ function NewWorld_Draw_NewBox() {
 
     /***** add the layer to the map *****/
 
-    NewWorld.Map.map.addLayer(Layer)
+    MapLayers.Map.map.addLayer(Layer)
 
     /***** create the Control *****/
 
-    NewWorld.Map.map.addLayers([Layer]);
+    MapLayers.Map.map.addLayers([Layer]);
     var Control = new OpenLayers.Control.DrawFeature(
         Layer,
         OpenLayers.Handler.RegularPolygon,
@@ -171,19 +171,19 @@ function NewWorld_Draw_NewBox() {
             }
         }
     );
-    NewWorld.Map.map.addControl(Control);
+    MapLayers.Map.map.addControl(Control);
 
 
-    if (NewWorld.Map.ActiveControl) {
-        NewWorld.Map.ActiveControl.deactivate();
+    if (MapLayers.Map.ActiveControl) {
+        MapLayers.Map.ActiveControl.deactivate();
     }
-    NewWorld.Map.ActiveControl = Control;
-    NewWorld.Map.ActiveControl.activate();
+    MapLayers.Map.ActiveControl = Control;
+    MapLayers.Map.ActiveControl.activate();
     
     
     /***** create the tree item *****/
 
-    NewWorld_Tree_Create_Templayer("Box Layer", Layer, Control)
+    MapLayers_Tree_Create_Templayer("Box Layer", Layer, Control)
 
 }
 

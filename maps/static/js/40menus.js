@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript rightclick context menu 
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -27,10 +27,10 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
-function NewWorld_TreeMenu_Create() {
+function MapLayers_TreeMenu_Create() {
 
     var menu = new dijit.Menu();
-    menu.bindDomNode(NewWorld.Tree.tree.domNode);
+    menu.bindDomNode(MapLayers.Tree.tree.domNode);
 
     /* we need this part for some reason */ 
     menu.addChild(new dijit.MenuItem({
@@ -68,21 +68,21 @@ function NewWorld_TreeMenu_Create() {
         menu.startup();
 }
 /*
-    NewWorld.Menues = new Object();
+    MapLayers.Menues = new Object();
     
-    NewWorld.Menues.Adj_Transparency = {
+    MapLayers.Menues.Adj_Transparency = {
         text: "Adjust Transparency",
         iconCls: 'default-icon-menu',
         handler: function() {
           var node = tree.getSelectionModel().getSelectedNode();
           if(node && node.layer) {
-            NewWorld_Widgets_TransparencySlider(node.layer);
+            MapLayers_Widgets_TransparencySlider(node.layer);
           }
         },
         scope: this
     };
 
-    NewWorld.Menues.Zoom_Extent = {
+    MapLayers.Menues.Zoom_Extent = {
         text: "Zoom to Layer Extent",
         iconCls: "icon-zoom-visible",
         handler: function() {
@@ -94,7 +94,7 @@ function NewWorld_TreeMenu_Create() {
         scope: this
     };
 
-    NewWorld.Menues.Del = {
+    MapLayers.Menues.Del = {
         text: "Delete",
         iconCls: "icon-zoom-visible",
         handler: function() {
@@ -108,7 +108,7 @@ function NewWorld_TreeMenu_Create() {
 
 });
 */
-function NewWorld_Menu_ContextMenu(node, e) {
+function MapLayers_Menu_ContextMenu(node, e) {
 
     var menu;
 
@@ -124,14 +124,14 @@ function NewWorld_Menu_ContextMenu(node, e) {
         
             menu = Ext.menu.Menu({
                 items: [
-                    NewWorld.Menues.Adj_Transparency
+                    MapLayers.Menues.Adj_Transparency
                 ]
             });
         } else {
             menu = Ext.menu.Menu({
                 items: [
-                    NewWorld.Menues.Adj_Transparency,
-                    NewWorld.Menues.Zoom_Extent
+                    MapLayers.Menues.Adj_Transparency,
+                    MapLayers.Menues.Zoom_Extent
                 ]
             });
         }

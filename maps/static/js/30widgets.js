@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript misc widgets
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -31,7 +31,7 @@
   transparency slider
 *******************************************************************************/
 
-function NewWorld_Widgets_TransparencySlider(layer) {
+function MapLayers_Widgets_TransparencySlider(layer) {
 	
     var title = 'Transparency - ' + layer.name;
     var transparency_window = new Ext.Window({

@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript openlsyers map
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -31,7 +31,7 @@
 dojo.require("dojo");
 
 dojo.ready(function() {
-    NewWorld.Map = new Object();
+    MapLayers.Map = new Object();
 });
 
 /**************************************************************************//**
@@ -41,11 +41,11 @@ dojo.ready(function() {
  * fixme theme needs to come from config somehow
 ******************************************************************************/
 
-function NewWorld_OLMap_Create() {
+function MapLayers_OLMap_Create() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_OLMap_Create()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_OLMap_Create()");
 
-    NewWorld.Map.map = new OpenLayers.Map({
+    MapLayers.Map.map = new OpenLayers.Map({
         div:                "MapPane",
         units:              "m",
         maxResolution:      156543.0339,

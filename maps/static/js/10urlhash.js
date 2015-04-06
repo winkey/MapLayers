@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript permalink in url hash
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -37,13 +37,13 @@
 dojo.require("dojo");
 
 dojo.ready(function() {
-    NewWorld.Hash = new Object();
+    MapLayers.Hash = new Object();
 
 });
 
 
 
-function NewWorld_Hash_Get(Variable) {
+function MapLayers_Hash_Get(Variable) {
     
     var hash = document.location.hash
     if ( hash && hash != '') {
@@ -55,8 +55,8 @@ function NewWorld_Hash_Get(Variable) {
     for ( i = 0; i < vars.length; i++ ) {
         pair = vars[i].split('=');
         if (pair[0] == Variable) {
-            NewWorld.Hash.GetRet = (pair[1]);
-            return (NewWorld.Hash.GetRet);
+            MapLayers.Hash.GetRet = (pair[1]);
+            return (MapLayers.Hash.GetRet);
         }
     }
     
@@ -69,7 +69,7 @@ function NewWorld_Hash_Get(Variable) {
  * 
 ******************************************************************************/
 
-function NewWorld_Hash_Replace(Variable, contents) {
+function MapLayers_Hash_Replace(Variable, contents) {
     var newhash=''
     var needamp = false;
     var done = false;
@@ -128,12 +128,12 @@ function NewWorld_Hash_Replace(Variable, contents) {
  *  @brief build the layer list of all layers minus this one
 *****************************************************************************/
 
-function NewWorld_Hash_Removelayer(hashname, lid) {
+function MapLayers_Hash_Removelayer(hashname, lid) {
     var pair;
     var newlayers = '';
     var needcomma = false;
     
-    var layers = NewWorld_Hash_Get(hashname);
+    var layers = MapLayers_Hash_Get(hashname);
     if (layers) {
         var lids = layers.split(',')
         var i;
@@ -151,7 +151,7 @@ function NewWorld_Hash_Removelayer(hashname, lid) {
     
     /***** set the layers in the url *****/
         
-    NewWorld_Hash_Replace(hashname, newlayers);
+    MapLayers_Hash_Replace(hashname, newlayers);
         
 }
 
@@ -161,13 +161,13 @@ function NewWorld_Hash_Removelayer(hashname, lid) {
  *  @brief build the layer list of all layers plus this one
 *****************************************************************************/
 
-function NewWorld_Hash_Addlayer(hashname, lid) {
+function MapLayers_Hash_Addlayer(hashname, lid) {
 
     var newlayers = ''; 
     var needcomma = false;
     var done = false;
 
-    var layers = NewWorld_Hash_Get(hashname);
+    var layers = MapLayers_Hash_Get(hashname);
     if (layers) {
         var lids = layers.split(',')
         var i;
@@ -196,7 +196,7 @@ function NewWorld_Hash_Addlayer(hashname, lid) {
     
     /***** set the layers in the url *****/
     
-    NewWorld_Hash_Replace(hashname, newlayers);
+    MapLayers_Hash_Replace(hashname, newlayers);
     
 }
 
@@ -211,7 +211,7 @@ function AddLayerToHashOpen(lid) {
     var needcomma = false;
     var done = false;
 
-    var layers = NewWorld_Hash_Get('open');
+    var layers = MapLayers_Hash_Get('open');
     if (layers) {
         var lids = layers.split(',')
         var i;
@@ -240,7 +240,7 @@ function AddLayerToHashOpen(lid) {
     
     /***** set the layers in the url *****/
     
-    NewWorld_Hash_Replace('open', newlayers);
+    MapLayers_Hash_Replace('open', newlayers);
     
 }
 
@@ -251,13 +251,13 @@ openlayers move event function
 
 function MoveListner() {
     var zoom = this.getZoom();
-    NewWorld_Hash_Replace('zoom', zoom);
+    MapLayers_Hash_Replace('zoom', zoom);
     
     var center = this.getCenter();
     var proj = new OpenLayers.Projection("EPSG:4326");
-    newcenter = center.transform(NewWorld.Map.map.getProjectionObject(), proj);
-    NewWorld_Hash_Replace('lon', newcenter.lon);
-    NewWorld_Hash_Replace('lat', newcenter.lat);
+    newcenter = center.transform(MapLayers.Map.map.getProjectionObject(), proj);
+    MapLayers_Hash_Replace('lon', newcenter.lon);
+    MapLayers_Hash_Replace('lat', newcenter.lat);
 
 }
 
@@ -266,35 +266,35 @@ function MoveListner() {
   function to get the center and zoom from the url snd set it in the map
 ******************************************************************************/
 
-function NewWorld_Setcenter() {
+function MapLayers_Setcenter() {
       
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Setcenter()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Setcenter()");
 
     /***** get lat lon and zoom from the url *****/
     
     var pair;
-    var slat = NewWorld_Hash_Get('lat');
-    var slon = NewWorld_Hash_Get('lon');
-    var szoom = NewWorld_Hash_Get('zoom');
+    var slat = MapLayers_Hash_Get('lat');
+    var slon = MapLayers_Hash_Get('lon');
+    var szoom = MapLayers_Hash_Get('zoom');
     
     /***** if lat and lon are set in the url, override default *****/
     
     if ( slat && slat != "" && slon && slon != "" ) {
-        NewWorld.Settings.center = new OpenLayers.LonLat(slon, slat);
+        MapLayers.Settings.center = new OpenLayers.LonLat(slon, slat);
     }
     
     /***** if zoom is set in the url, override default *****/
 
     if ( szoom && szoom != "" ) {
-        NewWorld.Settings.zoom = szoom;
+        MapLayers.Settings.zoom = szoom;
     }
     
     /***** if map center and zoom arent set, set them *****/
     
-    if (!NewWorld.Map.map.getCenter() || NewWorld.Map.map.getCenter().lon == 0) {
+    if (!MapLayers.Map.map.getCenter() || MapLayers.Map.map.getCenter().lon == 0) {
         var proj = new OpenLayers.Projection("EPSG:4326");
-        NewWorld.Map.map.setCenter(NewWorld.Settings.mycenter.transform(proj, NewWorld.Map.map.getProjectionObject()), NewWorld.Settings.zoom);
+        MapLayers.Map.map.setCenter(MapLayers.Settings.mycenter.transform(proj, MapLayers.Map.map.getProjectionObject()), MapLayers.Settings.zoom);
     }
     
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript dojo toolbar
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -41,51 +41,51 @@ dojo.require("dijit/MenuItem");
 *******************************************************************************/
 
 
-function NewWorld_toolbar_Create() {
+function MapLayers_toolbar_Create() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_toolbar_Create()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_toolbar_Create()");
     
-    NewWorld.toolbar = new dijit.Toolbar({}, "toolbar");
+    MapLayers.toolbar = new dijit.Toolbar({}, "toolbar");
 
 
     /***** LOGIN BUTTON *****/
 
     var label="";
 
-    NewWorld.login.loginbutton = new dijit.form.Button({
+    MapLayers.login.loginbutton = new dijit.form.Button({
             label: "Login",
             showLabel: true,
-            onClick: NewWorld_login
+            onClick: MapLayers_login
         });
 
-    if ( NewWorld.login.isLoggedin) {
-        NewWorld.login.loginbutton.set('label', 'Logout')
-        NewWorld.login.loginbutton.set('onClick', NewWorld_logout)
+    if ( MapLayers.login.isLoggedin) {
+        MapLayers.login.loginbutton.set('label', 'Logout')
+        MapLayers.login.loginbutton.set('onClick', MapLayers_logout)
     }        
 
-    NewWorld.toolbar.addChild(NewWorld.login.loginbutton)
-    NewWorld.login.loginbutton.startup();
+    MapLayers.toolbar.addChild(MapLayers.login.loginbutton)
+    MapLayers.login.loginbutton.startup();
 
-    NewWorld.toolbar.addChild(new dijit.ToolbarSeparator({}));
+    MapLayers.toolbar.addChild(new dijit.ToolbarSeparator({}));
 
     var gebutton = new dijit.form.Button({
         label: "Open in Google Earth",
         showLabel: true,
-        onClick: NewWorld_Kml_writekml
+        onClick: MapLayers_Kml_writekml
     });
 
-    NewWorld.toolbar.addChild(gebutton)
+    MapLayers.toolbar.addChild(gebutton)
     gebutton.startup();
 
-    NewWorld.toolbar.addChild(new dijit.ToolbarSeparator({}));
+    MapLayers.toolbar.addChild(new dijit.ToolbarSeparator({}));
 
     var NavButton = new dijit.form.Button({
         label: "Navigate",
         showLabel: true,
-        onClick: NewWorld_Draw_DoNav
+        onClick: MapLayers_Draw_DoNav
     });
 
-    NewWorld.toolbar.addChild(NavButton);
+    MapLayers.toolbar.addChild(NavButton);
     NavButton.startup();
 
     
@@ -93,26 +93,26 @@ function NewWorld_toolbar_Create() {
 
     PointMenu = new dijit.MenuItem({
         label: "New Point Layer",
-        onClick: NewWorld_Draw_NewPoint
+        onClick: MapLayers_Draw_NewPoint
     });
     DrawMenu.addChild(PointMenu);
 
 
     var LineMenu = new dijit.MenuItem({
         label: "New Line Layer",
-        onClick: NewWorld_Draw_NewLine
+        onClick: MapLayers_Draw_NewLine
     });
     DrawMenu.addChild(LineMenu);
 
     var PolyMenu = new dijit.MenuItem({
         label: "New Polygon Layer",
-        onClick: NewWorld_Draw_NewPoly
+        onClick: MapLayers_Draw_NewPoly
     });
     DrawMenu.addChild(PolyMenu);
 
     var BoxMenu = new dijit.MenuItem({
         label: "New Box Layer",
-        onClick: NewWorld_Draw_NewBox
+        onClick: MapLayers_Draw_NewBox
     });
     DrawMenu.addChild(BoxMenu);
 
@@ -125,12 +125,12 @@ function NewWorld_toolbar_Create() {
         dropDown: DrawMenu,
     })
     
-    NewWorld.toolbar.addChild(DrawButton);
+    MapLayers.toolbar.addChild(DrawButton);
     DrawButton.startup();
 
 
-    NewWorld.toolbar.placeAt("ToolbarPane")
-    NewWorld.toolbar.startup();
+    MapLayers.toolbar.placeAt("ToolbarPane")
+    MapLayers.toolbar.startup();
 
 }
 

@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript login button
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -32,12 +32,12 @@ dojo.require("dojo");
 
 dojo.ready(function() {
 
-    NewWorld.login = new Object();
-    NewWorld.login.loginbutton = {};
+    MapLayers.login = new Object();
+    MapLayers.login.loginbutton = {};
     
 });
 
-function NewWorld_login() {
+function MapLayers_login() {
     
     window.open(
         "../login/",
@@ -47,17 +47,17 @@ function NewWorld_login() {
     
 
 }
-function NewWorld_login_Finish() {
-    NewWorld.login.isLoggedin = true;
-    NewWorld.login.loginbutton.set('label', 'Logout')
-    NewWorld.login.loginbutton.set('onClick', NewWorld_logout)
+function MapLayers_login_Finish() {
+    MapLayers.login.isLoggedin = true;
+    MapLayers.login.loginbutton.set('label', 'Logout')
+    MapLayers.login.loginbutton.set('onClick', MapLayers_logout)
 
     /***** need to get a fresh tree *****/ 
     /***** parse hash layer list *****/ 
     
 }
     
-function NewWorld_logout() {
+function MapLayers_logout() {
     
     window.open(
         "../logout/",
@@ -67,10 +67,10 @@ function NewWorld_logout() {
     
     
 }
-function NewWorld_logout_Finish() {
-    NewWorld.login.isLoggedin = false;
-    NewWorld.login.loginbutton.set('label', 'Login')
-    NewWorld.login.loginbutton.set('onClick', NewWorld_login)
+function MapLayers_logout_Finish() {
+    MapLayers.login.isLoggedin = false;
+    MapLayers.login.loginbutton.set('label', 'Login')
+    MapLayers.login.loginbutton.set('onClick', MapLayers_login)
     
     /***** need to get a fresh tree *****/
     /***** parse hash layer list *****/

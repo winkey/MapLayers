@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript view in google earth
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -32,7 +32,7 @@
 
 
 dojo.ready(function() {
-    NewWorld.Kml = new Object();
+    MapLayers.Kml = new Object();
     
 
 });
@@ -42,11 +42,11 @@ dojo.ready(function() {
     recursive function to parse the tree to build a kml
 ******************************************************************************/
 
-function NewWorld_Kml_parsetree(item, indent) {
+function MapLayers_Kml_parsetree(item, indent) {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Kml_parsetree(item, indent) ", item, indent);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Kml_parsetree(item, indent) ", item, indent);
 
-    var children = NewWorld.Tree.Store.getChildren(item);
+    var children = MapLayers.Tree.Store.getChildren(item);
     
     if (children) {
         
@@ -64,65 +64,65 @@ function NewWorld_Kml_parsetree(item, indent) {
 
                     /***** layer kml head *****/
 
-                    NewWorld.Kml.kml += indent + '<Folder>\n';
-                    NewWorld.Kml.kml += indent + '  <name>' + child.name + '</name>\n';
-                    NewWorld.Kml.kml += indent + '  <visibility>0</visibility>\n';
-                    NewWorld.Kml.kml += indent + '  <open>1</open>\n';
-                    NewWorld.Kml.kml += indent + '  <Style>\n';
-                    NewWorld.Kml.kml += indent + '    <ListStyle>\n';
-                    NewWorld.Kml.kml += indent + '      <listItemType>radioFolder</listItemType>\n';
-                    NewWorld.Kml.kml += indent + '      <bgColor>00ffffff</bgColor>\n';
-                    NewWorld.Kml.kml += indent + '      <maxSnippetLines>2</maxSnippetLines>\n';
-                    NewWorld.Kml.kml += indent + '    </ListStyle>\n';
-                    NewWorld.Kml.kml += indent + '  </Style>\n';
+                    MapLayers.Kml.kml += indent + '<Folder>\n';
+                    MapLayers.Kml.kml += indent + '  <name>' + child.name + '</name>\n';
+                    MapLayers.Kml.kml += indent + '  <visibility>0</visibility>\n';
+                    MapLayers.Kml.kml += indent + '  <open>1</open>\n';
+                    MapLayers.Kml.kml += indent + '  <Style>\n';
+                    MapLayers.Kml.kml += indent + '    <ListStyle>\n';
+                    MapLayers.Kml.kml += indent + '      <listItemType>radioFolder</listItemType>\n';
+                    MapLayers.Kml.kml += indent + '      <bgColor>00ffffff</bgColor>\n';
+                    MapLayers.Kml.kml += indent + '      <maxSnippetLines>2</maxSnippetLines>\n';
+                    MapLayers.Kml.kml += indent + '    </ListStyle>\n';
+                    MapLayers.Kml.kml += indent + '  </Style>\n';
 
                     
                     /***** if the layer is on print the off folder first *****/
 
 	                if (child.checked) {
                         
-                        NewWorld.Kml.kml += indent + '  <Folder>\n';
-                        NewWorld.Kml.kml += indent + '    <name>off</name>\n';
-                        NewWorld.Kml.kml += indent + '    <visibility>0</visibility>\n';
-                        NewWorld.Kml.kml += indent + '  </Folder>\n';
+                        MapLayers.Kml.kml += indent + '  <Folder>\n';
+                        MapLayers.Kml.kml += indent + '    <name>off</name>\n';
+                        MapLayers.Kml.kml += indent + '    <visibility>0</visibility>\n';
+                        MapLayers.Kml.kml += indent + '  </Folder>\n';
                     }
 
                     /***** print the on folder *****/
 
-                    NewWorld.Kml.kml += indent + '  <Folder>\n';
-                    NewWorld.Kml.kml += indent + '    <name>on</name>\n';
+                    MapLayers.Kml.kml += indent + '  <Folder>\n';
+                    MapLayers.Kml.kml += indent + '    <name>on</name>\n';
 	                if (child.checked) {
-                        NewWorld.Kml.kml += indent + '    <visibility>1</visibility>\n';
+                        MapLayers.Kml.kml += indent + '    <visibility>1</visibility>\n';
                     } else {
-                        NewWorld.Kml.kml += indent + '    <visibility>0</visibility>\n';
+                        MapLayers.Kml.kml += indent + '    <visibility>0</visibility>\n';
                     }
-                    NewWorld.Kml.kml += indent + '    <NetworkLink>\n';
-                    NewWorld.Kml.kml += indent + '      <Link>\n';
-                    NewWorld.Kml.kml += indent + '        <href>' + NewWorld.Settings.tilecacheurl + '/1.0.0/' + child.id + '_4326/0/0/0.kml</href>\n';
-                    NewWorld.Kml.kml += indent + '        <viewRefreshMode>onRegion</viewRefreshMode>\n';
-                    NewWorld.Kml.kml += indent + '      </Link>\n';
-                    NewWorld.Kml.kml += indent + '    </NetworkLink>\n';
-                    NewWorld.Kml.kml += indent + '    <NetworkLink>\n';
-                    NewWorld.Kml.kml += indent + '      <Link>\n';
-                    NewWorld.Kml.kml += indent + '        <href>' + NewWorld.Settings.tilecacheurl + '/1.0.0/' + child.id + '_4326/0/1/0.kml</href>\n';
-                    NewWorld.Kml.kml += indent + '        <viewRefreshMode>onRegion</viewRefreshMode>\n';
-                    NewWorld.Kml.kml += indent + '      </Link>\n';
-                    NewWorld.Kml.kml += indent + '    </NetworkLink>\n';
-                    NewWorld.Kml.kml += indent + '  </Folder>\n';
+                    MapLayers.Kml.kml += indent + '    <NetworkLink>\n';
+                    MapLayers.Kml.kml += indent + '      <Link>\n';
+                    MapLayers.Kml.kml += indent + '        <href>' + MapLayers.Settings.tilecacheurl + '/1.0.0/' + child.id + '_4326/0/0/0.kml</href>\n';
+                    MapLayers.Kml.kml += indent + '        <viewRefreshMode>onRegion</viewRefreshMode>\n';
+                    MapLayers.Kml.kml += indent + '      </Link>\n';
+                    MapLayers.Kml.kml += indent + '    </NetworkLink>\n';
+                    MapLayers.Kml.kml += indent + '    <NetworkLink>\n';
+                    MapLayers.Kml.kml += indent + '      <Link>\n';
+                    MapLayers.Kml.kml += indent + '        <href>' + MapLayers.Settings.tilecacheurl + '/1.0.0/' + child.id + '_4326/0/1/0.kml</href>\n';
+                    MapLayers.Kml.kml += indent + '        <viewRefreshMode>onRegion</viewRefreshMode>\n';
+                    MapLayers.Kml.kml += indent + '      </Link>\n';
+                    MapLayers.Kml.kml += indent + '    </NetworkLink>\n';
+                    MapLayers.Kml.kml += indent + '  </Folder>\n';
 
                     /***** if the layer is off print the off folder last *****/
 
 	                if ( ! child.checked) {
                         
-                        NewWorld.Kml.kml += indent + '  <Folder>\n';
-                        NewWorld.Kml.kml += indent + '    <name>off</name>\n';
-                        NewWorld.Kml.kml += indent + '    <visibility>1</visibility>\n';
-                        NewWorld.Kml.kml += indent + '  </Folder>\n';
+                        MapLayers.Kml.kml += indent + '  <Folder>\n';
+                        MapLayers.Kml.kml += indent + '    <name>off</name>\n';
+                        MapLayers.Kml.kml += indent + '    <visibility>1</visibility>\n';
+                        MapLayers.Kml.kml += indent + '  </Folder>\n';
                     }
                     
                     /***** end the folder for the layer *****/
 
-                    NewWorld.Kml.kml += indent + '</Folder>\n';
+                    MapLayers.Kml.kml += indent + '</Folder>\n';
 
                 }
 
@@ -134,36 +134,36 @@ function NewWorld_Kml_parsetree(item, indent) {
                 console.log( "child before if ", child);
                 if (child.name != "Base Layers") {
                     console.log( "got here");
-                    NewWorld.Kml.kml += indent + '<Folder>\n';
-                    NewWorld.Kml.kml += indent + '  <name>' + child.text + '</name>\n';
-                    NewWorld.Kml.kml += indent + '  <visibility>0</visibility>\n';
+                    MapLayers.Kml.kml += indent + '<Folder>\n';
+                    MapLayers.Kml.kml += indent + '  <name>' + child.text + '</name>\n';
+                    MapLayers.Kml.kml += indent + '  <visibility>0</visibility>\n';
                     
                     //fixme this is always false
                     if ( child.isExpanded ) {
-                        NewWorld.Kml.kml += indent + '  <open>1</open>\n';
+                        MapLayers.Kml.kml += indent + '  <open>1</open>\n';
                     } else {
-                        NewWorld.Kml.kml += indent + '  <open>0</open>\n';
+                        MapLayers.Kml.kml += indent + '  <open>0</open>\n';
                     }
                     console.log( "got here");
-                    NewWorld_Kml_parsetree(child, indent + "  ");
+                    MapLayers_Kml_parsetree(child, indent + "  ");
 
 
-                    NewWorld.Kml.kml += indent + '</Folder>\n';
+                    MapLayers.Kml.kml += indent + '</Folder>\n';
                 }
             }
         });
     }    
 }
 
-function NewWorld_Kml_writekml() {
+function MapLayers_Kml_writekml() {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Kml_writekml()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Kml_writekml()");
 
-    var zoom = NewWorld.Map.map.getZoom();
+    var zoom = MapLayers.Map.map.getZoom();
     
-    var center = NewWorld.Map.map.getCenter();
+    var center = MapLayers.Map.map.getCenter();
     var proj = new OpenLayers.Projection("EPSG:4326");
-    var newcenter = center.transform(NewWorld.Map.map.getProjectionObject(), proj);
+    var newcenter = center.transform(MapLayers.Map.map.getProjectionObject(), proj);
 
     var lon = newcenter.lon;
     var lat = newcenter.lat;
@@ -173,7 +173,7 @@ function NewWorld_Kml_writekml() {
         altitude /= 2;
     }
     
-    NewWorld.Kml.kml = '\
+    MapLayers.Kml.kml = '\
 <?xml version="1.0" encoding="UTF-8"?>\n\
 <kml xmlns="http://www.opengis.net/kml/2.2">\n\
   <Document>\n\
@@ -188,9 +188,9 @@ function NewWorld_Kml_writekml() {
     </LookAt>\n\
     <name>testy2</name>\n';
 
-    NewWorld_Kml_parsetree(NewWorld.Tree.obStore.query( { id: 1 } )[0], "    ");
+    MapLayers_Kml_parsetree(MapLayers.Tree.obStore.query( { id: 1 } )[0], "    ");
     
-     NewWorld.Kml.kml += '\
+     MapLayers.Kml.kml += '\
   </Document>\n\
 </kml>\n';
 
@@ -202,7 +202,7 @@ function NewWorld_Kml_writekml() {
     
     var kmlinput = document.createElement("input");
     kmlinput.setAttribute("name", "kml") ;
-    kmlinput.setAttribute("value", NewWorld.Kml.kml);
+    kmlinput.setAttribute("value", MapLayers.Kml.kml);
 
     kmlform.appendChild(kmlinput)
     

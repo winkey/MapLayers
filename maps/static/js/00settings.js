@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript settings
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -30,10 +30,10 @@
 dojo.require("dojo");
 
 dojo.ready(function() {
-    NewWorld = new Object(); 
-    NewWorld.Settings = new Object();
+    MapLayers = new Object(); 
+    MapLayers.Settings = new Object();
 
-    NewWorld.Settings.debug=true;
+    MapLayers.Settings.debug=true;
 });
 
 
@@ -43,15 +43,15 @@ dojo.ready(function() {
  * 
  ******************************************************************************/
 
-function NewWorld_Settings_Set(settings) {
+function MapLayers_Settings_Set(settings) {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Settings_Set()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Settings_Set()");
 
-    NewWorld.Settings = settings[0].fields;
-    NewWorld.Settings.debug=true;
+    MapLayers.Settings = settings[0].fields;
+    MapLayers.Settings.debug=true;
 
-    var c = OpenLayers.Geometry.fromWKT(NewWorld.Settings.center);
-    NewWorld.Settings.mycenter = new OpenLayers.LonLat(c.x, c.y);
+    var c = OpenLayers.Geometry.fromWKT(MapLayers.Settings.center);
+    MapLayers.Settings.mycenter = new OpenLayers.LonLat(c.x, c.y);
     
 
 }

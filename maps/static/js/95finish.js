@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript finishup code
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2013,  Brian Case 
+ * Copyright (c) 2013-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -34,23 +34,23 @@ function finishup() {
 
 
     
-    NewWorld_Setcenter();
-    NewWorld_Draw_init();
+    MapLayers_Setcenter();
+    MapLayers_Draw_init();
 
-    NewWorld_toolbar_Create();
-    NewWorld_Time_CreateSlider();
+    MapLayers_toolbar_Create();
+    MapLayers_Time_CreateSlider();
     dijit.registry.byId("borderContainer").resize();
       /***** get layer list from the url *****/
   
     
-    var layers = NewWorld_Hash_Get('layers');
-    var open =  NewWorld_Hash_Get('open');
+    var layers = MapLayers_Hash_Get('layers');
+    var open =  MapLayers_Hash_Get('open');
 
     if ( open && open != "") {
-        NewWorld_Tree_Find_and_Open_Layers( open, true);
+        MapLayers_Tree_Find_and_Open_Layers( open, true);
     }
     if ( layers && layers != "") {
-        NewWorld_Tree_Find_and_Open_Layers( layers, false);
+        MapLayers_Tree_Find_and_Open_Layers( layers, false);
     }
   
 
@@ -58,11 +58,11 @@ function finishup() {
  add openlayers move event
 ******************************************************************************/
   
-    NewWorld.Map.map.events.register('moveend', NewWorld.Map.map, MoveListner);
+    MapLayers.Map.map.events.register('moveend', MapLayers.Map.map, MoveListner);
   
     /***** set the topic on the window *****/
     
-    document.title = NewWorld.Settings.title;
+    document.title = MapLayers.Settings.title;
 };
 
 
@@ -75,12 +75,12 @@ function finishup() {
  * 
 ******************************************************************************/
 
-function NewWorld_Tree_GetJson() {
+function MapLayers_Tree_GetJson() {
     
     $.getJSON( "../layers/treejson", {},
         function(data) {
-            NewWorld_Tree_Parse( data, null );
-            NewWorld_Tree_Create_stage_2();
+            MapLayers_Tree_Parse( data, null );
+            MapLayers_Tree_Create_stage_2();
             finishup();
         }
     );
@@ -93,17 +93,17 @@ function NewWorld_Tree_GetJson() {
 ******************************************************************************/
 
 
-function NewWorld_Login_GetJson() {
+function MapLayers_Login_GetJson() {
     
     $.getJSON( "isLoggedin", {}, 
         function(data) {
-            NewWorld.login.isLoggedin = data.isLoggedin;
+            MapLayers.login.isLoggedin = data.isLoggedin;
 
-            NewWorld_OLMap_Create();
+            MapLayers_OLMap_Create();
 
 
 
-            NewWorld_Tree_GetJson();
+            MapLayers_Tree_GetJson();
         }
     );
 }
@@ -115,12 +115,12 @@ function NewWorld_Login_GetJson() {
 ******************************************************************************/
 
 
-function NewWorld_Settings_GetJson() {
+function MapLayers_Settings_GetJson() {
     
     $.getJSON( "settings", {}, 
         function(data) {
-            NewWorld_Settings_Set(data);
-            NewWorld_Login_GetJson();
+            MapLayers_Settings_Set(data);
+            MapLayers_Login_GetJson();
         }
     );
 }
@@ -131,5 +131,5 @@ dojo.ready(function() {
 
 
 
-    NewWorld_Settings_GetJson();
+    MapLayers_Settings_GetJson();
 });

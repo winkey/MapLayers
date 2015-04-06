@@ -1,12 +1,12 @@
 /*******************************************************************************
  *
- * Project: NewWorld
+ * Project: MapLayers
  * App:     javascript timeslider
  *
  * 
  *
  *******************************************************************************
- * Copyright (c) 2014,  Brian Case 
+ * Copyright (c) 2014-2015,  Brian Case 
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
@@ -43,32 +43,32 @@ dojo.require("dojo/fx/Toggler");
 
 dojo.ready(function() {
 
-    NewWorld.Time = new Object();
-    NewWorld.Time.timer = null;
-    NewWorld.Time.updatetimer = null;
-    NewWorld.Time.firstplay = false;
+    MapLayers.Time = new Object();
+    MapLayers.Time.timer = null;
+    MapLayers.Time.updatetimer = null;
+    MapLayers.Time.firstplay = false;
     
-    NewWorld.Time.TSList = new DLList();
-    NewWorld.Time.TSCurrentNode = null;
-    NewWorld.Time.BegList = new DLList();
-    NewWorld.Time.EndList = new DLList();
-    NewWorld.Time.BegCurrentNode = null;
-    NewWorld.Time.EndCurrentNode = null;
+    MapLayers.Time.TSList = new DLList();
+    MapLayers.Time.TSCurrentNode = null;
+    MapLayers.Time.BegList = new DLList();
+    MapLayers.Time.EndList = new DLList();
+    MapLayers.Time.BegCurrentNode = null;
+    MapLayers.Time.EndCurrentNode = null;
     
-    NewWorld.Time.SliderMinValue = null;
-    NewWorld.Time.SliderMaxValue = null;
-    NewWorld.Time.IgnoreSliderChange = false;
+    MapLayers.Time.SliderMinValue = null;
+    MapLayers.Time.SliderMaxValue = null;
+    MapLayers.Time.IgnoreSliderChange = false;
     
-    NewWorld.Time.time = null;
-    NewWorld.Time.loop = false;
-    NewWorld.Time.rock = false;
-    NewWorld.Time.backwards = false;
-    NewWorld.Time.speed = 1000;
-    NewWorld.Time.incr = 1 * 60 * 60 * 1000;
+    MapLayers.Time.time = null;
+    MapLayers.Time.loop = false;
+    MapLayers.Time.rock = false;
+    MapLayers.Time.backwards = false;
+    MapLayers.Time.speed = 1000;
+    MapLayers.Time.incr = 1 * 60 * 60 * 1000;
     
     require(["dojo/fx/Toggler"], function(Toggler) {
 
-        NewWorld.Time.hidetoggler = new Toggler({
+        MapLayers.Time.hidetoggler = new Toggler({
             node: "TimebarPane",
             showDuration: 1000,
             hideDuration: 1000
@@ -85,96 +85,96 @@ function MAX (a,b) {
 }
 
     
-function NewWorld_Time_Node(treenode, timestamp) {
+function MapLayers_Time_Node(treenode, timestamp) {
     this.treenode = treenode;
     this.timestamp = timestamp;
 
 }
 
-function NewWorld_Time_CreateSlider() {
+function MapLayers_Time_CreateSlider() {
     
     //fixme grab the hash vars!
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_CreateSlider()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_CreateSlider()");
 
     
-    NewWorld.Time.toolbar = new dijit.Toolbar({}, "timebar");
+    MapLayers.Time.toolbar = new dijit.Toolbar({}, "timebar");
 
     /***** play/pause button *****/
     
-    NewWorld.Time.playbutton = new dijit.form.Button({
+    MapLayers.Time.playbutton = new dijit.form.Button({
             label: "Play",
             showLabel: true,
-            onClick: NewWorld_Time_Interval_Play
+            onClick: MapLayers_Time_Interval_Play
     }, "playbutton");
 
-    NewWorld.Time.toolbar.addChild(NewWorld.Time.playbutton)
-    NewWorld.Time.playbutton.startup();
+    MapLayers.Time.toolbar.addChild(MapLayers.Time.playbutton)
+    MapLayers.Time.playbutton.startup();
 
     /***** forward button *****/
 
-    NewWorld.Time.forwardbutton = new dijit.form.ToggleButton({
+    MapLayers.Time.forwardbutton = new dijit.form.ToggleButton({
             label: "Fwd",
             showLabel: true,
             checked: true,
-            onChange: function(val){ NewWorld.Time.backwards = !val; }
+            onChange: function(val){ MapLayers.Time.backwards = !val; }
     }, "forwardbutton");
 
-    NewWorld.Time.toolbar.addChild(NewWorld.Time.forwardbutton)
-    NewWorld.Time.forwardbutton.startup();
+    MapLayers.Time.toolbar.addChild(MapLayers.Time.forwardbutton)
+    MapLayers.Time.forwardbutton.startup();
 
     /***** time slider *****/
     
-    NewWorld.Time.Timeslider = new dijit.form.HorizontalSlider({
+    MapLayers.Time.Timeslider = new dijit.form.HorizontalSlider({
         value: 50,
         minimum: 0,
         maximum: 100000,
         intermediateChanges: true, //discreteValues
         style: "width:200px;",
-        onChange: NewWorld_Time_Timeslider_change
+        onChange: MapLayers_Time_Timeslider_change
     }, "timeslider");
 
-    NewWorld.Time.toolbar.addChild(NewWorld.Time.Timeslider)
-    NewWorld.Time.Timeslider.startup();
+    MapLayers.Time.toolbar.addChild(MapLayers.Time.Timeslider)
+    MapLayers.Time.Timeslider.startup();
 
     
     /***** loop button *****/
 
-    NewWorld.Time.loopbutton = new dijit.form.ToggleButton({
+    MapLayers.Time.loopbutton = new dijit.form.ToggleButton({
             label: "Loop",
             showLabel: true,
             checked: false,
             onChange: function(val){
-                NewWorld.Time.loop = val
+                MapLayers.Time.loop = val
                 if (val) {
-                    NewWorld.Time.rockbutton.set("checked", false);
+                    MapLayers.Time.rockbutton.set("checked", false);
                 }
             }
     }, "loopbutton");
 
-    NewWorld.Time.toolbar.addChild(NewWorld.Time.loopbutton)
-    NewWorld.Time.loopbutton.startup();
+    MapLayers.Time.toolbar.addChild(MapLayers.Time.loopbutton)
+    MapLayers.Time.loopbutton.startup();
 
     /***** rock button *****/
 
-    NewWorld.Time.rockbutton = new dijit.form.ToggleButton({
+    MapLayers.Time.rockbutton = new dijit.form.ToggleButton({
             label: "Rock",
             showLabel: true,
             checked: false,
             onChange: function(val){
-                NewWorld.Time.rock = val
+                MapLayers.Time.rock = val
                 if (val) {
-                    NewWorld.Time.loopbutton.set("checked", false);
+                    MapLayers.Time.loopbutton.set("checked", false);
                 }
             }
             
     }, "rockbutton");
 
-    NewWorld.Time.toolbar.addChild(NewWorld.Time.rockbutton)
-    NewWorld.Time.rockbutton.startup();
+    MapLayers.Time.toolbar.addChild(MapLayers.Time.rockbutton)
+    MapLayers.Time.rockbutton.startup();
 
     /***** increment chooser *****/
     
-    NewWorld.Time.incrStore = new dojo.store.Memory({
+    MapLayers.Time.incrStore = new dojo.store.Memory({
         data: [
             { name:"Second",     value: 1 * 1 * 1000},
             { name:"5 Seconds",  value: 5 * 1 * 1000},
@@ -218,26 +218,26 @@ function NewWorld_Time_CreateSlider() {
         ]
     });
 
-    NewWorld.Time.Incrbox = new dijit.form.ComboBox({
+    MapLayers.Time.Incrbox = new dijit.form.ComboBox({
         id: "timeincrbox",
         name: "state",
         value: "Hour",
-        store: NewWorld.Time.incrStore,
+        store: MapLayers.Time.incrStore,
         searchAttr: "name",
         labelAttr: "name",
-        onChange: NewWorld_Time_Incrbox_change
+        onChange: MapLayers_Time_Incrbox_change
     }, "timeincrbox");
 
-    NewWorld.Time.toolbar.addChild(NewWorld.Time.Incrbox)
-    NewWorld.Time.Incrbox.startup();
+    MapLayers.Time.toolbar.addChild(MapLayers.Time.Incrbox)
+    MapLayers.Time.Incrbox.startup();
 
 /*    
     /***** speed slider ****
     
-    NewWorld.Time.Speedslider = new Ext.slider.SingleSlider({
+    MapLayers.Time.Speedslider = new Ext.slider.SingleSlider({
             fieldLabel: "Time",
             width: 200,
-            value: NewWorld.Time.speed,
+            value: MapLayers.Time.speed,
             increment: 125,
             minValue: 250,
             maxValue: 10000,
@@ -245,14 +245,14 @@ function NewWorld_Time_CreateSlider() {
             useTips: false
     });
     
-    NewWorld.Time.Speedslider.addListener('change', NewWorld_Time_Speedslider_change)
+    MapLayers.Time.Speedslider.addListener('change', MapLayers_Time_Speedslider_change)
     */
 
-    NewWorld_Time_setVisible(false);
+    MapLayers_Time_setVisible(false);
 
     
-    NewWorld.Time.toolbar.placeAt("TimebarPane");
-    NewWorld.Time.toolbar.startup();
+    MapLayers.Time.toolbar.placeAt("TimebarPane");
+    MapLayers.Time.toolbar.startup();
 
 }
 
@@ -265,14 +265,14 @@ function NewWorld_Time_CreateSlider() {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_setVisible(bool) {
+function MapLayers_Time_setVisible(bool) {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_setVisible(bool)", bool);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_setVisible(bool)", bool);
     
     if (bool) { 
-        NewWorld.Time.hidetoggler.show();
+        MapLayers.Time.hidetoggler.show();
     } else {
-        NewWorld.Time.hidetoggler.hide();
+        MapLayers.Time.hidetoggler.hide();
     }
 
 }
@@ -284,18 +284,18 @@ function NewWorld_Time_setVisible(bool) {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_Speedslider_change( newValueb ) {
+function MapLayers_Time_Speedslider_change( newValueb ) {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Speedslider_change( newValue )",newValue);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Speedslider_change( newValue )",newValue);
     
     /***** set the new value *****/
 
-    NewWorld.Time.speed = newValue;
+    MapLayers.Time.speed = newValue;
     
     /***** restart the timer with the new speed *****/
     
-    NewWorld_Time_Interval_Pause();
-    NewWorld_Time_Interval_Play();
+    MapLayers_Time_Interval_Pause();
+    MapLayers_Time_Interval_Play();
 }
 
 /******************************************************************************
@@ -305,15 +305,15 @@ function NewWorld_Time_Speedslider_change( newValueb ) {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_expire_remaining() {
+function MapLayers_Time_expire_remaining() {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_expire_remaining()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_expire_remaining()");
     
     var node;
 
-    if (NewWorld.Time.backwards) {
+    if (MapLayers.Time.backwards) {
     
-        for (node = NewWorld.Time.BegCurrentNode ; node ; node = node.prev) {
+        for (node = MapLayers.Time.BegCurrentNode ; node ; node = node.prev) {
             if (node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(false);
             }
@@ -321,16 +321,16 @@ function NewWorld_Time_expire_remaining() {
         
     } else {
         
-        for (node = NewWorld.Time.EndCurrentNode ; node ; node = node.next) {
+        for (node = MapLayers.Time.EndCurrentNode ; node ; node = node.next) {
             if (node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(false);
             }
         }
     }
 
-    if (NewWorld.Time.TSCurrentNode) {
+    if (MapLayers.Time.TSCurrentNode) {
         if (node.data.treenode.layer.getVisibility()) {
-            NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+            MapLayers.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
         }
     }
 
@@ -338,15 +338,15 @@ function NewWorld_Time_expire_remaining() {
 
 /******************************************************************************
  * 
- * 
- * 
+ * fixme this is all wrong
+ * both timespan lists need to be parsed at the same time
  * 
 ******************************************************************************/
 
-function NewWorld_Time_Switch(list, CurrentNode, ts, forward, action ) {
+function MapLayers_Time_Switch(list, CurrentNode, ts, forward, action ) {
     var node;
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Switch(list, CurrentNode, ts, forward, action)", list, CurrentNode, ts, forward, action);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Switch(list, CurrentNode, ts, forward, action)", list, CurrentNode, ts, forward, action);
     
     if (forward) {
         /***** if the currentspannode is null, reset to head *****/
@@ -393,16 +393,16 @@ function NewWorld_Time_Switch(list, CurrentNode, ts, forward, action ) {
 
 /***** fixme fix flicker *****/
 
-function NewWorld_Time_Advance() {
+function MapLayers_Time_Advance() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Advance() ", NewWorld.Time.time);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Advance() ", MapLayers.Time.time);
 
     /***** we turn off before we turn on so you dont ever see 2 *****/
 
-    NewWorld.Time.EndCurrentNode = NewWorld_Time_Switch(
-        NewWorld.Time.EndList,
-        NewWorld.Time.EndCurrentNode,
-        NewWorld.Time.time,
+    MapLayers.Time.EndCurrentNode = MapLayers_Time_Switch(
+        MapLayers.Time.EndList,
+        MapLayers.Time.EndCurrentNode,
+        MapLayers.Time.time,
         true,
         function (node) {
             //console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
@@ -412,10 +412,10 @@ function NewWorld_Time_Advance() {
         }
     );
 
-    NewWorld.Time.BegCurrentNode = NewWorld_Time_Switch(
-        NewWorld.Time.BegList,
-        NewWorld.Time.BegCurrentNode,
-        NewWorld.Time.time,
+    MapLayers.Time.BegCurrentNode = MapLayers_Time_Switch(
+        MapLayers.Time.BegList,
+        MapLayers.Time.BegCurrentNode,
+        MapLayers.Time.time,
         true,
         function (node) {
             //console.log(" getvisibility: ", node.data.treenode.layer.getVisibility());
@@ -425,19 +425,19 @@ function NewWorld_Time_Advance() {
         }
     );
     
-    NewWorld.Time.TSCurrentNode = NewWorld_Time_Switch(
-        NewWorld.Time.TSList,
-        NewWorld.Time.TSCurrentNode,
-        NewWorld.Time.time,
+    MapLayers.Time.TSCurrentNode = MapLayers_Time_Switch(
+        MapLayers.Time.TSList,
+        MapLayers.Time.TSCurrentNode,
+        MapLayers.Time.time,
         true,
         function (node) {
             if (node.data.treenode.layer.getVisibility()) {
-                NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+                MapLayers.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
             }
             if (!node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(true);
             }
-            NewWorld.Time.TSCurrentNode = node;
+            MapLayers.Time.TSCurrentNode = node;
         }
     );
 
@@ -452,16 +452,16 @@ function NewWorld_Time_Advance() {
 
 /***** fixme fix flicker *****/
 
-function NewWorld_Time_Retard() {
+function MapLayers_Time_Retard() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Retard() ", NewWorld.Time.time);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Retard() ", MapLayers.Time.time);
     
     /***** we turn off before we turn on so you dont ever see 2 *****/
 
-    NewWorld.Time.BegCurrentNode = NewWorld_Time_Switch(
-        NewWorld.Time.BegList,
-        NewWorld.Time.BegCurrentNode,
-        NewWorld.Time.time,
+    MapLayers.Time.BegCurrentNode = MapLayers_Time_Switch(
+        MapLayers.Time.BegList,
+        MapLayers.Time.BegCurrentNode,
+        MapLayers.Time.time,
         false,
         function (node) {
             if (node.data.treenode.layer.getVisibility()) {
@@ -470,10 +470,10 @@ function NewWorld_Time_Retard() {
         }
     );
 
-    NewWorld.Time.EndCurrentNode = NewWorld_Time_Switch(
-        NewWorld.Time.EndList,
-        NewWorld.Time.EndCurrentNode,
-        NewWorld.Time.time,
+    MapLayers.Time.EndCurrentNode = MapLayers_Time_Switch(
+        MapLayers.Time.EndList,
+        MapLayers.Time.EndCurrentNode,
+        MapLayers.Time.time,
         false,
         function (node) {
             if (!node.data.treenode.layer.getVisibility()) {
@@ -482,19 +482,19 @@ function NewWorld_Time_Retard() {
         }
     );
     
-    NewWorld.Time.TSCurrentNode = NewWorld_Time_Switch(
-        NewWorld.Time.TSList,
-        NewWorld.Time.TSCurrentNode,
-        NewWorld.Time.time,
+    MapLayers.Time.TSCurrentNode = MapLayers_Time_Switch(
+        MapLayers.Time.TSList,
+        MapLayers.Time.TSCurrentNode,
+        MapLayers.Time.time,
         false,
         function (node) {
             if (node.data.treenode.layer.getVisibility) {
-                NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+                MapLayers.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
             }
             if (!node.data.treenode.layer.getVisibility()) {
                 node.data.treenode.layer.setVisibility(true);
             }
-            NewWorld.Time.TSCurrentNode = node;
+            MapLayers.Time.TSCurrentNode = node;
         }
     );
 
@@ -508,46 +508,46 @@ function NewWorld_Time_Retard() {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_Timeslider_change( newValue ) {
+function MapLayers_Time_Timeslider_change( newValue ) {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Timeslider_change( newValue)", newValue);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Timeslider_change( newValue)", newValue);
     
-    if (NewWorld.Time.IgnoreSliderChange) return;
+    if (MapLayers.Time.IgnoreSliderChange) return;
     
 
     /***** stop if playing *****/
     
-    if (NewWorld.Time.timer != null) {
-        NewWorld_Time_Interval_Pause();
+    if (MapLayers.Time.timer != null) {
+        MapLayers_Time_Interval_Pause();
     }
     
     /***** move backwards? *****/
     
-    if (newValue < NewWorld.Time.time ) {
+    if (newValue < MapLayers.Time.time ) {
     
-        NewWorld.Time.time = newValue;
+        MapLayers.Time.time = newValue;
 
         /***** update the hash *****/
         
-        NewWorld_Hash_Replace("timeslider", NewWorld.Time.time);
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.time);
 
         /***** now we can go ahead and update the display *****/
         
-        NewWorld_Time_Retard();
+        MapLayers_Time_Retard();
     
     /***** forward move *****/
     
     } else {
 
-        NewWorld.Time.time = newValue;
+        MapLayers.Time.time = newValue;
 
         /***** update the hash *****/
         
-        NewWorld_Hash_Replace("timeslider", NewWorld.Time.time);
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.time);
 
         /***** now we can go ahead and update the display *****/
         
-        NewWorld_Time_Advance();
+        MapLayers_Time_Advance();
 
     }
 
@@ -560,19 +560,19 @@ function NewWorld_Time_Timeslider_change( newValue ) {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_Incrbox_change( newValue ) {
+function MapLayers_Time_Incrbox_change( newValue ) {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Incrbox_change( newValue )", newValue );
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Incrbox_change( newValue )", newValue );
     
     /***** set the new value *****/
-    var incr = NewWorld.Time.incrStore.query({name:newValue})[0];
+    var incr = MapLayers.Time.incrStore.query({name:newValue})[0];
     
-    NewWorld.Time.incr = incr.value;
+    MapLayers.Time.incr = incr.value;
     
     /***** restart the timer with the new speed *****/
     
-    NewWorld_Time_Interval_Pause();
-    NewWorld_Time_Interval_Play();
+    MapLayers_Time_Interval_Pause();
+    MapLayers_Time_Interval_Play();
 
 }
 
@@ -585,56 +585,56 @@ function NewWorld_Time_Incrbox_change( newValue ) {
 
 /***** fixme this only works on timespans not timestamps *****/
 
-function NewWorld_Time_Interval_Update() {
+function MapLayers_Time_Interval_Update() {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Update() ");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Update() ");
 
     var stopped = false;
     var looped = false;
     var node = null;
    
-    var incr = NewWorld.Time.incr;
+    var incr = MapLayers.Time.incr;
     
-    var lastvalue = NewWorld.Time.time;
+    var lastvalue = MapLayers.Time.time;
 
 
     /***** are we going backwards? *****/
 
-    if (NewWorld.Time.backwards) {
-        NewWorld.Time.time = lastvalue - incr;
+    if (MapLayers.Time.backwards) {
+        MapLayers.Time.time = lastvalue - incr;
 
         /***** past the begining? *****/
 
-        if (NewWorld.Time.time < NewWorld.Time.SliderMinValue ) {
+        if (MapLayers.Time.time < MapLayers.Time.SliderMinValue ) {
         
             /***** is the loop or rock button pressed *****/
             
-            if ( NewWorld.Time.loop && ! NewWorld.Time.rock ) {
-                NewWorld_Time_Interval_Pause();
+            if ( MapLayers.Time.loop && ! MapLayers.Time.rock ) {
+                MapLayers_Time_Interval_Pause();
                 stopped = true
             }
             
             /***** rock? *****/
                 //fixme if were rocking should we still wait a cycle to incr?
 
-            if (NewWorld.Time.rock) {
-                NewWorld.Time.time = NewWorld.Time.SliderMinValue;
-                NewWorld.Time.backwards = false;
-                NewWorld.Time.forwardbutton.set("checked", true);
+            if (MapLayers.Time.rock) {
+                MapLayers.Time.time = MapLayers.Time.SliderMinValue;
+                MapLayers.Time.backwards = false;
+                MapLayers.Time.forwardbutton.set("checked", true);
 
-                NewWorld.Time.BegCurrentNode = NewWorld.Time.BegList.head;
-                NewWorld.Time.EndCurrentNode = NewWorld.Time.EndList.head;
-                NewWorld.Time.tsCurrentNode = NewWorld.Time.TSList.head;
+                MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
+                MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
+                MapLayers.Time.tsCurrentNode = MapLayers.Time.TSList.head;
 
             /***** loop *****/
 
             } else {
-                NewWorld.Time.time = NewWorld.Time.SliderMaxValue;
-                NewWorld_Time_expire_remaining();
+                MapLayers.Time.time = MapLayers.Time.SliderMaxValue;
+                MapLayers_Time_expire_remaining();
     
-                NewWorld.Time.BegCurrentNode = NewWorld.Time.BegList.tail;
-                NewWorld.Time.EndCurrentNode = NewWorld.Time.EndList.tail;
-                NewWorld.Time.TSCurrentNode = NewWorld.Time.TSList.tail;
+                MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.tail;
+                MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.tail;
+                MapLayers.Time.TSCurrentNode = MapLayers.Time.TSList.tail;
             }
 
         }
@@ -642,40 +642,40 @@ function NewWorld_Time_Interval_Update() {
     /***** were going forwards *****/
 
     } else {
-        NewWorld.Time.time = lastvalue + incr;
+        MapLayers.Time.time = lastvalue + incr;
         
         /***** past the end time? *****/
 
-        if (NewWorld.Time.time > NewWorld.Time.SliderMaxValue ) {
+        if (MapLayers.Time.time > MapLayers.Time.SliderMaxValue ) {
             
             /***** is the loop or rock button pressed *****/
             
-            if ( ! NewWorld.Time.loop && ! NewWorld.Time.rock ) {
-                NewWorld_Time_Interval_Pause();
+            if ( ! MapLayers.Time.loop && ! MapLayers.Time.rock ) {
+                MapLayers_Time_Interval_Pause();
                 stopped = true
             }
             
             /***** rock? *****/
                 //fixme if were rocking should we still wait a cyckle to incr?
 
-            if (NewWorld.Time.rock) {
-                NewWorld.Time.time = NewWorld.Time.SliderMaxValue;
-                NewWorld.Time.backwards = true;
-                NewWorld.Time.forwardbutton.set("checked", false);
+            if (MapLayers.Time.rock) {
+                MapLayers.Time.time = MapLayers.Time.SliderMaxValue;
+                MapLayers.Time.backwards = true;
+                MapLayers.Time.forwardbutton.set("checked", false);
 
-                NewWorld.Time.BegCurrentNode = NewWorld.Time.BegList.tail;
-                NewWorld.Time.EndCurrentNode = NewWorld.Time.EndList.tail;
-                NewWorld.Time.TSCurrentNode = NewWorld.Time.TSList.tail;
+                MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.tail;
+                MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.tail;
+                MapLayers.Time.TSCurrentNode = MapLayers.Time.TSList.tail;
 
             /***** loop *****/
 
             } else {
-                NewWorld.Time.time = NewWorld.Time.SliderMinValue;
-                NewWorld_Time_expire_remaining();
+                MapLayers.Time.time = MapLayers.Time.SliderMinValue;
+                MapLayers_Time_expire_remaining();
         
-                NewWorld.Time.BegCurrentNode = NewWorld.Time.BegList.head;
-                NewWorld.Time.EndCurrentNode = NewWorld.Time.EndList.head;
-                NewWorld.Time.TSCurrentNode = NewWorld.Time.TSList.head;
+                MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
+                MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
+                MapLayers.Time.TSCurrentNode = MapLayers.Time.TSList.head;
             }
 
         }
@@ -683,19 +683,19 @@ function NewWorld_Time_Interval_Update() {
 
     /***** update the time slider *****/
 
-    NewWorld.Time.Timeslider.set("value", NewWorld.Time.time, false);
-    //NewWorld.Time.Timeslider._lastValueReported=null;
+    MapLayers.Time.Timeslider.set("value", MapLayers.Time.time, false);
+    //MapLayers.Time.Timeslider._lastValueReported=null;
 
     /***** update the hash *****/
     
-    NewWorld_Hash_Replace("timeslider", NewWorld.Time.time);
+    MapLayers_Hash_Replace("timeslider", MapLayers.Time.time);
     
     /***** update the display *****/
     
-    if (NewWorld.Time.backwards) {
-        NewWorld_Time_Retard();
+    if (MapLayers.Time.backwards) {
+        MapLayers_Time_Retard();
     } else {
-        NewWorld_Time_Advance();
+        MapLayers_Time_Advance();
     }
     
 }
@@ -706,21 +706,21 @@ function NewWorld_Time_Interval_Update() {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_Interval_Play() {
+function MapLayers_Time_Interval_Play() {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Play()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Play()");
     
-    NewWorld.Time.firstplay = true;
+    MapLayers.Time.firstplay = true;
     
-    if (NewWorld.Time.timer == null) {
+    if (MapLayers.Time.timer == null) {
         
-        NewWorld.Time.timer = setInterval( NewWorld_Time_Interval_Update ,
-                                           NewWorld.Time.speed);
+        MapLayers.Time.timer = setInterval( MapLayers_Time_Interval_Update ,
+                                           MapLayers.Time.speed);
                                            
-        NewWorld.Time.playbutton.set('label', 'Pause');
-        NewWorld.Time.Timeslider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
-        NewWorld.Time.playbutton.set( 'onClick', NewWorld_Time_Interval_Pause);
-        NewWorld_Hash_Replace("play", true);
+        MapLayers.Time.playbutton.set('label', 'Pause');
+        MapLayers.Time.Timeslider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
+        MapLayers.Time.playbutton.set( 'onClick', MapLayers_Time_Interval_Pause);
+        MapLayers_Hash_Replace("play", true);
     }
     
 }
@@ -731,18 +731,18 @@ function NewWorld_Time_Interval_Play() {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_Interval_Pause() {
+function MapLayers_Time_Interval_Pause() {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_Interval_Pause()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Pause()");
     
-    if (NewWorld.Time.timer != null) {
-        clearInterval(NewWorld.Time.timer);
-        NewWorld.Time.timer = null;
+    if (MapLayers.Time.timer != null) {
+        clearInterval(MapLayers.Time.timer);
+        MapLayers.Time.timer = null;
         
-        NewWorld.Time.playbutton.set('label', ' Play'); 
-        NewWorld.Time.Timeslider.set("intermediateChanges", true); // this helps prevent the onchange event from fireing
-        NewWorld.Time.playbutton.set( 'onClick', NewWorld_Time_Interval_Play);
-        NewWorld_Hash_Replace("play", "");
+        MapLayers.Time.playbutton.set('label', ' Play'); 
+        MapLayers.Time.Timeslider.set("intermediateChanges", true); // this helps prevent the onchange event from fireing
+        MapLayers.Time.playbutton.set( 'onClick', MapLayers_Time_Interval_Play);
+        MapLayers_Hash_Replace("play", "");
     }
     
 }
@@ -758,62 +758,62 @@ function NewWorld_Time_Interval_Pause() {
 ******************************************************************************/
 
 
-function NewWorld_Time_setends(begin, end) {
+function MapLayers_Time_setends(begin, end) {
         
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_setends(begin, end)", begin, end);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_setends(begin, end)", begin, end);
     
-    NewWorld.Time.IgnoreSliderChange = true;
+    MapLayers.Time.IgnoreSliderChange = true;
     
     /***** update the time slider *****/
     
-    if (NewWorld.Time.SliderMinValue == null) {
-        NewWorld.Time.SliderMinValue = begin;
-        NewWorld.Time.SliderMaxValue = end;
+    if (MapLayers.Time.SliderMinValue == null) {
+        MapLayers.Time.SliderMinValue = begin;
+        MapLayers.Time.SliderMaxValue = end;
     
-        NewWorld.Time.Timeslider.set( 'minimum', NewWorld.Time.SliderMinValue, false );
-        NewWorld.Time.Timeslider._lastValueReported=null;
-        NewWorld.Time.Timeslider.set( 'maximum', NewWorld.Time.SliderMaxValue, false );
-        NewWorld.Time.Timeslider._lastValueReported=null;
+        MapLayers.Time.Timeslider.set( 'minimum', MapLayers.Time.SliderMinValue, false );
+        MapLayers.Time.Timeslider._lastValueReported=null;
+        MapLayers.Time.Timeslider.set( 'maximum', MapLayers.Time.SliderMaxValue, false );
+        MapLayers.Time.Timeslider._lastValueReported=null;
     
         /***** make the ui visible *****/
         
-        NewWorld_Time_setVisible(true);
+        MapLayers_Time_setVisible(true);
             
     }
     
     else {
-        NewWorld.Time.SliderMinValue = MIN ( begin,
-                                             NewWorld.Time.SliderMinValue
+        MapLayers.Time.SliderMinValue = MIN ( begin,
+                                             MapLayers.Time.SliderMinValue
                                            );
-        NewWorld.Time.SliderMaxValue = MAX ( end,
-                                             NewWorld.Time.SliderMaxValue
+        MapLayers.Time.SliderMaxValue = MAX ( end,
+                                             MapLayers.Time.SliderMaxValue
                                            );
-        NewWorld.Time.Timeslider.set( 'minimum', NewWorld.Time.SliderMinValue, false );
-        NewWorld.Time.Timeslider._lastValueReported=null;
-        NewWorld.Time.Timeslider.set( 'maximum', NewWorld.Time.SliderMaxValue, false );
-        NewWorld.Time.Timeslider._lastValueReported=null;
+        MapLayers.Time.Timeslider.set( 'minimum', MapLayers.Time.SliderMinValue, false );
+        MapLayers.Time.Timeslider._lastValueReported=null;
+        MapLayers.Time.Timeslider.set( 'maximum', MapLayers.Time.SliderMaxValue, false );
+        MapLayers.Time.Timeslider._lastValueReported=null;
     
     }
     
-    if (!NewWorld.Time.firstplay) {
+    if (!MapLayers.Time.firstplay) {
         
         /***** update the time slider value *****/
         
-        NewWorld.Time.time = NewWorld.Time.SliderMinValue
-        last= NewWorld.Time.Timeslider.get("intermediateChanges")
+        MapLayers.Time.time = MapLayers.Time.SliderMinValue
+        last= MapLayers.Time.Timeslider.get("intermediateChanges")
 
 
-        NewWorld.Time.Timeslider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
-        NewWorld.Time.Timeslider.set( "value", NewWorld.Time.time, false );
-        NewWorld.Time.Timeslider.set("intermediateChanges", last); // this helps prevent the onchange event from fireing
-        NewWorld.Time.Timeslider._lastValueReported=null;
-        NewWorld.Time.TSCurrentNode = NewWorld.Time.TSList.head;
-        NewWorld.Time.BegCurrentNode = NewWorld.Time.BegList.head;
-        NewWorld.Time.EndCurrentNode = NewWorld.Time.EndList.head;
+        MapLayers.Time.Timeslider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
+        MapLayers.Time.Timeslider.set( "value", MapLayers.Time.time, false );
+        MapLayers.Time.Timeslider.set("intermediateChanges", last); // this helps prevent the onchange event from fireing
+        MapLayers.Time.Timeslider._lastValueReported=null;
+        MapLayers.Time.TSCurrentNode = MapLayers.Time.TSList.head;
+        MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
+        MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
     }
     
     
-    NewWorld.Time.IgnoreSliderChange = false;
+    MapLayers.Time.IgnoreSliderChange = false;
 }
 
 /******************************************************************************
@@ -827,7 +827,7 @@ function NewWorld_Time_setends(begin, end) {
 // actualy theres something else wrong our test data is in backwars so the loop N#EVER iterates
 // so we need to fixme anyway
 
-function NewWorld_Time_Insert_Node_Before(list, newnode, ts) {
+function MapLayers_Time_Insert_Node_Before(list, newnode, ts) {
 
     var node;
 
@@ -861,15 +861,15 @@ function NewWorld_Time_Insert_Node_Before(list, newnode, ts) {
 
 /***** fixme we need to see if they need turned on when the nodes are added *****/
 
-function NewWorld_Time_addnode(treenode) {
+function MapLayers_Time_addnode(treenode) {
 
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_addnode(treenode)", treenode);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_addnode(treenode)", treenode);
     
     var timestamp = null;
     var begin = null;
     var end = null;
     var node = null;
-    NewWorld_Time_setVisible(true)
+    MapLayers_Time_setVisible(true)
     
     //treenode.layer.setVisibility(true);
     //treenode.layer.div.style.visibility = "hidden";
@@ -888,14 +888,14 @@ function NewWorld_Time_addnode(treenode) {
         
         /***** create a new time node *****/
         
-        var newnode = new NewWorld_Time_Node( treenode, timestamp);
+        var newnode = new MapLayers_Time_Node( treenode, timestamp);
         
-        NewWorld_Time_Insert_Node_Before(NewWorld.Time.TSList, newnode, timestamp);
+        MapLayers_Time_Insert_Node_Before(MapLayers.Time.TSList, newnode, timestamp);
 
         /***** update the time slider *****/
         
-        NewWorld_Time_setends( NewWorld.Time.TSList.head.data.timestamp,
-                               NewWorld.Time.TSList.tail.data.timestamp
+        MapLayers_Time_setends( MapLayers.Time.TSList.head.data.timestamp,
+                               MapLayers.Time.TSList.tail.data.timestamp
                             );
         
     }
@@ -908,20 +908,20 @@ function NewWorld_Time_addnode(treenode) {
         
         /***** begin list *****/
         
-        var newnode = new NewWorld_Time_Node( treenode, begin);
+        var newnode = new MapLayers_Time_Node( treenode, begin);
         
-        NewWorld_Time_Insert_Node_Before(NewWorld.Time.BegList, newnode, begin);
+        MapLayers_Time_Insert_Node_Before(MapLayers.Time.BegList, newnode, begin);
         
         /***** end list ******/
 
-        newnode = new NewWorld_Time_Node( treenode, end);
+        newnode = new MapLayers_Time_Node( treenode, end);
         
-        NewWorld_Time_Insert_Node_Before(NewWorld.Time.EndList, newnode, end);
+        MapLayers_Time_Insert_Node_Before(MapLayers.Time.EndList, newnode, end);
         
         /***** update the time slider *****/
         
-        NewWorld_Time_setends( NewWorld.Time.BegList.head.data.timestamp,
-                               NewWorld.Time.EndList.tail.data.timestamp
+        MapLayers_Time_setends( MapLayers.Time.BegList.head.data.timestamp,
+                               MapLayers.Time.EndList.tail.data.timestamp
                             );
         
     }
@@ -930,14 +930,14 @@ function NewWorld_Time_addnode(treenode) {
     /***** this timer should only expire after all the nodes are added     *****/
 
 
-    if (NewWorld.Time.updatetimer) {
-        window.clearInterval(NewWorld.Time.updatetimer);
+    if (MapLayers.Time.updatetimer) {
+        window.clearInterval(MapLayers.Time.updatetimer);
     }
-    NewWorld.Time.updatetimer = setInterval(
+    MapLayers.Time.updatetimer = setInterval(
         function () {
-            window.clearInterval(NewWorld.Time.updatetimer);
-            NewWorld.Time.updatetimer = null;
-            NewWorld_Time_Advance();
+            window.clearInterval(MapLayers.Time.updatetimer);
+            MapLayers.Time.updatetimer = null;
+            MapLayers_Time_Advance();
         },
         5000
     );
@@ -951,13 +951,13 @@ function NewWorld_Time_addnode(treenode) {
  * 
 ******************************************************************************/
 
-function NewWorld_Time_removenode_sub (list, treenode) {
+function MapLayers_Time_removenode_sub (list, treenode) {
 
     var node;
     for (node = list.head; node ; node = next) {
         next = node.next;
         if (treenode.id == node.data.treenode.id) {
-            NewWorld.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
+            MapLayers.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
             DLList_delete(list, node);
             break;
         }
@@ -970,9 +970,9 @@ function NewWorld_Time_removenode_sub (list, treenode) {
     return node;
 }
 
-function NewWorld_Time_removenode(treenode) {
+function MapLayers_Time_removenode(treenode) {
     
-    //if (NewWorld.Settings.debug) console.log("NewWorld_Time_removenode(treenode)", treenode);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_removenode(treenode)", treenode);
     
     var node = null;
     var bext = null;
@@ -983,17 +983,17 @@ function NewWorld_Time_removenode(treenode) {
     
     if (treenode.timestamp != null) {
         
-        node = NewWorld_Time_removenode_sub(TSList, treenode);
+        node = MapLayers_Time_removenode_sub(TSList, treenode);
         
-        if (NewWorld.Time.TSCurrentNode.data.treenode.id == node.data.treenode.id) {
-            NewWorld.Time.TSCurrentNode = null;
+        if (MapLayers.Time.TSCurrentNode.data.treenode.id == node.data.treenode.id) {
+            MapLayers.Time.TSCurrentNode = null;
         }
 
         /***** update the time slider *****/
         
-        if (NewWorld.Time.TSList.head) {
-            NewWorld_Time_setends( NewWorld.Time.TSList.head.data.timestamp,
-                                   NewWorld.Time.TSList.tail.data.timestamp
+        if (MapLayers.Time.TSList.head) {
+            MapLayers_Time_setends( MapLayers.Time.TSList.head.data.timestamp,
+                                   MapLayers.Time.TSList.tail.data.timestamp
                                 );
         }    
     }
@@ -1002,32 +1002,32 @@ function NewWorld_Time_removenode(treenode) {
     
     else if (treenode.begin_timespan != null && treenode.end_timespan != null ) {
         
-        node = NewWorld_Time_removenode_sub(BegList, treenode);
-        if (NewWorld.Time.BegCurrentNode.data.treenode.id == node.data.treenode.id) {
-            NewWorld.Time.BegCurrentNode = null;
+        node = MapLayers_Time_removenode_sub(BegList, treenode);
+        if (MapLayers.Time.BegCurrentNode.data.treenode.id == node.data.treenode.id) {
+            MapLayers.Time.BegCurrentNode = null;
         }
 
-        node = NewWorld_Time_removenode_sub(EndList, treenode);
-        if (NewWorld.Time.EndCurrentNode.data.treenode.id == node.data.treenode.id) {
-            NewWorld.Time.EndCurrentNode = null;
+        node = MapLayers_Time_removenode_sub(EndList, treenode);
+        if (MapLayers.Time.EndCurrentNode.data.treenode.id == node.data.treenode.id) {
+            MapLayers.Time.EndCurrentNode = null;
         }
 
         
         /***** update the time slider *****/
         
-        if (NewWorld.Time.spanlist.head) {
-            NewWorld_Time_setends( NewWorld.Time.BegList.head.data.timestamp,
-                                   NewWorld.Time.EndList.tail.data.timestamp
+        if (MapLayers.Time.spanlist.head) {
+            MapLayers_Time_setends( MapLayers.Time.BegList.head.data.timestamp,
+                                   MapLayers.Time.EndList.tail.data.timestamp
                                 );
         }
     }
     
     /***** hide the ui when there is no more nodes *****/
     
-    if ( NewWorld.Time.TSList.head == null &&
-         NewWorld.Time.spanlist.head == null
+    if ( MapLayers.Time.TSList.head == null &&
+         MapLayers.Time.spanlist.head == null
     ) {
-        NewWorld_Time_setVisible(false);
+        MapLayers_Time_setVisible(false);
     }
     
 }
