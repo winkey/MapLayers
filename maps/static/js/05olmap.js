@@ -43,7 +43,7 @@ dojo.ready(function() {
 
 function MapLayers_OLMap_Create() {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_OLMap_Create()");
+    if (MapLayers.Settings.debug) console.log("MapLayers_OLMap_Create()");
 
     MapLayers.Map.map = new OpenLayers.Map({
         div:                "MapPane",

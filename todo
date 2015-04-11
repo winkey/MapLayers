@@ -50,10 +50,7 @@ map:
 
 
 tree.js
-    implement lazy loading, initial request needs to fetch open and layers data aswell!!!!!
-    a link should request its target right away
-    a animation should request its target right away
-    base layers need to be requested right away
+
     perms
     when layers get turned on, center and zoom if set
 
@@ -63,9 +60,9 @@ tree.js
 
     autohide the tree with TogglePane + BC 
 
-[18:48:22] <winkey> so the lazy loading tree stuff? can it call custom code on each json node it pulls?
-[18:49:03] <winkey> or will i have to roll my own
-[18:50:47] <winkey> that and i have a link node type
+    radio folders should be checkable (not base layers)
+
+    save temp layer data
 
     
 menues.js
@@ -82,8 +79,6 @@ time.js
     
     tooltips
     https://bitbucket.org/sage2/sage2/wiki/SAGE2%20Application%20API
-
-
 
 
 bookmark app:

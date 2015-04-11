@@ -35,12 +35,154 @@ from django.template import RequestContext
 from django.shortcuts import get_object_or_404, render_to_response
 from django.contrib.auth import authenticate, login, logout
 
+
+
+
+
 # from django.core import serializers
 
 from layers.serializers import layertreenodeSerializer
 
 from . import models
 from . import forms
+
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+def layer2tc (layer):
+    if layer.tile_cache:
+        if isinstance(layer, models.WMS) or isinstance(layer, models.ArcIMS):
+
+            tc = models.WMS( id                       = layer.id,
+                             polymorphic_ctype_id     = layer.polymorphic_ctype_id,
+                             lft                      = layer.lft,
+                             rght                     = layer.rght,
+                             tree_id                  = layer.tree_id,
+                             level                    = layer.level,
+                             parent_id                = layer.parent_id,
+                             nodetype                 = 'WMS',
+                             added                    = layer.added,
+                             modified                 = layer.modified,
+                             owner_id                 = layer.owner_id,
+                             groups_id                = layer.groups_id,
+                             timestamp                = layer.timestamp,
+                             begin_timespan           = layer.begin_timespan,
+                             end_timespan             = layer.end_timespan,
+                             tile_cache               = layer.tile_cache,
+                             tooltip                  = layer.tooltip,
+                             metadata                 = layer.metadata,
+                             name                     = layer.name,
+                             url                      = '../tilecache/',
+                             layers                   = layer.layertreenode_ptr_id,
+                             opacity                  = layer.opacity,
+                             attribution              = layer.attribution,
+                             isBaseLayer              = layer.isBaseLayer)
+            return tc
+    return layer
+    
+
+
+def subtc (qs):
+
+    newlayers = []
+    for layer in qs:
+        newlayers.append( layer2tc(layer) )
+
+    return newlayers
+
+
+#@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view([ 'GET' ])
+
+################################################################################
+#
+# @brief function to retrieve, update or delete a layer instance. 
+#
+# @param request
+#
+################################################################################
+
+def query(request, myid = None):
+
+    ##### get method #####
+
+    if request.method == 'GET':
+
+        if myid is None:
+            myid = request.GET.get('id', None)
+            myparent = request.GET.get('parent', None)
+
+        if myid is not None:
+            try:
+                layers = models.layertreenode.objects.all().filter( id = myid)
+            except models.layertreenode.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            newlayers = subtc( layers )
+            serializer = layertreenodeSerializer(newlayers[0])
+
+            return JSONResponse(serializer.data)
+
+        elif myparent is not None:
+            try:
+                layers = models.layertreenode.objects.all().filter( parent = myparent)
+            except models.layertreenode.DoesNotExist:
+                return Response(status=status.HTTP_404_NOT_FOUND)
+
+            newlayers = subtc( layers )
+            serializer = layertreenodeSerializer(newlayers)
+
+            return JSONResponse(serializer.data)
+        
+        else:
+            serializer = layertreenodeSerializer([])
+
+            return JSONResponse(serializer.data)
+    ##### post method, adding a new layer #####
+
+    #elif request.method == 'POST':
+    #    serializer = layertreenodeSerializer(data=request.data)
+    #    if serializer.is_valid():
+    #        serializer.save()
+    #        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    ##### put method, modifying a layer #####
+
+    #elif request.method == 'PUT':
+    #    serializer = layertreenodeSerializer(layer, data=request.data)
+    #    if serializer.is_valid():
+    #        serializer.save()
+    #        return Response(serializer.data)
+    #    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    ##### delete method, removing a layer #####
+
+    #elif request.method == 'DELETE':
+    #    layer.delete()
+    #    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+################################################################################
+#
+# @brief our old view function
+#
+################################################################################
+
+def treejson( request, id ):
+
+    layers = models.layertreenode.objects.all()
+    newlayers = subtc( layers )
+
+    serializer = layertreenodeSerializer( newlayers )
+
+    return JSONResponse(serializer.data)
+
+################################################################################
+#old stuff below
+
+
 
 
 
@@ -65,53 +207,7 @@ class JSONResponse(HttpResponse):
         super(JSONResponse, self).__init__(content, **kwargs)
         
 
-def subtc (qs):
 
-    newlayers = []
-    for layer in qs:
-        if layer.tile_cache:
-            if isinstance(layer, models.WMS) or isinstance(layer, models.ArcIMS):
-
-                tc = models.WMS( id                       = layer.id,
-                                 polymorphic_ctype_id     = layer.polymorphic_ctype_id,
-                                 lft                      = layer.lft,
-                                 rght                     = layer.rght,
-                                 tree_id                  = layer.tree_id,
-                                 level                    = layer.level,
-                                 parent_id                = layer.parent_id,
-                                 nodetype                 = 'WMS',
-                                 added                    = layer.added,
-                                 modified                 = layer.modified,
-                                 owner_id                 = layer.owner_id,
-                                 groups_id                = layer.groups_id,
-                                 timestamp                = layer.timestamp,
-                                 begin_timespan           = layer.begin_timespan,
-                                 end_timespan             = layer.end_timespan,
-                                 tile_cache               = layer.tile_cache,
-                                 tooltip                  = layer.tooltip,
-                                 metadata                 = layer.metadata,
-                                 name                     = layer.name,
-                                 url                      = '../tilecache/',
-                                 layers                   = layer.layertreenode_ptr_id,
-                                 opacity                  = layer.opacity,
-                                 attribution              = layer.attribution,
-                                 isBaseLayer              = layer.isBaseLayer)
-                newlayers.append(tc)
-            else:
-                newlayers.append(layer)
-        else:
-            newlayers.append(layer)
-
-    return newlayers
-
-def treejson( request ):
-
-    layers = models.layertreenode.objects.all()
-    newlayers = subtc( layers )
-
-    serializer = layertreenodeSerializer( newlayers )
-
-    return JSONResponse(serializer.data)
 
 #get_queryset_ancestors(queryset, include_self=False)
 #Returns a queryset containing the ancestors of all nodes in the given queryset.
@@ -126,6 +222,7 @@ def treejson( request ):
 
 #MyMPTTModel.objects.get_queryset_ancestors(qs).filter(rght__lte = starting_node_rght)
 import gc
+
 def treeinit( request ):
 
     myopen = request.GET.get('open')

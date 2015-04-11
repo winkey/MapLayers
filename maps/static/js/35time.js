@@ -94,7 +94,7 @@ function MapLayers_Time_Node(treenode, timestamp) {
 function MapLayers_Time_CreateSlider() {
     
     //fixme grab the hash vars!
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_CreateSlider()");
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_CreateSlider()");
 
     
     MapLayers.Time.toolbar = new dijit.Toolbar({}, "timebar");
@@ -267,7 +267,7 @@ function MapLayers_Time_CreateSlider() {
 
 function MapLayers_Time_setVisible(bool) {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_setVisible(bool)", bool);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_setVisible(bool)", bool);
     
     if (bool) { 
         MapLayers.Time.hidetoggler.show();
@@ -286,7 +286,7 @@ function MapLayers_Time_setVisible(bool) {
 
 function MapLayers_Time_Speedslider_change( newValueb ) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Speedslider_change( newValue )",newValue);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Speedslider_change( newValue )",newValue);
     
     /***** set the new value *****/
 
@@ -307,7 +307,7 @@ function MapLayers_Time_Speedslider_change( newValueb ) {
 
 function MapLayers_Time_expire_remaining() {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_expire_remaining()");
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_expire_remaining()");
     
     var node;
 
@@ -346,7 +346,7 @@ function MapLayers_Time_expire_remaining() {
 function MapLayers_Time_Switch(list, CurrentNode, ts, forward, action ) {
     var node;
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Switch(list, CurrentNode, ts, forward, action)", list, CurrentNode, ts, forward, action);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Switch(list, CurrentNode, ts, forward, action)", list, CurrentNode, ts, forward, action);
     
     if (forward) {
         /***** if the currentspannode is null, reset to head *****/
@@ -395,7 +395,7 @@ function MapLayers_Time_Switch(list, CurrentNode, ts, forward, action ) {
 
 function MapLayers_Time_Advance() {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Advance() ", MapLayers.Time.time);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Advance() ", MapLayers.Time.time);
 
     /***** we turn off before we turn on so you dont ever see 2 *****/
 
@@ -454,7 +454,7 @@ function MapLayers_Time_Advance() {
 
 function MapLayers_Time_Retard() {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Retard() ", MapLayers.Time.time);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Retard() ", MapLayers.Time.time);
     
     /***** we turn off before we turn on so you dont ever see 2 *****/
 
@@ -510,7 +510,7 @@ function MapLayers_Time_Retard() {
 
 function MapLayers_Time_Timeslider_change( newValue ) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Timeslider_change( newValue)", newValue);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Timeslider_change( newValue)", newValue);
     
     if (MapLayers.Time.IgnoreSliderChange) return;
     
@@ -562,7 +562,7 @@ function MapLayers_Time_Timeslider_change( newValue ) {
 
 function MapLayers_Time_Incrbox_change( newValue ) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Incrbox_change( newValue )", newValue );
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Incrbox_change( newValue )", newValue );
     
     /***** set the new value *****/
     var incr = MapLayers.Time.incrStore.query({name:newValue})[0];
@@ -587,7 +587,7 @@ function MapLayers_Time_Incrbox_change( newValue ) {
 
 function MapLayers_Time_Interval_Update() {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Update() ");
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Update() ");
 
     var stopped = false;
     var looped = false;
@@ -708,7 +708,7 @@ function MapLayers_Time_Interval_Update() {
 
 function MapLayers_Time_Interval_Play() {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Play()");
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Play()");
     
     MapLayers.Time.firstplay = true;
     
@@ -733,7 +733,7 @@ function MapLayers_Time_Interval_Play() {
 
 function MapLayers_Time_Interval_Pause() {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Pause()");
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Pause()");
     
     if (MapLayers.Time.timer != null) {
         clearInterval(MapLayers.Time.timer);
@@ -760,7 +760,7 @@ function MapLayers_Time_Interval_Pause() {
 
 function MapLayers_Time_setends(begin, end) {
         
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_setends(begin, end)", begin, end);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_setends(begin, end)", begin, end);
     
     MapLayers.Time.IgnoreSliderChange = true;
     
@@ -863,7 +863,7 @@ function MapLayers_Time_Insert_Node_Before(list, newnode, ts) {
 
 function MapLayers_Time_addnode(treenode) {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_addnode(treenode)", treenode);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_addnode(treenode)", treenode);
     
     var timestamp = null;
     var begin = null;
@@ -972,7 +972,7 @@ function MapLayers_Time_removenode_sub (list, treenode) {
 
 function MapLayers_Time_removenode(treenode) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_removenode(treenode)", treenode);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Time_removenode(treenode)", treenode);
     
     var node = null;
     var bext = null;

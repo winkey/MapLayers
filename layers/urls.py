@@ -30,6 +30,8 @@
 from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
+    url(r'^query$', 'layers.views.query'),
+    url(r'^query/(?P<myid>[0-9]+)$', 'layers.views.query'),
     url(r'^tree$',      'layers.views.tree'),
     url(r'^treejson$',  'layers.views.treejson'),
     url(r'^treeinit$',  'layers.views.treeinit'),

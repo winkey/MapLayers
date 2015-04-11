@@ -43,7 +43,7 @@ dojo.require("dijit/MenuItem");
 
 function MapLayers_toolbar_Create() {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_toolbar_Create()");
+    if (MapLayers.Settings.debug) console.log("MapLayers_toolbar_Create()");
     
     MapLayers.toolbar = new dijit.Toolbar({}, "toolbar");
 

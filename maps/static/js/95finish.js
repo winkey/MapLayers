@@ -31,28 +31,26 @@ dojo.require("dojo");
 
 function finishup() {
 
-
-
-    
     MapLayers_Setcenter();
     MapLayers_Draw_init();
 
     MapLayers_toolbar_Create();
     MapLayers_Time_CreateSlider();
     dijit.registry.byId("borderContainer").resize();
-      /***** get layer list from the url *****/
-  
+
+    /***** get layer list from the url *****/
     
     var layers = MapLayers_Hash_Get('layers');
     var open =  MapLayers_Hash_Get('open');
 
-    if ( open && open != "") {
+    //fixme
+/*    if ( open && open != "") {
         MapLayers_Tree_Find_and_Open_Layers( open, true);
     }
     if ( layers && layers != "") {
         MapLayers_Tree_Find_and_Open_Layers( layers, false);
     }
-  
+  */
 
 /******************************************************************************
  add openlayers move event
@@ -66,32 +64,11 @@ function finishup() {
 };
 
 
-
-
-
-/**************************************************************************//**
- *
- * @brief function to fetch the layer tree 
- * 
-******************************************************************************/
-
-function MapLayers_Tree_GetJson() {
-    
-    $.getJSON( "../layers/treejson", {},
-        function(data) {
-            MapLayers_Tree_Parse( data, null );
-            MapLayers_Tree_Create_stage_2();
-            finishup();
-        }
-    );
-}
-
 /**************************************************************************//**
  *
  *  @brief fuction to get the login status json
  * 
 ******************************************************************************/
-
 
 function MapLayers_Login_GetJson() {
     
@@ -103,7 +80,9 @@ function MapLayers_Login_GetJson() {
 
 
 
-            MapLayers_Tree_GetJson();
+            //MapLayers_Tree_GetJson();
+            MapLayers_Tree_Create();
+           
         }
     );
 }
@@ -128,8 +107,7 @@ function MapLayers_Settings_GetJson() {
 
 
 dojo.ready(function() {
-
-
-
+    
     MapLayers_Settings_GetJson();
+
 });
