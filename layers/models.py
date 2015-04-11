@@ -117,7 +117,7 @@ class layertreenode( PolymorphicMPTTModel ):
     class Meta:
         verbose_name = _( "layertreenode" )
         verbose_name_plural = _( "layertreenodes" )
-
+        ordering = ["id"]
         
     def GetVisibility( self ):
         return False
