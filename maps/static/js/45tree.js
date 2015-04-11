@@ -590,13 +590,16 @@ function MapLayers_Tree_Create_querycallback(NodeData) {
             /***** fetch the link target now *****/
 
             var target = MapLayers.Store.Observable.query( { id: NodeData.target } )[0];
-                        
-            if ( target && (target.leaf || target.nodetype == 'Animation') ) {
-                NodeData.Checkable = true;
-            }
             
-            NodeData.haschildren = target.haschildren;
-            NodeData.leaf = target.leaf;
+            if ( target ) {            
+                if (target.leaf || target.nodetype == 'Animation') {
+                    NodeData.Checkable = true;
+                }
+            
+                NodeData.haschildren = target.haschildren;
+                NodeData.leaf = target.leaf;
+            }
+
             break;
         
         default:
