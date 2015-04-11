@@ -591,7 +591,7 @@ function MapLayers_Tree_Create_querycallback(NodeData) {
 
             var target = MapLayers.Store.Observable.query( { id: NodeData.target } )[0];
                         
-            if ( target && target.leaf || target.nodetype == 'Animation') {
+            if ( target && (target.leaf || target.nodetype == 'Animation') ) {
                 NodeData.Checkable = true;
             }
             
