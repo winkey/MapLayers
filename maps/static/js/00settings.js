@@ -45,7 +45,7 @@ dojo.ready(function() {
 
 function MapLayers_Settings_Set(settings) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Settings_Set()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Settings_Set()");
 
     MapLayers.Settings = settings[0].fields;
     MapLayers.Settings.debug=true;

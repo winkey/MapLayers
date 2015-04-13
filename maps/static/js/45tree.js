@@ -38,29 +38,13 @@ dojo.ready(function() {
 });
 
 
-/**************************************************************************//**
- *
- * @brief function to fetch the layer tree 
- * 
-******************************************************************************/
-//fixme
-function MapLayers_Tree_GetBranch(id, parent) {
-
-    $.getJSON( "../layers/treebranch?id="+id, {},
-        function(data) {
-             MapLayers_Tree_Parse( data, parent );
-             finishup();
-        }
-    );
-}
-
 /*****************************************************************************
  function for the trees checkchange
 *****************************************************************************/
 
 function MapLayers_Tree_CheckChange(item, checked) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_CheckChange(item, checked)", item, checked);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_CheckChange(item, checked)", item, checked);
 
     /***** if turn on a temp folder item it has a controll, activate it *****/
 
@@ -172,6 +156,70 @@ function MapLayers_Tree_CollapseNode(item, node) {
 }
 
 
+function MapLayers_Tree_Find_Layers_callback( result ) {
+
+   //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_Layers_callback( result)", result);
+    if ( result && result.Checkable ) {
+
+        /***** the tree isnt expanded posibly so we need to folow it to our node *****/
+
+        var path = [];
+        var pitem;
+        for ( pitem = result ;
+              pitem ;
+              pitem = MapLayers.Store.Memory.get( pitem.parent )
+        ) {
+            path.unshift( pitem );
+        }
+
+        /***** loop over the path and expand the nodes *****/
+
+        console.log("expanding ", result.id); 
+        for ( var iPath = 0; iPath < path.length; iPath++ ) {
+            var node = MapLayers.Tree.tree.getNodesByItem(path[iPath])[0];
+
+            if (node && node.isExpandable) {
+                MapLayers.Tree.tree._expandNode(node);
+            }
+        }
+
+        /***** now we can click on our node *****/
+
+        node = MapLayers.Tree.tree.getNodesByItem(result)[0];
+        node.checkbox.set('checked', true);
+    }
+}
+
+function MapLayers_Tree_Open_Layers_callback( result ) {
+
+   //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Open_Layers_callback( result)", result);
+    if ( result ) {
+
+        /***** the tree isnt expanded posibly so we need to folow it to our node *****/
+
+        var path = [];
+        var pitem;
+        for ( pitem = result ;
+              pitem ;
+              pitem = MapLayers.Store.Memory.get( pitem.parent )
+        ) {
+            path.unshift( pitem );
+        }
+
+        /***** loop over the path and expand the nodes *****/
+
+        console.log("expanding ", result.id); 
+        for ( var iPath = 0; iPath < path.length; iPath++ ) {
+            var node = MapLayers.Tree.tree.getNodesByItem(path[iPath])[0];
+
+            if (node && node.isExpandable) {
+                MapLayers.Tree.tree._expandNode(node);
+            }
+        }
+
+    }
+}
+
 /******************************************************************************
     function to parse the tree to turn on the requested layers
 ******************************************************************************/
@@ -179,7 +227,7 @@ function MapLayers_Tree_CollapseNode(item, node) {
 
 function MapLayers_Tree_Find_and_Open_Layers( layers, expand) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_FindLayers(layers)", layers);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_and_Open_Layers( layers, expand)", layers, expand);
 
     /***** loop over the layers in the url *****/
 
@@ -187,54 +235,22 @@ function MapLayers_Tree_Find_and_Open_Layers( layers, expand) {
     var iLid;
     for ( var iLid = 0; iLid < lays.length; iLid++ ) {
 
-        var item = MapLayers.Store.Observable.query( { id: lays[iLid] } )[0];
-
-        if (item && expand || item.Checkable) {
-
-            /***** the tree isnt expanded posibly so we need to folow it to our node *****/
-
-/***** fixme in the next release 
-            var paths= MapLayers.Tree.tree.get('paths');
-            var path=[];
-
-            for ( var pitem = item ;
-                  pitem ;
-                  pitem = MapLayers.Store.Observable.query( { id: pitem.parent } )[0] 
-            ) {
-                path.splice( 0, 0, pitem.id);
-            }
-
-            paths.push(path);
-
-            MapLayers.Tree.tree.set('paths',  paths ); 
-****/
-
-            var path = [];
-            var pitem;
-            for ( pitem = item ;
-                  pitem ;
-                  pitem = MapLayers.Store.Observable.query( { id: pitem.parent } )[0] 
-            ) {
-                path.unshift( pitem );
-            }
-
-            /***** loop over the path and expand the nodes *****/
-
-            for ( var iPath = 0; iPath < path.length; iPath++ ) {
-                var node = MapLayers.Tree.tree.getNodesByItem(path[iPath])[0];
-
-                if (node && node.isExpandable) {
-                    MapLayers.Tree.tree._expandNode(node);
-                }
-            }
-
-            /***** now we can click on our node *****/
-
-            if (!expand) {
-                node = MapLayers.Tree.tree.getNodesByItem(item)[0];
-                node.checkbox.set('checked', true);
-            }
+        if (expand) {
+            MapLayers_Store_Cache_get_withcallback(
+                lays[iLid],
+                undefined,
+                MapLayers_Tree_Open_Layers_callback,
+                expand
+            );
+        } else {
+            MapLayers_Store_Cache_get_withcallback(
+                lays[iLid],
+                undefined,
+                MapLayers_Tree_Find_Layers_callback,
+                expand
+            );
         }
+
     }
 }
 
@@ -243,7 +259,7 @@ function MapLayers_Tree_Find_and_Open_Layers( layers, expand) {
 
     i dont think we can use this
 ******************************************************************************/
-//fixme
+
 function MapLayers_Tree_FindNode_by_id(root, id) {
 
     var nodes = root.childNodes;
@@ -281,7 +297,7 @@ function MapLayers_Tree_FindNode_by_id(root, id) {
 
 function MapLayers_Tree_Parse( NodeData, ParentNode) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse( NodeData, ParentNode)", NodeData, ParentNode);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse( NodeData, ParentNode)", NodeData, ParentNode);
 
     var layer = null;
 
@@ -507,11 +523,7 @@ function MapLayers_Tree_Parse( NodeData, ParentNode) {
 
         }
 
-        /***** wait for the firat base layer to turn on the map ****/
 
-        if ( NodeData.options.isBaseLayer == true && ! ParentNode.haschildren ) {
-            finishup();
-        }
 
         ParentNode.haschildren = true;
 
@@ -551,8 +563,9 @@ function MapLayers_Tree_Parse( NodeData, ParentNode) {
 *******************************************************************************/
 
 function MapLayers_Tree_Create_querycallback(NodeData) {
+    
+    //if (MapLayers.Settings.debug) console.log("MMapLayers_Tree_Create_querycallback(NodeData) ", NodeData );
 
-    if (MapLayers.Settings.debug) console.log("MMapLayers_Tree_Create_querycallback(NodeData) ", NodeData );
 
     switch(NodeData.nodetype) {
         
@@ -603,6 +616,8 @@ function MapLayers_Tree_Create_querycallback(NodeData) {
             break;
         
         default:
+
+
             break;
     }
 }
@@ -614,30 +629,36 @@ function MapLayers_Tree_Create_querycallback(NodeData) {
 
 function MapLayers_Tree_Create_TemFolder(ParentNode) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_TemFolder(ParentNode) ", ParentNode );
-    var newNode = MapLayers_Tree_Parse(
-        {
-            leaf: false,
-            isExpanded: false, //dojo
-            checked: false,
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_TemFolder(ParentNode) ", ParentNode );
+    if (!MapLayers.Tree.tempid ) {
+        var newNode = {
             id: "temp",
             parent: 1,
             nodetype: "Folder",
+            owner: null,
+            groups: null,
+            timestamp: null,
+            begin_timespan: null,
+            end_timespan: null,
+            tile_cache: false,
+            tooltip: "",
+            metadata: "",
             lft: 0,
             rght: 0,
             tree_id: 1,
             level: 1,
-            Checkable: false,
-            name: "Temporary Layers"
-        },
-        ParentNode
-    )
-    
-    MapLayers.Tree.tempid = 1;
+            name: "Temporary Layers",
+            leaf: false,
+            isExpanded: false, //dojo
+            checked: false,
+            Checkable: false
+        };
 
+        MapLayers.Tree.tempid = 1;
 
-    MapLayers.Store.Memory.add( newNode );
+        MapLayers.Store.Memory.add( newNode );
 
+    }
 
 }
 
@@ -648,7 +669,7 @@ function MapLayers_Tree_Create_TemFolder(ParentNode) {
 
 function MapLayers_Tree_Create_Templayer(Lname, Layer, Controll) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_Templayer(Lname, Layer, Controll :", Lname, Layer, Controll);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_Templayer(Lname, Layer, Controll :", Lname, Layer, Controll);
 
     var newNode = ({
         leaf: true,
@@ -669,7 +690,7 @@ function MapLayers_Tree_Create_Templayer(Lname, Layer, Controll) {
     });
 
     MapLayers.Store.Memory.add( newNode );
-   
+    MapLayers.Store.Observable.notify(newNode);
 }
 
 /*******************************************************************************
@@ -680,6 +701,8 @@ function MapLayers_Tree_Create_Templayer(Lname, Layer, Controll) {
 *******************************************************************************/
 
 function MapLayers_Tree_CreateTreeNode (args) {
+     //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_CreateTreeNode (args) ", args);
+
     tnode = new dijit._TreeNode(args);
     tnode.labelNode.innerHTML = args.label;
 
@@ -734,7 +757,7 @@ function MapLayers_Tree_CreateTreeNode (args) {
 
 function MapLayers_Tree_Create () {
     
-    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create()");
 
     /***** make the store *****/
 

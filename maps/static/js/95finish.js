@@ -43,14 +43,14 @@ function finishup() {
     var layers = MapLayers_Hash_Get('layers');
     var open =  MapLayers_Hash_Get('open');
 
-    //fixme
-/*    if ( open && open != "") {
+
+    if ( open && open != "") {
         MapLayers_Tree_Find_and_Open_Layers( open, true);
     }
     if ( layers && layers != "") {
         MapLayers_Tree_Find_and_Open_Layers( layers, false);
     }
-  */
+
 
 /******************************************************************************
  add openlayers move event
@@ -82,7 +82,7 @@ function MapLayers_Login_GetJson() {
 
             //MapLayers_Tree_GetJson();
             MapLayers_Tree_Create();
-           
+
         }
     );
 }

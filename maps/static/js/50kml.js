@@ -44,7 +44,7 @@ dojo.ready(function() {
 
 function MapLayers_Kml_parsetree(item, indent) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Kml_parsetree(item, indent) ", item, indent);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Kml_parsetree(item, indent) ", item, indent);
 
     var children = MapLayers.Tree.Store.getChildren(item);
     
@@ -157,7 +157,7 @@ function MapLayers_Kml_parsetree(item, indent) {
 
 function MapLayers_Kml_writekml() {
     
-    if (MapLayers.Settings.debug) console.log("MapLayers_Kml_writekml()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Kml_writekml()");
 
     var zoom = MapLayers.Map.map.getZoom();
     

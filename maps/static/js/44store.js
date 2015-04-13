@@ -31,6 +31,7 @@ require([
         "dojo/_base/declare",
         "dojo/_base/array",
         "dojo/_base/lang",
+        "dojo/when",
         "dojo/store/util/QueryResults",
         "dojo/store/JsonRest",
         "dojo/store/Memory",
@@ -44,6 +45,7 @@ require([
         declare,
         array,
         lang,
+        when,
         QueryResults,
         JsonRest,
         Memory,
@@ -59,6 +61,7 @@ require([
         mydojo.declare = declare;
         mydojo.array = array;
         mydojo.lang = lang;
+        mydojo.when = when;
         mydojo.QueryResults = QueryResults;
         mydojo.JsonRest = JsonRest;
         mydojo.Memory = Memory;
@@ -85,14 +88,14 @@ dojo.ready(function() {
     
 function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Store_Create( rootid )", rootid);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Store_Create( rootid )", rootid);
 
     var our_JsonRest = mydojo.declare(mydojo.JsonRest, {
-        query: function () {
+        query: function (query, directives) {
             var originalResults = this.inherited(arguments);
             var newResults = originalResults.then(function (results) {
                 return mydojo.array.map(results, function (result) {
-                
+
                     /***** get the parent *****/
 
                     var parent = MapLayers.Store.Memory.query( { id: result.parent } )[0];
@@ -100,7 +103,13 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
                     /***** parse the data in the node before we add it *****/
 
                     return parse_callback( result, parent);
-                    
+
+                    /***** store the query on the item so the cache can test if it needs to fetch *****/
+
+                    // fixme we should favor parent= querys, dont change the query on a memory store
+                    //newitem.query = query;
+
+                    return newitem
                 });
             });
             var mynewResults = mydojo.lang.delegate(newResults, { total: originalResults.total });
@@ -112,11 +121,11 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
             /***** modify in place *****/
 
             originalResults.then(function (results) {
-                
+
                 parse_callback( results, null);
-                    
+
             });
-            
+
             return originalResults;
         }
     });
@@ -159,7 +168,133 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
         MapLayers.Store.JsonRest,
         MapLayers.Store.Memory
     );
+	
+    /***** change the query function so we check the cache                *****/
+    /***** also we add a callback on all new fetches after there complete *****/
 
+    // fixme if we already have an item and we do a new query its important
+    // that item dont get put to the memory store
+
+
+    //  that already is a match
+
+    // ch
+    // there is no guarentee a query will get all the results
+    // were only doing one type right now so its ok eg parent=
+
+    // fixme we will need a way to get a new one if the data on the server changes
+
+    mydojo.aspect.around (
+        MapLayers.Store.Cache,
+        "query",
+        function(originalquery) {
+
+            return function(query, directives) {
+
+            //if (MapLayers.Settings.debug) console.log("MapLayers.Store.Cache.query(query, directives)", query, directives);
+
+                /***** check the cache *****/
+
+                var results = MapLayers.Store.Memory.query(query, directives);
+                var skip = false;
+
+                if ( results.length > 0) {
+                    skip = true;
+                }
+
+                /***** dont try to get temp stuff *****/
+
+                if ( query
+                     && query.hasOwnProperty('parent')
+                     && typeof(query.parent) == "string"
+                     && query.parent.match(/temp.*/) 
+                   ) {
+                     skip = true;
+                }
+
+                /***** if the first item is temp, fetch anyway *****/
+            
+                if ( results.length == 1
+                     && typeof(results[0].id) == "string"
+                     && results[0].id.match(/temp.*/) 
+                   ) {
+                    skip=false;
+               }
+                
+                /***** get results from the server? *****/
+
+                if ( !skip ) {
+                    var newresults = MapLayers.Store.JsonRest.query(query, directives);
+
+                    /***** loop over the results and add them to the store *****/
+
+                    newresults.then(function(newresults) {
+                        newresults.forEach(function(object) {
+
+                            MapLayers.Store.Memory.put(object);
+                        });
+
+                        return newresults; // we need this for the next .then
+
+                    /***** now notify *****/
+
+                    }).then(function(newresults) {
+
+                        var parent = MapLayers.Store.Memory.query( {id: newresults[0].parent} )[0]; 
+
+                        newresults.forEach(function(object) {
+
+                            MapLayers.Store.Observable.notify(object);
+                            obstore_callback (object);
+
+                        });
+                        
+                        /***** if these are baselayers turn on the map ****/
+
+                        if ( parent.name == "Base Layers"
+                             && !MapLayers.Store.calledfinishup
+                           ) {
+                            MapLayers.Store.calledfinishup = true;
+                            finishup();
+                        }
+
+                    });
+                }
+
+                return results;
+            }
+        }
+    );
+
+    /***** change the get function so we can add a callback  *****/
+
+    mydojo.aspect.around (
+        MapLayers.Store.Cache,
+        "get",
+        function (originalget) {
+            return function (id, directives) {
+
+            //if (MapLayers.Settings.debug) console.log("MapLayers.Store.Cache.get(id, directives)", id, directives);
+
+                return mydojo.when(
+                    MapLayers.Store.Memory.get(id),
+                    function (result) {
+                        return result || mydojo.when(
+
+                            MapLayers.Store.JsonRest.get(id, directives),
+                            function (result) {
+                                if(result) {
+                                    MapLayers.Store.Memory.put(result, {id: id});
+                                    obstore_callback (result);
+                                }
+                                return result;
+                            }
+                        );
+                    }
+                );
+            }
+        }
+    );
 
     /***** obstore *****/
 
@@ -186,22 +321,28 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
     
     });
 
+}
 
-    /***** we need to insert a little routine into the model so that *****/
-    /***** when its given a new node from the store we can act on it *****/
+function MapLayers_Store_Cache_get_withcallback (id, directives, callback) {
 
-    mydojo.aspect.after(
-        MapLayers.Store.Model,
-        "getIdentity",
-        function(originalgetIdentity, Arguments) {
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Store_Cache_get_withcallback(id, directives)", id, directives);
 
-            var item = MapLayers.Store.Memory.query( {id: Arguments[0].id } );
-            obstore_callback (item[0]);
-            
-            return originalgetIdentity;
+    return mydojo.when(
+        MapLayers.Store.Memory.get(id),
+        function (result) {
+            return result || mydojo.when(
+
+                MapLayers.Store.JsonRest.get(id, directives),
+                function (result) {
+                    if(result) {
+                        MapLayers.Store.Memory.put(result, {id: id});
+                        callback(result);
+                    }
+                    return result;
+                }
+            );
         }
     );
-
 }
 
 

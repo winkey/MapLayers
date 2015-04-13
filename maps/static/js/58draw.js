@@ -36,7 +36,7 @@ dojo.ready(function() {
 
 function MapLayers_Draw_init() {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Draw_init()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_init()");
 
     MapLayers.Draw.NavControl = new OpenLayers.Control.Navigation();
     MapLayers.Map.ActiveControl = MapLayers.Draw.NavControl;
@@ -46,7 +46,7 @@ function MapLayers_Draw_init() {
 
 function MapLayers_Draw_DoNav() {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Draw_DoNav()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_DoNav()");
 
     if ( MapLayers.Map.ActiveControl != MapLayers.Draw.NavControl ) {
 
@@ -60,7 +60,7 @@ function MapLayers_Draw_DoNav() {
 
 function MapLayers_Draw_NewPoint() {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewPoint()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewPoint()");
 
     /***** create the layer *****/
 
@@ -85,7 +85,7 @@ function MapLayers_Draw_NewPoint() {
 
 function MapLayers_Draw_NewLine() {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewLine()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewLine()");
 
     /***** create the layer *****/
 
@@ -115,7 +115,7 @@ function MapLayers_Draw_NewLine() {
 
 function MapLayers_Draw_NewPoly() {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewPoly()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewPoly()");
 
     /***** create the layer *****/
 
@@ -148,7 +148,7 @@ function MapLayers_Draw_NewPoly() {
 
 function MapLayers_Draw_NewBox() {
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewBox() :");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Draw_NewBox() :");
 
     /***** create the layer *****/
 

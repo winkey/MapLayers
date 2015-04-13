@@ -269,7 +269,7 @@ function MoveListner() {
 function MapLayers_Setcenter() {
       
 
-    if (MapLayers.Settings.debug) console.log("MapLayers_Setcenter()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Setcenter()");
 
     /***** get lat lon and zoom from the url *****/
     
