@@ -4,12 +4,14 @@ tilecache:
 
     add a bg job that rms the tiles when a layer is deleted
     add a second config table and layers for 4326 for view in google earth
-
+    FIXME tilecache @ telascience does not work, note its picking up the global install
 
 layers:
     need getancestors for the lay loading view!!!!
 
     save views
+
+    bookmarks could be a seperate tree, it mnay be good to share these with other regestered users ans public
 
 
     change layer pkeys to bigint
@@ -40,7 +42,7 @@ map:
 
     add a print mechanism
     the help text needs populated for everything
-    the time slider toolbar should display the current datetime 
+
     refresh the client when the layer tree changes, perhaps signals again in the map app
     do the admin so you can do intial settings
 
@@ -48,8 +50,18 @@ map:
         
     test kmlrepeater
 
+map.js
+
+
+    pink tiles are bad!
+
 
 tree.js
+
+    fixme nested open folders dont work right if there too deep, chicken and egg
+            also this seems not let en entire folder load, the next dolder in has a get done before the query is
+
+
 
     FIXME bookmarked animations are turned on before the children are loaded 
     perms
@@ -77,7 +89,7 @@ time.js
     all the time settings should be in the url has as long as there is data in the list
     add center and zoom when a layer becomes "active"
     split timeslider
-    
+        the time slider toolbar should display the current datetime 
      do a node of each begm end, ts then loop and retest to the current time
     
     tooltips

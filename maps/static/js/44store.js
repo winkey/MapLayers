@@ -121,6 +121,7 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
             /***** modify in place *****/
 
             originalResults.then(function (results) {
+                results.querytype = get;
 
                 parse_callback( results, null);
 
@@ -219,8 +220,17 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
                      && results[0].id.match(/temp.*/) 
                    ) {
                     skip=false;
-               }
-                
+                }
+
+                // fixme this should test different querys too not just store.get
+    `           /***** if its not a parent = query we should fetch new *****/
+    
+                results.foreach (function ( result ) {
+                    if (result.querytype == "get" ) {
+                        skip = false;
+                    }
+                });
+
                 /***** get results from the server? *****/
 
                 if ( !skip ) {
