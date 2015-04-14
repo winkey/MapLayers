@@ -57,11 +57,6 @@ map.js
 
 tree.js
 
-    fixme nested open folders dont work right if there too deep, chicken and egg
-            also this seems not let en entire folder load, the next dolder in has a get done before the query is
-
-    
-
     FIXME bookmarked animations are turned on before the children are loaded 
     perms
 
