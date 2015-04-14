@@ -90,6 +90,9 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
 
     //if (MapLayers.Settings.debug) console.log("MapLayers_Store_Create( rootid )", rootid);
 
+    MapLayers.Store.obstore_callback = obstore_callback;
+
+
     var our_JsonRest = mydojo.declare(mydojo.JsonRest, {
         query: function (query, directives) {
             var originalResults = this.inherited(arguments);
@@ -368,6 +371,7 @@ function MapLayers_Store_Cache_get_withcallback (id, callback) {
 
                         if(result) {
                             MapLayers.Store.Memory.put(result, {id: id});
+                            MapLayers.Store.obstore_callback (result);
                             callback(result);
                         }
                     }
