@@ -1002,12 +1002,12 @@ function MapLayers_Time_removenode(treenode) {
     
     else if (treenode.begin_timespan != null && treenode.end_timespan != null ) {
         
-        node = MapLayers_Time_removenode_sub(BegList, treenode);
+        node = MapLayers_Time_removenode_sub(MapLayers.Time.BegList, treenode);
         if (MapLayers.Time.BegCurrentNode.data.treenode.id == node.data.treenode.id) {
             MapLayers.Time.BegCurrentNode = null;
         }
 
-        node = MapLayers_Time_removenode_sub(EndList, treenode);
+        node = MapLayers_Time_removenode_sub(MapLayers.Time.EndList, treenode);
         if (MapLayers.Time.EndCurrentNode.data.treenode.id == node.data.treenode.id) {
             MapLayers.Time.EndCurrentNode = null;
         }
