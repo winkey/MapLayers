@@ -155,33 +155,46 @@ function MapLayers_Tree_CollapseNode(item, node) {
 
 }
 
+function MapLayers_Tree_GetPath( result ) {
+
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_GetPath( result)", result);
+
+    /***** the tree isnt expanded posibly so we need to folow it to our node *****/
+    var path = new Array();
+    for ( var pitem = result ;
+          pitem ;
+          pitem = MapLayers.Store.Memory.get( pitem.parent )
+    ) {
+        path.unshift( pitem );
+    }
+
+    return path;
+}
+
+function MapLayers_Tree_ExpandPath( path ) {
+
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_ExpandPath( path)", path);
+
+    /***** loop over the path and expand the nodes *****/
+
+    for ( var iPath = 0; iPath < path.length; iPath++ ) {
+        var node = MapLayers.Tree.tree.getNodesByItem(path[iPath])[0];
+
+        if (node && node.isExpandable) {
+            //console.log("expanding ", path[iPath].id);
+            MapLayers.Tree.tree._expandNode(node);
+        }
+    }
+}
+
 
 function MapLayers_Tree_Find_Layers_callback( result ) {
 
-   //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_Layers_callback( result)", result);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_Layers_callback( result)", result);
     if ( result && result.Checkable ) {
 
-        /***** the tree isnt expanded posibly so we need to folow it to our node *****/
-
-        var path = [];
-        var pitem;
-        for ( pitem = result ;
-              pitem ;
-              pitem = MapLayers.Store.Memory.get( pitem.parent )
-        ) {
-            path.unshift( pitem );
-        }
-
-        /***** loop over the path and expand the nodes *****/
-
-        console.log("expanding ", result.id); 
-        for ( var iPath = 0; iPath < path.length; iPath++ ) {
-            var node = MapLayers.Tree.tree.getNodesByItem(path[iPath])[0];
-
-            if (node && node.isExpandable) {
-                MapLayers.Tree.tree._expandNode(node);
-            }
-        }
+        var path = MapLayers_Tree_GetPath( result );
+        MapLayers_Tree_ExpandPath(path);
 
         /***** now we can click on our node *****/
 
@@ -192,30 +205,11 @@ function MapLayers_Tree_Find_Layers_callback( result ) {
 
 function MapLayers_Tree_Open_Layers_callback( result ) {
 
-   //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Open_Layers_callback( result)", result);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Open_Layers_callback( result)", result);
     if ( result ) {
 
-        /***** the tree isnt expanded posibly so we need to folow it to our node *****/
-
-        var path = [];
-        var pitem;
-        for ( pitem = result ;
-              pitem ;
-              pitem = MapLayers.Store.Memory.get( pitem.parent )
-        ) {
-            path.unshift( pitem );
-        }
-
-        /***** loop over the path and expand the nodes *****/
-
-        console.log("expanding ", result.id); 
-        for ( var iPath = 0; iPath < path.length; iPath++ ) {
-            var node = MapLayers.Tree.tree.getNodesByItem(path[iPath])[0];
-
-            if (node && node.isExpandable) {
-                MapLayers.Tree.tree._expandNode(node);
-            }
-        }
+        var path = MapLayers_Tree_GetPath( result );
+        MapLayers_Tree_ExpandPath(path);
 
     }
 }
@@ -238,16 +232,12 @@ function MapLayers_Tree_Find_and_Open_Layers( layers, expand) {
         if (expand) {
             MapLayers_Store_Cache_get_withcallback(
                 lays[iLid],
-                undefined,
-                MapLayers_Tree_Open_Layers_callback,
-                expand
+                MapLayers_Tree_Open_Layers_callback
             );
         } else {
             MapLayers_Store_Cache_get_withcallback(
                 lays[iLid],
-                undefined,
-                MapLayers_Tree_Find_Layers_callback,
-                expand
+                MapLayers_Tree_Find_Layers_callback
             );
         }
 

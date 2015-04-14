@@ -93,21 +93,35 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
     var our_JsonRest = mydojo.declare(mydojo.JsonRest, {
         query: function (query, directives) {
             var originalResults = this.inherited(arguments);
+
             var newResults = originalResults.then(function (results) {
+
                 return mydojo.array.map(results, function (result) {
 
-                    /***** get the parent *****/
+                    /***** if it is already in the memory we dont replace it *****/
 
-                    var parent = MapLayers.Store.Memory.query( { id: result.parent } )[0];
+                    var newitem = null;
+                    if ( (newitem = MapLayers.Store.Memory.get( result.id )) ) {
+                        newitem.status = "update";
+                        //fixme what if its new data on the server? serial num?
 
-                    /***** parse the data in the node before we add it *****/
+                    /***** use the new data *****/
 
-                    return parse_callback( result, parent);
+                    } else {
 
-                    /***** store the query on the item so the cache can test if it needs to fetch *****/
+                        var parent = MapLayers.Store.Memory.get( result.parent );
+                        newitem = parse_callback( result, parent );
+                        newitem.status = "new";
+                    }
 
-                    // fixme we should favor parent= querys, dont change the query on a memory store
-                    //newitem.query = query;
+                    /***** store the query on the item so the cache can test  *****/
+                    /***** if it needs to fetch, but favor the parent= querys *****/
+
+                    if ( ! newitem.querytype
+                         || newitem.querytype != JSON.stringify({parent: result.parent} )
+                       ) {
+                        newitem.querytype = JSON.stringify(query);
+                    }
 
                     return newitem
                 });
@@ -121,8 +135,8 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
             /***** modify in place *****/
 
             originalResults.then(function (results) {
-                results.querytype = get;
-
+            
+                results.querytype = "get";
                 parse_callback( results, null);
 
             });
@@ -173,16 +187,6 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
     /***** change the query function so we check the cache                *****/
     /***** also we add a callback on all new fetches after there complete *****/
 
-    // fixme if we already have an item and we do a new query its important
-    // that item dont get put to the memory store
-
-
-    //  that already is a match
-
-    // ch
-    // there is no guarentee a query will get all the results
-    // were only doing one type right now so its ok eg parent=
-
     // fixme we will need a way to get a new one if the data on the server changes
 
     mydojo.aspect.around (
@@ -198,7 +202,7 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
 
                 var results = MapLayers.Store.Memory.query(query, directives);
                 var skip = false;
-
+                var checkold = false;
                 if ( results.length > 0) {
                     skip = true;
                 }
@@ -222,14 +226,19 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
                     skip=false;
                 }
 
-                // fixme this should test different querys too not just store.get
-    `           /***** if its not a parent = query we should fetch new *****/
-    
-                results.foreach (function ( result ) {
-                    if (result.querytype == "get" ) {
+                /***** if the query was different on any results in the set  *****/
+                
+
+                for ( var iResult = 0;
+                      skip &&iResult < results.length;
+                      iResult++
+                    ) {
+
+                    if (results[iResult].querytype != JSON.stringify(query) ) {
                         skip = false;
                     }
-                });
+                }
+
 
                 /***** get results from the server? *****/
 
@@ -240,8 +249,9 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
 
                     newresults.then(function(newresults) {
                         newresults.forEach(function(object) {
-
-                            MapLayers.Store.Memory.put(object);
+                            if (object.status == "new") {
+                                MapLayers.Store.Memory.put(object);
+                            }
                         });
 
                         return newresults; // we need this for the next .then
@@ -249,16 +259,25 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
                     /***** now notify *****/
 
                     }).then(function(newresults) {
-
+                        var updated = false; 
                         var parent = MapLayers.Store.Memory.query( {id: newresults[0].parent} )[0]; 
 
                         newresults.forEach(function(object) {
-
-                            MapLayers.Store.Observable.notify(object);
-                            obstore_callback (object);
+                            if (object.hasOwnProperty('status') && object.status == "new") {
+                                MapLayers.Store.Observable.notify(object);
+                                obstore_callback (object);
+                            } else if (object.hasOwnProperty('status') && object.status == "update") {
+                                MapLayers.Store.Observable.notify(object, object.id);
+                                updated = true;
+                            }
+                            object.status = null;
 
                         });
-                        
+
+                        if (updated) {
+                            MapLayers.Store.Observable.notify(parent, parent.id);
+                        }
+
                         /***** if these are baselayers turn on the map ****/
 
                         if ( parent.name == "Base Layers"
@@ -333,24 +352,27 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
 
 }
 
-function MapLayers_Store_Cache_get_withcallback (id, directives, callback) {
+function MapLayers_Store_Cache_get_withcallback (id, callback) {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Store_Cache_get_withcallback(id, directives)", id, directives);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Store_Cache_get_withcallback(id, callback)", id);
 
-    return mydojo.when(
+    mydojo.when(
         MapLayers.Store.Memory.get(id),
         function (result) {
-            return result || mydojo.when(
+            if ( result ) {
+                callback(result);
+            } else {
+                mydojo.when(
+                    MapLayers.Store.JsonRest.get(id),
+                    function (result) {
 
-                MapLayers.Store.JsonRest.get(id, directives),
-                function (result) {
-                    if(result) {
-                        MapLayers.Store.Memory.put(result, {id: id});
-                        callback(result);
+                        if(result) {
+                            MapLayers.Store.Memory.put(result, {id: id});
+                            callback(result);
+                        }
                     }
-                    return result;
-                }
-            );
+                );
+            }
         }
     );
 }
