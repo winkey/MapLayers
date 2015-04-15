@@ -3,7 +3,7 @@
     "model": "maps.Settings",
     "pk": 1,
     "fields": {
-      "title": "NewWorld",
+      "title": "MapLayers",
       "zoom": "5",
       "tilecacheurl": "http://hypercube.telascience.org/tilecache/tilecache.py",
       "center": "POINT(-96.51198932266146 37.7121262837109)"

@@ -57,12 +57,13 @@ map.js
 
 tree.js
 
-    FIXME bookmarked animations are turned on before the children are loaded 
+    tooltips
+
     perms
 
     when layers get turned on, center and zoom if set
 
-    js: how do we update the tree when the data is updated?
+    how do we update the tree when the data is updated?
 
     drag and drop
 

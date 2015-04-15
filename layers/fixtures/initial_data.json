@@ -71,17 +71,17 @@
       "tree_id": 1,
       "level": 2,
       "parent": 2,
-      "nodetype": "Google"
+      "nodetype": "Googlev3"
     }
   },
   {
-	"model": "layers.google",
+	"model": "layers.googlev3",
     "pk": 4,
     "fields": {
       "name": "Google Satellite",
       "isBaseLayer": true,
-      "type": "G_SATELLITE_MAP",
-      "sphericalMercator": true
+      "type": "SATELLITE",
+      "numZoomLevels": 22
     }
   },
   {
@@ -94,17 +94,17 @@
       "tree_id": 1,
       "level": 2,
       "parent": 2,
-      "nodetype": "Google"
+      "nodetype": "Googlev3"
     }
   },
   {
-	"model": "layers.google",
+	"model": "layers.googlev3",
     "pk": 5,
     "fields": {
       "name": "Google Hybrid",
       "isBaseLayer": true,
-      "type": "G_HYBRID_MAP",
-      "sphericalMercator": true
+      "type": "HYBRID",
+      "numZoomLevels": 20
     }
   },
   {
@@ -117,17 +117,17 @@
       "tree_id": 1,
       "level": 2,
       "parent": 2,
-      "nodetype": "Google"
+      "nodetype": "Googlev3"
     }
   },
   {
-	"model": "layers.google",
+	"model": "layers.googlev3",
     "pk": 6,
     "fields": {
       "name": "Google Terrain",
       "isBaseLayer": true,
-      "type": "G_PHYSICAL_MAP",
-      "sphericalMercator": true
+      "type": "TERRAIN",
+      "numZoomLevels": 20
     }
   },
   {
@@ -140,17 +140,16 @@
       "tree_id": 1,
       "level": 2,
       "parent": 2,
-      "nodetype": "Google"
+      "nodetype": "Googlev3"
     }
   },
   {
-	"model": "layers.google",
+	"model": "layers.googlev3",
     "pk": 7,
     "fields": {
       "name": "Google Streets",
       "isBaseLayer": true,
-      "type": "",
-      "sphericalMercator": true
+      "type": "ROADMAP"
     }
   },
   {
