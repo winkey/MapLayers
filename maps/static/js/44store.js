@@ -278,7 +278,8 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
                         });
 
                         if (updated) {
-                            MapLayers.Store.Observable.notify(parent, parent.id);
+                            //fixme this destroys checkboxs on folders
+                            //MapLayers.Store.Observable.notify(parent, parent.id);
                         }
 
                         /***** if these are baselayers turn on the map ****/
