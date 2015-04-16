@@ -354,7 +354,7 @@ function MapLayers_Tree_Parse( NodeData, ParentNode) {
                                                );
             break;
 
-        /*
+        
         case 'Google':
 
             switch (NodeData.options.type) {
@@ -374,7 +374,7 @@ function MapLayers_Tree_Parse( NodeData, ParentNode) {
                                                );
 
             break;
-        */
+        
 
         case 'Googlev3':
             switch (NodeData.options.type) {
