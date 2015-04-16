@@ -79,7 +79,6 @@
     "pk": 4,
     "fields": {
       "name": "Google Satellite",
-      "isBaseLayer": true,
       "type": "SATELLITE",
       "numZoomLevels": 22
     }
@@ -102,7 +101,6 @@
     "pk": 5,
     "fields": {
       "name": "Google Hybrid",
-      "isBaseLayer": true,
       "type": "HYBRID",
       "numZoomLevels": 20
     }
@@ -125,7 +123,6 @@
     "pk": 6,
     "fields": {
       "name": "Google Terrain",
-      "isBaseLayer": true,
       "type": "TERRAIN",
       "numZoomLevels": 20
     }
@@ -148,7 +145,6 @@
     "pk": 7,
     "fields": {
       "name": "Google Streets",
-      "isBaseLayer": true,
       "type": "ROADMAP"
     }
   },
@@ -170,29 +166,6 @@
     "pk": 8,
     "fields": {
       "name": "Test Layers"
-    }
-  },
-  {
-	"model": "layers.layertreenode",
-    "pk": 9,
-    "fields": {
-      "polymorphic_ctype": 15,
-      "lft": 0,
-      "rght": 0,
-      "tree_id": 1,
-      "level": 2,
-      "parent": 8,
-      "nodetype": "Google"
-    }
-  },
-  {
-	"model": "layers.google",
-    "pk": 9,
-    "fields": {
-      "name": "testy123",
-      "isBaseLayer": false,
-      "type": "",
-      "sphericalMercator": true
     }
   },
   {

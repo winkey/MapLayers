@@ -287,7 +287,7 @@ function MapLayers_Tree_FindNode_by_id(root, id) {
 
 function MapLayers_Tree_Parse( NodeData, ParentNode) {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse( NodeData, ParentNode)", NodeData, ParentNode);
+    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse( NodeData, ParentNode)", NodeData, ParentNode);
 
     var layer = null;
 
@@ -392,7 +392,7 @@ function MapLayers_Tree_Parse( NodeData, ParentNode) {
                     break;
             }
 
-            layer = new OpenLayers.Layer.Googlev3( NodeData.name,
+            layer = new OpenLayers.Layer.Google( NodeData.name,
                                                    NodeData.options
                                                  );
             break;
@@ -509,8 +509,9 @@ function MapLayers_Tree_Parse( NodeData, ParentNode) {
 
         /***** add a baselayer to the map now *****/
 
-        if ( NodeData.options.isBaseLayer == true ||
-             NodeData.nodetype == 'Google'
+        if ( NodeData.options.isBaseLayer == true
+             || NodeData.nodetype == 'Google'
+             || NodeData.nodetype == 'Googlev3'
            ) {
             MapLayers.Map.map.addLayers([layer]);
 
