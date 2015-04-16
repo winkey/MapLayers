@@ -65,7 +65,7 @@
 	"model": "layers.layertreenode",
     "pk": 4,
     "fields": {
-      "polymorphic_ctype": 7,
+      "polymorphic_ctype": 15,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
@@ -88,7 +88,7 @@
 	"model": "layers.layertreenode",
     "pk": 5,
     "fields": {
-      "polymorphic_ctype": 7,
+      "polymorphic_ctype": 15,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
@@ -111,7 +111,7 @@
 	"model": "layers.layertreenode",
     "pk": 6,
     "fields": {
-      "polymorphic_ctype": 7,
+      "polymorphic_ctype": 15,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
@@ -134,7 +134,7 @@
 	"model": "layers.layertreenode",
     "pk": 7,
     "fields": {
-      "polymorphic_ctype": 7,
+      "polymorphic_ctype": 15,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
@@ -176,7 +176,7 @@
 	"model": "layers.layertreenode",
     "pk": 9,
     "fields": {
-      "polymorphic_ctype": 7,
+      "polymorphic_ctype": 15,
       "lft": 0,
       "rght": 0,
       "tree_id": 1,
