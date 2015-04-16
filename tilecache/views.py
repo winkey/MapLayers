@@ -31,7 +31,7 @@ from os.path import abspath, dirname, join
 
 
 #wee need this to make tc work right, mayby if we use a globaly installred one
-sys.path.append(abspath( dirname( __file__ ) ))
+sys.path.insert(0, abspath( dirname( __file__ ) ))
 
 from tilecache.TileCache.Service import Service, TileCacheException
 
