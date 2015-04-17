@@ -32,128 +32,15 @@ dojo.require("dijit.form.CheckBox");
 dojo.require("dijit.form.RadioButton");
 dojo.require("dojo/aspect");
 
-
-dojo.ready(function() {
+require(['dojo/_base/declare'], function(declare) {
     MapLayers.Tree = new Object();
 });
 
 
-/*****************************************************************************
- function for the trees checkchange
-*****************************************************************************/
-
-function MapLayers_Tree_CheckChange(item, checked) {
-
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_CheckChange(item, checked)", item, checked);
-
-    /***** if turn on a temp folder item it has a controll, activate it *****/
 
 
-    /***** temp layer *****/
-
-    if (item.control) {
-        if(checked) {
-            if (MapLayers.Map.ActiveControl) {
-                MapLayers.Map.ActiveControl.deactivate();
-            }
-            MapLayers.Map.ActiveControl = item.control;
-            MapLayers.Map.ActiveControl.activate();
-            item.layer.setVisibility(true);
-
-        } else {
-
-            item.layer.setVisibility(false);
-        }
-    }
-
-    /***** new permalink add/remove *****/
-
-    else if ( item.nodetype != 'Animation' ) {
-        if(checked) {
-            MapLayers_Hash_Addlayer("layers", item.layer.lid);
-            item.layer.setVisibility(true);
-
-        } else {
-            MapLayers_Hash_Removelayer("layers", item.layer.lid);
-            item.layer.setVisibility(false);
-        }
-    }
-
-    if ( item.nodetype == 'Animation' ) {
-
-        if(checked) {
-            MapLayers_Hash_Addlayer("layers", item.id);
 
 
-            var children = MapLayers.Store.Observable.getChildren(item);
-            children.forEach(function(child) {
-                MapLayers_Time_addnode(child);
-                MapLayers.Map.map.addLayer(child.layer);
-            });
-        }
-
-        else {
-            MapLayers_Hash_Removelayer("layers", item.id);
-
-            var children = MapLayers.Store.Observable.getChildren(item);
-            children.forEach(function(child) {
-                MapLayers_Time_removenode(child);
-                MapLayers.Map.map.removeLayer(child.layer, 'TRUE');
-            });
-        }
-
-    }
-
-    /***** keep the layers out of the map to keep the map fast *****/
-
-    else if ( item.layer.isBaseLayer === false &&
-         item.nodetype != 'Google'
-       ) {
-
-        if(checked) {
-            MapLayers.Map.map.addLayer(item.layer);
-        } else {
-            MapLayers.Map.map.removeLayer(item.layer, 'TRUE');
-        }
-
-    /***** set the zoom on the map when baselayer is changed *****/
-
-    } else {
-        item.layer.onMapResize();
-        var center = MapLayers.Map.map.getCenter();
-
-        if (MapLayers.Map.map.baseLayer != null && center != null) {
-            var zoom = MapLayers.Map.map.getZoom();
-            MapLayers.Map.map.zoom = null;
-            MapLayers.Map.map.setCenter(center, zoom);
-        }
-    }
-
-}
-
-/*****************************************************************************
- function for the tree node expansion
-*****************************************************************************/
-
-function MapLayers_Tree_ExpandNode(item, node) {
-
-    /***** search for unexpanded parents *****/
-
-    MapLayers_Hash_Addlayer("open", item.id);
-
-}
-
-/*****************************************************************************
- function for the tree node Collapse
-*****************************************************************************/
-
-function MapLayers_Tree_CollapseNode(item, node) {
-
-    /***** search children for expanded layers *****/
-
-    MapLayers_Hash_Removelayer("open", item.id);
-
-}
 
 function MapLayers_Tree_GetPath( result ) {
 
@@ -244,377 +131,503 @@ function MapLayers_Tree_Find_and_Open_Layers( layers, expand) {
     }
 }
 
-/******************************************************************************
-    function to parse the tree to find a node by its id
+require(['dojo/_base/declare'], function(declare) {
 
-    i dont think we can use this
-******************************************************************************/
+declare("MapLayers.Tree.Node",null,{
 
-function MapLayers_Tree_FindNode_by_id(root, id) {
+    leaf: false,
+    isExpanded: false,
+    checked: false,
+    Checkable: false,
+    layer: null,
 
-    var nodes = root.childNodes;
-
-    if (nodes && id) {
-
-        /***** loop over the nodes children *****/
-
-        var iNode;
-        for ( iNode = 0; iNode < nodes.length ; iNode++ ) {
-
-            var node = nodes[iNode];
-
-            if ( node.id == id) {
-                return node
-            }
+    log:  function () {
+        if (MapLayers.Settings.debug) {
+            console.log("MapLayers.Tree.Node. : ", this, " : ", arguments);
         }
-    }
-}
+    },
 
+    /***************************************************************************
+     method to turn a layer off
+    ***************************************************************************/
 
-/**************************************************************************//**
- *
- *  @brief recursive funtion to parse the json array into the dojo tree
- * 
- *  @param NodesArray
- *  @param ParentNode
- *  @param LayerArray
- * 
-******************************************************************************/
+    Layer_off: function () {
 
-
-
-
-
-function MapLayers_Tree_Parse( NodeData, ParentNode) {
-
-    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse( NodeData, ParentNode)", NodeData, ParentNode);
-
-    var layer = null;
-
-    NodeData.leaf = false;
-    NodeData.isExpanded = false;
-    NodeData.checked = false;
-    NodeData.Checkable = false;
-
-    //fixme need extent for zoom to, we dont keep this in the db either
-    //                                    w                     s                   e            n
-    //'myExtent': new OpenLayers.Bounds(-9852248.59963804, 3527237.61654759, -9447717.68891644, 4172836.22079423)
-    switch(NodeData.nodetype) {
-
-        case 'Folder':
-            break;
-
-        case 'Radio':
-            break;
-
-        case 'Animation':
-            NodeData.Checkable = true;
-            break;
-
-        case 'Link':    
-            NodeData.target = NodeData.target;
-            break;
-
-        case 'ArcGISCache':
-            return NodeData;
-
-        case 'ArcGIS93Rest':
-            layer = new OpenLayers.Layer.ArcGIS93Rest( NodeData.name,
-                                                       NodeData.url,
-                                                       NodeData.options
-                                                     );
-           break;
-
-        case 'ArcIMS':
-            layer = new OpenLayers.Layer.ArcIMS( NodeData.name,
-                                                 NodeData.url,
-                                                 NodeData.options
-                                               );
-            break;
-
-        case 'Bing':
-            layer = new OpenLayers.Layer.Bing( NodeData.name,
-                                               NodeData.type,
-                                               NodeData.key,
-                                               NodeData.options
-                                              );
-            break;
-
-        case 'GeoRSS':
-
-            NodeData.popupSize = new OpenLayers.Size(NodeData.popupSize[0],
-                                                     NodeData.popupSize[1]);
-            NodeData.projection = new OpenLayers.Projection("EPSG:" + NodeData.projection);
-
-            layer = new OpenLayers.Layer.GeoRSS( NodeData.name,
-                                                 NodeData.url,
-                                                 NodeData.popupSize,
-                                                 NodeData.projection,
-                                                 NodeData.options
-                                               );
-            break;
-
-        
-        case 'Google':
-
-            switch (NodeData.options.type) {
-                case 'G_SATELLITE_MAP':
-                    NodeData.options.type = G_SATELLITE_MAP;
-                    break;
-                case 'G_HYBRID_MAP':
-                    NodeData.options.type = G_HYBRID_MAP;
-                    break;
-                case 'G_PHYSICAL_MAP':
-                    NodeData.options.type = G_PHYSICAL_MAP
-                    break;
-            }
-
-            layer = new OpenLayers.Layer.Google( NodeData.name,
-                                                 NodeData.options
-                                               );
-
-            break;
-        
-
-        case 'Googlev3':
-            switch (NodeData.options.type) {
-                case 'SATELLITE':
-                    NodeData.options.type = google.maps.MapTypeId.SATELLITE;
-                    break;
-                case 'HYBRID':
-                    NodeData.options.type = google.maps.MapTypeId.HYBRID;
-                    break;
-                case 'TERRAIN':
-                    NodeData.options.type = google.maps.MapTypeId.TERRAIN;
-                    break;
-                case 'ROADMAP':
-                    NodeData.options.type = google.maps.MapTypeId.ROADMAP;
-                    break;
-            }
-
-            layer = new OpenLayers.Layer.Google( NodeData.name,
-                                                   NodeData.options
-                                                 );
-            break;
-
-        case 'KaMap':
-            layer = new OpenLayers.Layer.KaMap( NodeData.name,
-                                                NodeData.url,
-                                                NodeData.params,
-                                                NodeData.options
-                                              );
-            break;
-
-        case 'KaMapCache':
-            layer = new OpenLayers.Layer.KaMapCache( NodeData.name,
-                                                     NodeData.url,
-                                                     NodeData.params,
-                                                     NodeData.options
-                                                   );
-            break;
-
-        case 'MapGuide':
-            return NodeData;
-
-        case 'MapServer':
-            layer = new OpenLayers.Layer.MapServer( NodeData.name,
-                                                    NodeData.url,
-                                                    NodeData.params,
-                                                    NodeData.options
-                                                  );
-            break;
-
-        case 'OSM':
-            layer = new OpenLayers.Layer.OSM( NodeData.name,
-                                              NodeData.url,
-                                              NodeData.options
-                                            );
-            break;
-
-        case 'TMS':
-            layer = new OpenLayers.Layer.TMS( NodeData.name,
-                                              NodeData.url,
-                                              NodeData.options
-                                            );
-            break;
-
-        case 'TileCache':
-            layer = new OpenLayers.Layer.TileCache( NodeData.name,
-                                                    NodeData.url,
-                                                    NodeData.layername,
-                                                    NodeData.options
-                                                  );
-            break;
-
-        case 'WMS':
-            layer = new OpenLayers.Layer.WMS( NodeData.name,
-                                              NodeData.url,
-                                              NodeData.params,
-                                              NodeData.options
-                                             );
-            break;
-
-        case 'WMTS':
-            layer = new OpenLayers.Layer.WMTS( NodeData.options
-                                             );
-            break;
-
-        case 'WorldWind':
-            NodeData.options.tileSize = new OpenLayers.Size( NodeData.options.tileSize[0],
-                                                             NodeData.options.tileSize[1] );
-            layer = new OpenLayers.Layer.WorldWind( NodeData.name,
-                                                    NodeData.url,
-                                                    NodeData.lzd,
-                                                    NodeData.zoomLevels,
-                                                    NodeData.params,
-                                                    NodeData.options
-                                                  );
-            break;
-
-        case 'XYZ':
-            layer = new OpenLayers.Layer.XYZ( NodeData.name,
-                                              NodeData.url,
-                                              NodeData.options
-                                            );
-            break;
-
-        default:
-            return NodeData
-
-    }
-
-    /***** layer *****/
-
-    if ( layer != null) {
-        NodeData.leaf = true;
-        NodeData.Checkable = true;
-        NodeData.layer = layer; 
-
-
-        if (ParentNode.nodetype == 'Radio') {
-            NodeData.radioGroup = "RadioGroup_" + ParentNode.id;
-
-            if (! ParentNode.haschildren) {
-                NodeData.checked = true;
-
-
-            }
-
-        }
-
-        if (ParentNode.nodetype == 'Animation') {
-            NodeData.checked = null;
-            NodeData.Checkable = false;
-        }
-
-        /***** add a baselayer to the map now *****/
-
-        if ( NodeData.options.isBaseLayer == true
-             || NodeData.nodetype == 'Google'
-             || NodeData.nodetype == 'Googlev3'
+        if ( this.layer
+             && this.layer.getVisibility()
            ) {
-            MapLayers.Map.map.addLayers([layer]);
+            this.layer.setVisibility(false);
+        }
+
+    },
+
+    /***************************************************************************
+     method to turn a layer on
+    ***************************************************************************/
+
+    Layer_on: function () {
+
+        if ( this.layer
+             && ! this.layer.getVisibility()
+           ) {
+            this.layer.setVisibility(true);
+        }
+
+    },
+
+    /***************************************************************************
+     method for the trees checkchange
+    ***************************************************************************/
+
+    CheckChange: function (checked) {
+
+        this.log( "CheckChange (checked) ", checked);
+
+        /***** if turn on a temp folder item it has a controll, activate it *****/
+
+        /***** temp layer *****/
+
+        if (this.control) {
+            if(checked) {
+                if (MapLayers.Map.ActiveControl) {
+                    MapLayers.Map.ActiveControl.deactivate();
+                }
+                MapLayers.Map.ActiveControl = this.control;
+                MapLayers.Map.ActiveControl.activate();
+                this.Layer_on( this.layer) ;
+
+            } else {
+
+                this.Layer_off( this.layer) ;
+            }
+        }
+
+        /***** new permalink add/remove *****/
+
+        else if ( this.nodetype != 'Animation' ) {
+            if(checked) {
+                MapLayers_Hash_Addlayer("layers", this.layer.lid);
+                this.Layer_on( this.layer) ;
+
+            } else {
+                MapLayers_Hash_Removelayer("layers", this.layer.lid);
+                this.Layer_off( this.layer) ;
+            }
+        }
+
+        if ( this.nodetype == 'Animation' ) {
+
+            if(checked) {
+                MapLayers_Hash_Addlayer("layers", this.id);
+
+
+                var children = MapLayers.Store.Observable.getChildren(this);
+                children.forEach(function(child) {
+                    MapLayers_Time_addnode(child);
+                    MapLayers.Map.map.addLayer(child.layer);
+                });
+            }
+
+            else {
+                MapLayers_Hash_Removelayer("layers", this.id);
+
+                var children = MapLayers.Store.Observable.getChildren(this);
+                children.forEach(function(child) {
+                    MapLayers_Time_removenode(child);
+                    MapLayers.Map.map.removeLayer(child.layer, 'TRUE');
+                });
+            }
 
         }
 
+        /***** keep the layers out of the map to keep the map fast *****/
+
+        else if ( this.layer.isBaseLayer === false
+                  && this.nodetype != 'Google'
+                  && this.nodetype != 'Googlev3'
+                ) {
+
+            if(checked) {
+                MapLayers.Map.map.addLayer(this.layer);
+            } else {
+                MapLayers.Map.map.removeLayer(this.layer, 'TRUE');
+            }
+
+        /***** set the zoom on the map when baselayer is changed *****/
+
+        } else {
+            this.layer.onMapResize();
+            var center = MapLayers.Map.map.getCenter();
+
+            if (MapLayers.Map.map.baseLayer != null && center != null) {
+                var zoom = MapLayers.Map.map.getZoom();
+                MapLayers.Map.map.zoom = null;
+                MapLayers.Map.map.setCenter(center, zoom);
+            }
+        }
+
+    },
+
+    /***************************************************************************
+     function for the tree node expansion
+    ***************************************************************************/
+
+    ExpandNode: function (node) {
+        this.log( "ExpandNode (node) ", node);
+
+        MapLayers_Hash_Addlayer("open", this.id);
+
+    },
+
+    /***************************************************************************
+     function for the tree node Collapse
+    ***************************************************************************/
+
+    CollapseNode: function (node) {
+        this.log( "CollapseNode (node) ", node);
+
+        MapLayers_Hash_Removelayer("open", this.id);
+    },
+
+    /***********************************************************************//**
+     *
+     *  @brief to parse the json array into the dojo tree
+     * 
+     *  @param NodesArray
+     *  @param ParentNode
+     *  @param LayerArray
+     * 
+    ***************************************************************************/
+
+    constructor: function (NodeData, ParentNode) {
+        this.log( "constructor (NodeData, ParentNode) ", NodeData, ParentNode);
+        var layer = null;
+
+        for (var attrname in NodeData) {
+            this[attrname] = NodeData[attrname];
+        }
+
+        //fixme need extent for zoom to, we dont keep this in the db either
+        //                                    w                     s                   e            n
+        //'myExtent': new OpenLayers.Bounds(-9852248.59963804, 3527237.61654759, -9447717.68891644, 4172836.22079423)
+        switch(this.nodetype) {
+
+            case 'Folder':
+                break;
+
+            case 'Radio':
+                break;
+
+            case 'Animation':
+                this.Checkable = true;
+                break;
+
+            case 'Link':    
+                break;
+
+            case 'ArcGISCache':
+                break;
+
+            case 'ArcGIS93Rest':
+                layer = new OpenLayers.Layer.ArcGIS93Rest( this.name,
+                                                           this.url,
+                                                           this.options
+                                                         );
+               break;
+
+            case 'ArcIMS':
+                layer = new OpenLayers.Layer.ArcIMS( this.name,
+                                                     this.url,
+                                                     this.options
+                                                   );
+                break;
+
+            case 'Bing':
+                layer = new OpenLayers.Layer.Bing( this.name,
+                                                   this.type,
+                                                   this.key,
+                                                   this.options
+                                                  );
+                break;
+
+            case 'GeoRSS':
+
+                this.popupSize = new OpenLayers.Size(this.popupSize[0],
+                                                         this.popupSize[1]);
+                this.projection = new OpenLayers.Projection("EPSG:" + this.projection);
+
+                layer = new OpenLayers.Layer.GeoRSS( this.name,
+                                                     this.url,
+                                                     this.popupSize,
+                                                     this.projection,
+                                                     this.options
+                                                   );
+                break;
+
+            
+            case 'Google':
+
+                switch (this.options.type) {
+                    case 'G_SATELLITE_MAP':
+                        this.options.type = G_SATELLITE_MAP;
+                        break;
+                    case 'G_HYBRID_MAP':
+                        this.options.type = G_HYBRID_MAP;
+                        break;
+                    case 'G_PHYSICAL_MAP':
+                        this.options.type = G_PHYSICAL_MAP
+                        break;
+                }
+
+                layer = new OpenLayers.Layer.Google( this.name,
+                                                     this.options
+                                                   );
+
+                break;
+            
+
+            case 'Googlev3':
+                switch (this.options.type) {
+                    case 'SATELLITE':
+                        this.options.type = google.maps.MapTypeId.SATELLITE;
+                        break;
+                    case 'HYBRID':
+                        this.options.type = google.maps.MapTypeId.HYBRID;
+                        break;
+                    case 'TERRAIN':
+                        this.options.type = google.maps.MapTypeId.TERRAIN;
+                        break;
+                    case 'ROADMAP':
+                        this.options.type = google.maps.MapTypeId.ROADMAP;
+                        break;
+                }
+
+                layer = new OpenLayers.Layer.Google( this.name,
+                                                       this.options
+                                                     );
+                break;
+
+            case 'KaMap':
+                layer = new OpenLayers.Layer.KaMap( this.name,
+                                                    this.url,
+                                                    this.params,
+                                                    this.options
+                                                  );
+                break;
+
+            case 'KaMapCache':
+                layer = new OpenLayers.Layer.KaMapCache( this.name,
+                                                         this.url,
+                                                         this.params,
+                                                         this.options
+                                                       );
+                break;
+
+            case 'MapGuide':
+                break;
+
+            case 'MapServer':
+                layer = new OpenLayers.Layer.MapServer( this.name,
+                                                        this.url,
+                                                        this.params,
+                                                        this.options
+                                                      );
+                break;
+
+            case 'OSM':
+                layer = new OpenLayers.Layer.OSM( this.name,
+                                                  this.url,
+                                                  this.options
+                                                );
+                break;
+
+            case 'TMS':
+                layer = new OpenLayers.Layer.TMS( this.name,
+                                                  this.url,
+                                                  this.options
+                                                );
+                break;
+
+            case 'TileCache':
+                layer = new OpenLayers.Layer.TileCache( this.name,
+                                                        this.url,
+                                                        this.layername,
+                                                        this.options
+                                                      );
+                break;
+
+            case 'WMS':
+                layer = new OpenLayers.Layer.WMS( this.name,
+                                                  this.url,
+                                                  this.params,
+                                                  this.options
+                                                 );
+                break;
+
+            case 'WMTS':
+                layer = new OpenLayers.Layer.WMTS( this.options
+                                                 );
+                break;
+
+            case 'WorldWind':
+                this.options.tileSize = new OpenLayers.Size( this.options.tileSize[0],
+                                                                 this.options.tileSize[1] );
+                layer = new OpenLayers.Layer.WorldWind( this.name,
+                                                        this.url,
+                                                        this.lzd,
+                                                        this.zoomLevels,
+                                                        this.params,
+                                                        this.options
+                                                      );
+                break;
+
+            case 'XYZ':
+                layer = new OpenLayers.Layer.XYZ( this.name,
+                                                  this.url,
+                                                  this.options
+                                                );
+                break;
+
+            default:
+                break;
+
+        }
+
+        /***** layer *****/
+
+        if ( layer ) {
+
+            this.leaf = true;
+            this.Checkable = true;
+            this.layer = layer; 
 
 
-        ParentNode.haschildren = true;
+            if (ParentNode.nodetype == 'Radio') {
+                this.radioGroup = "RadioGroup_" + ParentNode.id;
 
-    /***** folder type *****/
+                if (! ParentNode.haschildren) {
+                    this.checked = true;
 
-    } else {
-        if (ParentNode) {
+
+                }
+
+            }
+
+            if (ParentNode.nodetype == 'Animation') {
+                this.checked = null;
+                this.Checkable = false;
+            }
+
+            /***** add a baselayer to the map now *****/
+
+            if ( this.options.isBaseLayer == true
+                 || this.nodetype == 'Google'
+                 || this.nodetype == 'Googlev3'
+               ) {
+                MapLayers.Map.map.addLayers([layer]);
+
+            }
+
+
+
             ParentNode.haschildren = true;
+
+        /***** folder type *****/
+
+        } else {
+            if (ParentNode) {
+                ParentNode.haschildren = true;
+            }
+            
+            switch(this.nodetype) {
+                
+                case 'Folder':
+                    
+
+                    if (this.id == 1) {
+
+                        this.isExpanded = true;
+
+                    }
+
+                    break;
+
+            
+                default:
+                    break;
+            }
+
         }
-        
-        switch(NodeData.nodetype) {
+
+        return this;
+    },
+
+    /*******************************************************************************
+
+
+    *******************************************************************************/
+
+    querycallback: function () {
+        this.log( "querycallback");
+
+
+        switch(this.nodetype) {
             
             case 'Folder':
                 
 
-                if (NodeData.id == 1) {
+                if (this.id == 1) {
 
-                    NodeData.isExpanded = true;
+                    /***** add tempfolder *****/
+
+                    MapLayers_Tree_Create_TemFolder(this)
 
                 }
 
                 break;
 
-        
+            case 'Radio':
+
+                /***** fetch the RADIO   items now *****/
+                
+                var children = MapLayers.Store.Observable.query( { parent: this.id } );
+                
+                break;
+
+            case 'Animation':
+
+                /***** fetch the animation items now *****/
+
+                var children = MapLayers.Store.Observable.query( { parent: this.id } );
+                
+                break;
+
+            case 'Link':
+
+                /***** fetch the link target now *****/
+
+                var target = MapLayers.Store.Observable.query( { id: this.target } )[0];
+                
+                if ( target ) {            
+                    if (target.leaf || target.nodetype == 'Animation') {
+                        this.Checkable = true;
+                    }
+                
+                    this.haschildren = target.haschildren;
+                    this.leaf = target.leaf;
+                }
+
+                break;
+            
             default:
+
+
                 break;
         }
-
     }
 
-    return NodeData;
-}
-
-/*******************************************************************************
-
-
-*******************************************************************************/
-
-function MapLayers_Tree_Create_querycallback(NodeData) {
-    
-    //if (MapLayers.Settings.debug) console.log("MMapLayers_Tree_Create_querycallback(NodeData) ", NodeData );
-
-
-    switch(NodeData.nodetype) {
-        
-        case 'Folder':
-            
-
-            if (NodeData.id == 1) {
-
-                /***** add tempfolder *****/
-
-                MapLayers_Tree_Create_TemFolder(NodeData)
-
-            }
-
-            break;
-
-        case 'Radio':
-
-            /***** fetch the RADIO   items now *****/
-            
-            var children = MapLayers.Store.Observable.query( { parent: NodeData.id } );
-            
-            break;
-
-        case 'Animation':
-
-            /***** fetch the animation items now *****/
-
-            var children = MapLayers.Store.Observable.query( { parent: NodeData.id } );
-            
-            break;
-
-        case 'Link':
-
-            /***** fetch the link target now *****/
-
-            var target = MapLayers.Store.Observable.query( { id: NodeData.target } )[0];
-            
-            if ( target ) {            
-                if (target.leaf || target.nodetype == 'Animation') {
-                    NodeData.Checkable = true;
-                }
-            
-                NodeData.haschildren = target.haschildren;
-                NodeData.leaf = target.leaf;
-            }
-
-            break;
-        
-        default:
-
-
-            break;
-    }
-}
+});
+}); // end of require
 /*******************************************************************************
 
 ***** hack to add temp folder *****
@@ -650,7 +663,10 @@ function MapLayers_Tree_Create_TemFolder(ParentNode) {
 
         MapLayers.Tree.tempid = 1;
 
-        MapLayers.Store.Memory.add( newNode );
+        var mynewnode = new MapLayers.Tree.Node(newNode, ParentNode);
+
+
+        MapLayers.Store.Memory.add( mynewnode );
 
     }
 
@@ -683,8 +699,12 @@ function MapLayers_Tree_Create_Templayer(Lname, Layer, Controll) {
         control: Controll
     });
 
-    MapLayers.Store.Memory.add( newNode );
-    MapLayers.Store.Observable.notify(newNode);
+    var ParentNode = MapLayers.Store.Memory.get("temp");
+
+    var mynewnode = new MapLayers.Tree.Node(newNode, ParentNode);
+
+    MapLayers.Store.Memory.add( mynewnode );
+    MapLayers.Store.Observable.notify(mynewnode);
 }
 
 /*******************************************************************************
@@ -730,7 +750,7 @@ function MapLayers_Tree_CreateTreeNode (args) {
 
             /***** update the url etc.... *****/
 
-            MapLayers_Tree_CheckChange(args.item, this.checked);
+            args.item.CheckChange(this.checked);
 
         });
     }
@@ -738,8 +758,20 @@ function MapLayers_Tree_CreateTreeNode (args) {
     return tnode;
 }
 
+function MapLayers_Tree_Parse (newNode, ParentNode) {
+    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse (newNode, ParentNode)", newNode, ParentNode );
 
 
+    var node = new MapLayers.Tree.Node(newNode, ParentNode);
+    var booboo;
+    return node;
+
+}
+
+function MapLayers_Tree_Create_querycallback(NodeData) {
+    if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_querycallback(NodeData)", NodeData );
+    NodeData.querycallback();
+}
 
 /*******************************************************************************
  *
@@ -766,8 +798,8 @@ function MapLayers_Tree_Create () {
             /***** NOTE THE dndSource stuff needs overrode there just stubs *****/
             //dndController: dijit.tree.dndSource, //fixme do we bneed to mod or replace this to save teh tree? what about perms?
             showRoot: true,
-            onOpen: MapLayers_Tree_ExpandNode,
-            onClose: MapLayers_Tree_CollapseNode,
+            onOpen: function (item, node) { item.ExpandNode(node); },
+            onClose: function (item, node) { item.CollapseNode(node); },
             _createTreeNode: MapLayers_Tree_CreateTreeNode
             //fixme the json example had persist: false
         },

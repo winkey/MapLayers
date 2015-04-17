@@ -29,7 +29,7 @@
 
 dojo.require("dojo");
 
-dojo.ready(function() {
+require(['dojo/_base/declare'], function(declare) {
     MapLayers = new Object(); 
     MapLayers.Settings = new Object();
 

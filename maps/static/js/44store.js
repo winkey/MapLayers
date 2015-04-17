@@ -137,14 +137,16 @@ function MapLayers_Store_Create( rootid, parse_callback, obstore_callback ) {
 
             /***** modify in place *****/
 
-            originalResults.then(function (results) {
+            var newresults = originalResults.then(function (result) {
             
-                results.querytype = "get";
-                parse_callback( results, null);
+                var newresult = parse_callback( result, null);
+                newresult.querytype = "get";
+
+                return newresult;
 
             });
 
-            return originalResults;
+            return newresults;
         }
     });
 

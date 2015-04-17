@@ -36,7 +36,7 @@
 
 dojo.require("dojo");
 
-dojo.ready(function() {
+require(['dojo/_base/declare'], function(declare) {
     MapLayers.Hash = new Object();
 
 });
