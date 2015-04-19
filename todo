@@ -55,6 +55,20 @@ map.js
     pink tiles are bad!
 
 
+[13:18:23] * HyperJohn has changed the topic to: http://maps.telascience.org/map/#&open=1,2&zoom=18&lon=-117.23456987478615&lat=32.88229130553326&layers=4
+[13:18:27] <MartinSpott> s/Winderful/Wonderful/
+[13:18:55] <HyperJohn> odd its zooming to the wrong place in the link
+[13:19:40] <winkey> how far off?
+[13:19:48] <MartinSpott> once it's loaded it isn't zooming back to the initial zoom level when loading again
+[13:19:52] <HyperJohn> click on it
+[13:20:00] <HyperJohn> whwhat do you see
+[13:20:17] <winkey> i see a daM
+[13:20:33] <HyperJohn> that lat lon is foe UCSD
+[13:20:48] <HyperJohn> zoom back
+[13:21:25] <HyperJohn> it never moved it just zoomed
+[13:21:43] <HyperJohn> went to map default center
+[13:21:50] <winkey> ok
+
 tree.js
 
     tooltips
@@ -90,6 +104,19 @@ time.js
     
     tooltips
     https://bitbucket.org/sage2/sage2/wiki/SAGE2%20Application%20API
+
+[12:04:28] <HyperJohn> i was thinking a fade out timer on the close loop
+[12:05:00] <winkey> close?
+[12:05:20] <HyperJohn> the next step
+[12:05:49] <winkey> i am not catching what youy mean
+[12:05:54] <HyperJohn> dont turn off the last layer
+[12:05:58] <HyperJohn> fade off
+[12:06:04] <winkey> ohh on the loop?
+[12:06:12] <HyperJohn> yup
+[12:06:52] <HyperJohn> so call something that changes the layer transparency till its gone then remove
+[12:08:11] <HyperJohn> then a fade in on the other end and you have smoothed animation
+
+
 
 
 bookmark app:
