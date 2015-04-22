@@ -780,8 +780,7 @@ function MapLayers_Time_setends(begin, end) {
 ******************************************************************************/
 
 //fixme this is slow mo, use a circular list and test the dir to go
-// actualy theres something else wrong our test data is in backwars so the loop N#EVER iterates
-// so we need to fixme anyway
+
 
 function MapLayers_Time_Insert_Node_Before(list, newnode, ts) {
 
@@ -909,6 +908,11 @@ function MapLayers_Time_addnode(treenode) {
 
 function MapLayers_Time_removenode_sub (list, treenode) {
 
+    
+    /***** TURN OFF THE VIS *****/
+    
+    treenode.Layer_off();
+
     var node;
     for (node = list.head; node ; node = next) {
         next = node.next;
@@ -918,10 +922,7 @@ function MapLayers_Time_removenode_sub (list, treenode) {
             break;
         }
     }
-    
-    /***** TURN OFF THE VIS *****/
-    
-    treenode.layer.setVisibility(false);
+
     
     return node;
 }
@@ -971,7 +972,7 @@ function MapLayers_Time_removenode(treenode) {
         
         /***** update the time slider *****/
         
-        if (MapLayers.Time.spanlist.head) {
+        if (MapLayers.Time.BegList.head) {
             MapLayers_Time_setends( MapLayers.Time.BegList.head.data.timestamp,
                                    MapLayers.Time.EndList.tail.data.timestamp
                                 );
@@ -981,7 +982,7 @@ function MapLayers_Time_removenode(treenode) {
     /***** hide the ui when there is no more nodes *****/
     
     if ( MapLayers.Time.TSList.head == null &&
-         MapLayers.Time.spanlist.head == null
+         MapLayers.Time.BegList.head == null
     ) {
         MapLayers_Time_setVisible(false);
     }
