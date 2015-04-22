@@ -4,10 +4,10 @@ tilecache:
 
     add a bg job that rms the tiles when a layer is deleted
     add a second config table and layers for 4326 for view in google earth
-    FIXME tilecache @ telascience does not work, note its picking up the global install
+
 
 layers:
-    need getancestors for the lay loading view!!!!
+    do we still need this? need getancestors for the lay loading view!!!!
 
     save views
 
