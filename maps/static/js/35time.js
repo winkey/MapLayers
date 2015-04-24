@@ -917,7 +917,6 @@ function MapLayers_Time_removenode_sub (list, treenode) {
     for (node = list.head; node ; node = next) {
         next = node.next;
         if (treenode.id == node.data.treenode.id) {
-            MapLayers.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
             DLList_delete(list, node);
             break;
         }
