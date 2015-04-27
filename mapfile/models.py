@@ -91,61 +91,703 @@ class style(models.Model):
         (LINEJOIN_BEVEL, LINEJOIN_BEVEL),
     )
 
-#### fixme need help text
+    ##### ANGLE [double|attribute|AUTO] ##### 
 
+    ANGLE_HELP = '''
+    Angle, given in degrees, to rotate the symbol (counter clockwise). Default
+    is 0 (no rotation). If you have an attribute that specifies angles in a
+    clockwise direction (compass direction), you have to adjust the angle
+    attribute values before they reach MapServer (360-ANGLE), as it is no
+    possible to use a mathematical expression for ANGLE.
 
-    #ANGLE [double|attribute|AUTO]
-    angle               = models.FloatField(                 default = 0,
-                                                             help_text='Angle, given in degrees, to draw the line work. Default is 0. For symbols of Type HATCH, this is the angle of the hatched lines.')
-    #ANGLEITEM [string]
-    #d angleitem        = models.TextField(                   )
-    #ANTIALIAS [true|false]
-    antialias           = models.NullBooleanField(           default=False)
-    #BACKGROUNDCOLOR [r] [g] [b] - deprecated
-    #d backgroundcolor     = ArrayField( models.IntegerField(), size=3)
-    #COLOR [r] [g] [b] | [hex string] | [attribute]
-    color               = ArrayField( models.IntegerField(), size=3)
-    #GAP [double]
-    gap                 = models.FloatField()
-    #GEOMTRANSFORM [bbox|centroid|end|labelpnt|labelpoly|start|vertices|<expression>]
-    geotransform        = models.TextField(                  choices = GEOMTRANSFORM_CHOICES)
-    #INITIALGAP [double]
-    initialgap          = models.FloatField()
-    #LINECAP [butt|round|square]
-    linecap             = models.TextField(                  choices = LINECAP_CHOICES)
-    #LINEJOIN [round|miter|bevel]
-    #LINEJOINMAXSIZE [int]
-    linejoinmaxsize     = models.IntegerField()
-    #MAXSCALEDENOM [double]
-    maxscaledenom       = models.FloatField()
-    #MAXSIZE [double]
-    maxsize            = models.FloatField()
-    #MAXWIDTH [double]
-    maxwidth            = models.FloatField()
-    #MINSCALEDENOM [double]
-    minscaledenom       = models.FloatField()
-    #MINSIZE [double]
-    minsize             = models.FloatField()
-    #MINWIDTH [double]
-    minwidth            = models.FloatField()
-    #OFFSET [x][y]
-    offset              = ArrayField( models.IntegerField(), size=2)
-    #OPACITY [integer|attribute]
-    opacity             = models.TextField(                  )
-    #OUTLINECOLOR [r] [g] [b] | [attribute]
-    outlinecolor        = models.TextField(                  )
-    #OUTLINEWIDTH [double|attribute]
-    outlinewidth        = models.TextField(                  )
-    #PATTERN [double on] [double off] [double on] [double off] ... END
-    pattern             = ArrayField( ArrayField( models.FloatField(), size=2 ) )
-    #POLAROFFSET [double|attribute] [double|attribute]
-    polaroffset         = models.TextField(                  )
-    #SIZE [double|attribute]
-    size                = models.TextField(                  )
-    #SYMBOL [integer|string|filename|url|attribute]
-    symbol              = models.TextField(                  )
-    #WIDTH [double|attribute]
-    width               = models.TextField(                  )
+    For points, it specifies the rotation of the symbol around its center.
+
+    For decorated lines, the behaviour depends on the value of the GAP element.
+    For negative GAP values it specifies the rotation of the decoration symbol
+    relative to the direction of the line. An angle of 0 means that the symbols
+    x-axis is oriented along the direction of the line.
+    For non-negativ (or absent) GAP values it specifies the rotation of the 
+    decoration symbol around its center. An angle of 0 means that the symbol is
+    not rotated.
+
+    For polygons, it specifies the angle of the lines in a HATCH symbol
+    (0 - horizontal lines), or it specifies the rotation of the symbol used to
+    generate the pattern in a polygon fill (it does not specify the rotation of
+    the fill as a whole). For its use with hatched lines, see Example #7 in the
+    symbology examples.
+
+    [attribute] was introduced in version 5.0, to specify the attribute to use
+    for angle values. The hard brackets [] are required. For example, if your
+    data source has an attribute named "MYROTATE" that holds angle values for
+    each feature, your STYLE object for hatched lines might contain:
+
+    STYLE
+      SYMBOL 'hatch-test'
+      COLOR 255 0 0
+      ANGLE [MYROTATE]
+      SIZE 4.0
+      WIDTH 3.0
+    END
+
+    The associated RFC document for this feature is MS RFC 19: Style & Label
+    attribute binding.
+
+    The AUTO keyword was added in version 5.4, and currently only applies when
+    coupled with the GEOMTRANSFORM keyword.
+
+    Note
+
+    Rotation using ANGLE is not supported for SYMBOLs of TYPE ellipse with the
+    GD renderer (gif).
+    '''
+
+    angle = models.FloatField( default = 0, help_text=ANGLE_HELP )
+
+    ##### ANGLEITEM [string] #####
+
+    ANGLEITEM_HELP = '''
+    ANGLE[attribute] must now be used instead.
+
+    Deprecated since version 5.0.
+    '''
+
+    #d angleitem = models.TextField( help_text=ANGLEITEM_HELP )
+
+    ##### ANTIALIAS [true|false] #####
+
+    ANTIALIAS_HELP = '''
+    Should TrueType fonts be antialiased. Only useful for GD (gif) rendering.
+    Default is false. Has no effect for the other renderers (where anti-aliasing
+    can not be turned off).
+    '''
+
+    antialias = models.NullBooleanField( default=False, help_text=ANGLE_HELP )
+
+    ##### BACKGROUNDCOLOR [r] [g] [b] - deprecated #####
+
+    BACKGROUNDCOLOR_HELP = '''
+    Color to use for non-transparent symbols.
+
+    Note
+
+    Multiple STYLEs can be used instead:
+
+    STYLE
+      BACKGROUNDCOLOR 0 0 0
+      SYMBOL "foo"
+      COLOR 255 0 0
+    END
+
+    can be replaced with:
+
+    STYLE
+      COLOR 0 0 0
+    END
+    STYLE
+      SYMBOL "foo"
+      COLOR 255 0 0
+    END
+
+    Deprecated since version 6.2.
+    '''
+
+    #d backgroundcolor = ArrayField( models.IntegerField(), size=3,
+    #                                help_text=BACKGROUNDCOLOR_HELP )
+
+    ##### COLOR [r] [g] [b] | [hex string] | [attribute] #####
+
+    COLOR_HELP = '''
+    Color to use for drawing features.
+
+    r, g and b shall be integers [0..255]. To specify green, the following is
+    used:
+
+            COLOR 0 255 0
+
+    hex string can be
+
+            RGB value - "#rrggbb". To specify magenta, the following is used:
+
+            COLOR "#FF00FF"
+
+            RGBA value (adding translucence) - "#rrggbbaa". To specify a
+            semi-translucent magenta, the following is used:
+
+            COLOR "#FF00FFCC"
+
+        [attribute] was introduced in version 5.0, to specify the attribute to
+        use for color values. The hard brackets [] are required. For example,
+        if your data set has an attribute named "MYPAINT" that holds color
+        values for each record, use: object for might contain:
+
+        COLOR [MYPAINT]
+
+        If COLOR is not specified, and it is not a SYMBOL of TYPE pixmap, then
+        the symbol will not be rendered.
+
+        The associated RFC document for this feature is MS RFC 19: Style & Label
+        attribute binding.
+    '''
+
+    color = ArrayField( models.IntegerField(), size=3, help_text=COLOR_HELP )
+
+    ##### GAP [double] #####
+
+    GAP_HELP = '''
+    GAP specifies the distance between SYMBOLs (center to center) for decorated
+    lines and polygon fills in layer SIZEUNITS. For polygon fills, GAP specifies
+    the distance between SYMBOLs in both the X and the Y direction. For lines,
+    the centers of the SYMBOLs are placed on the line. As of MapServer 5.0 this
+    also applies to PixMap symbols.
+
+    When scaling of symbols is in effect (SYMBOLSCALEDENOM is specified for the
+    LAYER), GAP specifies the distance in layer SIZEUNITS at the map scale
+    1:SYMBOLSCALEDENOM.
+
+    For lines, if INITIALGAP is not specified, the first symbol will be placed
+    GAP/2 from the start of the line.
+    For lines, a negative GAP value will cause the symbols' X axis to be aligned
+    relative to the tangent of the line.
+    For lines, a positive GAP value aligns the symbols' X axis relative to the X
+    axis of the output device.
+    For lines, a GAP of 0 (the default value) will cause the symbols to be
+    rendered edge to edge
+    For polygons, a missing GAP or a GAP of less than or equal to the size of
+    the symbol will cause the symbols to be rendered edge to edge.
+
+    Symbols can be rotated using ANGLE.
+
+    New in version 6.0: moved from SYMBOL
+
+    Note
+
+    The behaviour of GAP has not been stable over time. It has specified the
+    amount of space between the symbols, and also something in between the
+    amount of space between the symbols and the center to center distance.
+    Since 6.2 GAP specifies the center to center distance between the symbols.
+    '''
+
+    gap = models.FloatField( help_text=GAP_HELP )
+
+    ##### GEOMTRANSFORM [bbox|centroid|end|labelpnt|labelpoly|start|vertices|<expression>] #####
+
+    GEOMTRANSFORM_HELP = '''
+
+    Used to indicate that the current feature will be transformed before the
+    actual style is applied. Introduced in version 5.4.
+
+        bbox: produces the bounding box of the current feature geometry.
+
+        centroid: produces the centroid of the current feature geometry.
+
+        end: produces the last point of the current feature geometry. When used
+        with ANGLE AUTO, it can for instance be used to render arrowheads on
+        line segments.
+
+        labelpnt: used for LABEL styles. Draws a marker on the geographic
+        position the label is attached to. This corresponds to the center of the
+        label text only if the label is in position CC.
+
+        labelpoly: used for LABEL styles. Produces a polygon that covers the
+        label plus a 1 pixel padding.
+
+        start: produces the first point of the current feature geometry. When
+        used with ANGLE AUTO, it can for instance be used to render arrow tails
+        on line segments.
+
+        vertices: produces all the intermediate vertices (points) of the current
+        feature geometry (the start and end are excluded). When used with ANGLE
+        AUTO, the marker is oriented by the half angle formed by the two
+        adjacent line segments.
+
+        <expression>: Applies the given expression to the geometry. Supported
+        expressions:
+            (buffer([shape],dist)): Buffer the geometry ([shape]) using dist
+            pixels as buffer distance. For polygons, a negative dist will
+            produce a setback.
+            (generalize([shape],tolerance)): simplifies a geometry ([shape]) in
+            way comparable to FME's ThinNoPoint algorithm. See
+            http://trac.osgeo.org/gdal/ticket/966 for more information.
+
+        Note
+
+        Depends on GEOS.
+            (simplify([shape],tolerance)): simplifies a geometry ([shape]) using
+            the standard Douglas-Peucker algorithm.
+            (simplifypt([shape],tolerance)): simplifies a geometry ([shape]),
+            ensuring that the result is a valid geometry having the same
+            dimension and number of components as the input. tolerance must be
+            non-negative.
+            (smoothsia([shape], smoothing_size, smoothing_iteration,
+            preprocessing)): will smooth a geometry ([shape]) using the SIA
+            algorithm
+
+        Example (polygon data set) - draw a two pixel wide line 5 pixels inside
+        the boundary of the polygon:
+
+        STYLE
+          OUTLINECOLOR 255 0 0
+          WIDTH 2
+          GEOMTRANSFORM (buffer([shape],-5))
+        END
+
+    There is a difference between STYLE and LAYER GEOMTRANSFORM. LAYER-level
+    will receive ground coordinates (meters, degress, etc) and STYLE-level will
+    receive pixel coordinates. The argument to methods such as simplify() must
+    be in the same units as the coordinates of the shapes at that point of the
+    rendering workflow, i.e. pixels at the STYLE-level and in ground units at
+    the LAYER-level.
+
+    LAYER NAME "my_layer"
+        TYPE LINE
+        STATUS DEFAULT
+        DATA "lines.shp"
+        GEOMTRANSFORM (simplify([shape], 10))  ## 10 ground units
+        CLASS
+            STYLE
+                GEOMTRANSFORM (buffer([shape], 5)  ## 5 pixels
+                WIDTH 2
+                COLOR 255 0 0
+            END
+        END
+    END
+
+    See also
+
+    Geometry Transformations
+    '''
+
+    geotransform = models.TextField( choices = GEOMTRANSFORM_CHOICES,
+                                     help_text=ANGLE_HELP )
+
+    ##### INITIALGAP [double] #####
+
+    INITIALGAP_HELP = '''
+    INITIALGAP is useful for styling dashed lines.
+
+    If used with GAP, INITIALGAP specifies the distance to the first symbol on a
+    styled line.
+
+    If used with PATTERN, INITIALGAP specifies the distance to the first dash on
+    a dashed line.
+
+    Example 1 - dashed line styled with circles:
+
+    STYLE
+      COLOR 0 0 0
+      WIDTH 4
+      PATTERN 40 10 END
+    END
+    STYLE
+      SYMBOL "circlef"
+      COLOR 0 0 0
+      SIZE 8
+      INITIALGAP 20
+      GAP 50
+    END
+
+    Example 1 - dashed line styled with dashed line overlay:
+
+    STYLE
+      COLOR 0 0 0
+      WIDTH 6
+      PATTERN 40 10 END
+    END
+    STYLE
+      COLOR 255 255 255
+      WIDTH 4
+      INITIALGAP 2
+      PATTERN 36 14 END
+    END
+
+    New in version 6.2.
+    '''
+    initialgap = models.FloatField( help_text=INITIALGAP_HELP )
+
+    ###### LINECAP [butt|round|square] #####
+
+    LINECAP_HELP = '''
+
+    Sets the line cap type for lines. Default is round. See Cartographical
+    Symbol Construction with MapServer for explanation and examples.
+
+    New in version 6.0: moved from SYMBOL
+    '''
+
+    linecap = models.TextField( choices = LINECAP_CHOICES,
+                                help_text=ANGLE_HELP )
+
+    ##### LINEJOIN [round|miter|bevel] #####
+
+    LINEJOIN_HELP = '''
+    Sets the line join type for lines. Default is round. See Cartographical
+    Symbol Construction with MapServer for explanation and examples.
+
+    New in version 6.0: moved from SYMBOL
+    '''
+
+    linejoin = models.TextField( choices = LINEJOIN_CHOICES,
+                                 help_text=LINEJOIN_HELP )
+
+    ##### LINEJOINMAXSIZE [int] #####
+
+    LINEJOINMAXSIZE_HELP = '''
+    Sets the max length of the miter LINEJOIN type. The value represents a
+    coefficient which multiplies a current symbol size. Default is 3. See
+    Cartographical Symbol Construction with MapServer for explanation and examples.
+
+    New in version 6.0: moved from SYMBOL
+    '''
+
+    linejoinmaxsize = models.IntegerField( help_text=LINEJOINMAXSIZE_HELP )
+
+    ###### MAXSCALEDENOM [double] #####
+
+    MAXSCALEDENOM_HELP = '''
+    Minimum scale at which this STYLE is drawn. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000.
+
+    New in version 5.4.
+
+    See also Map Scale
+    '''
+
+    maxscaledenom = models.FloatField( help_text=MAXSCALEDENOM_HELP )
+
+    ##### MAXSIZE [double] #####
+
+    MAXSIZE_HELP = '''
+    Maximum size in pixels to draw a symbol. Default is 500. Starting from
+    version 5.4, the value can also be a decimal value (and not only integer).
+    See LAYER SYMBOLSCALEDENOM.
+    '''
+
+    maxsize            = models.FloatField( help_text=MAXSIZE_HELP )
+
+    ##### MAXWIDTH [double] #####
+
+    MAXWIDTH_HELP = '''
+    Maximum width in pixels to draw the line work. Default is 32. Starting from
+    version 5.4, the value can also be a decimal value (and not only integer).
+    See LAYER SYMBOLSCALEDENOM.
+    '''
+
+    maxwidth = models.FloatField( help_text=MAXWIDTH_HELP )
+
+    ##### MINSCALEDENOM [double] #####
+
+    MINSCALEDENOM_HELP = '''
+    Maximum scale at which this STYLE is drawn. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000.
+
+    New in version 5.4.
+
+    See also Map Scale
+    '''
+
+    minscaledenom = models.FloatField( help_text=MINSCALEDENOM_HELP )
+
+    ##### MINSIZE [double] #####
+
+    MINSIZE_HELP = '''
+    Minimum size in pixels to draw a symbol. Default is 0. Starting from version
+    5.4, the value can also be a decimal value (and not only integer).
+    See LAYER SYMBOLSCALEDENOM.
+    '''
+
+    minsize = models.FloatField( help_text=MINSIZE_HELP )
+
+    ##### MINWIDTH [double] #####
+
+    MINWIDTH_HELP = '''
+    Minimum width in pixels to draw the line work. Default is 0. Starting from
+    version 5.4, the value can also be a decimal value (and not only integer).
+    See LAYER SYMBOLSCALEDENOM.
+    '''
+
+    minwidth = models.FloatField( help_text=MINWIDTH_HELP )
+
+    ##### OFFSET [x][y] #####
+
+    OFFSET_HELP = '''
+    Geometry offset values in layer SIZEUNITS. In the general case, SIZEUNITS
+    will be pixels.
+
+    When scaling of symbols is in effect (SYMBOLSCALEDENOM is specified for the
+    LAYER), OFFSET gives offset values in layer SIZEUNITS at the map scale
+    1:SYMBOLSCALEDENOM.
+
+    An OFFSET of 20 40 will shift the geometry 20 SIZEUNITS to the left and 40
+    SIZEUNITS down before rendering.
+
+    For lines, an OFFSET of y = -99 will produce a line geometry that is shifted
+    x SIZEUNITS perpendicular to the original line geometry. A positive x shifts
+    the line to the right when seen along the direction of the line. A negative
+    x shifts the line to the left when seen along the direction of the line.
+
+    For lines, an OFFSET of y = -999 (added in version 6.4) will produce a
+    multiline geometry corresponding to the borders of a line that is x
+    SIZEUNITS wide. This can be used to render only the outlines of a thick line.
+    '''
+
+    offset = ArrayField( models.IntegerField(), size=2, help_text=ANGLE_HELP )
+
+    ##### OPACITY [integer|attribute] #####
+
+    OPACITY_HELP = '''
+    Opacity to draw the current style (applies to 5.2+, AGG Rendering Specifics
+    only, does not apply to pixmap symbols)
+
+    [attribute] was introduced in version 5.6, to specify the attribute to use
+    for opacity values.
+    '''
+
+    opacity = models.TextField( help_text=OPACITY_HELP )
+
+    ##### OUTLINECOLOR [r] [g] [b] | [attribute] #####
+
+    OUTLINECOLOR_HELP = '''
+    Color to use for outlining polygons and certain marker symbols (ellipse,
+    vector polygons and truetype). Has no effect for lines. The width of the
+    outline can be specified using WIDTH. If no WIDTH is specified, an outline
+    of one pixel will be drawn.
+
+    If there is a SYMBOL defined for the STYLE, the OUTLINECOLOR will be used to
+    create an outline for that SYMBOL (only ellipse, truetype and polygon vector
+    symbols will get an outline). If there is no SYMBOL defined for the STYLE,
+    the polygon will get an outline.
+
+    r, g and b shall be integers [0..255]. To specify green, the following is used:
+
+        OUTLINECOLOR 0 255 0
+        WIDTH 3.0
+
+    [attribute] was introduced in version 5.0, to specify the attribute to
+    use for color values. The hard brackets [] are required. For example, if
+    your data set has an attribute named "MYPAINT" that holds color values for
+    each record, use: object for might contain:
+
+        OUTLINECOLOR [MYPAINT]
+
+    The associated RFC document for this feature is MS RFC 19: Style & Label
+    attribute binding.
+    '''
+
+    outlinecolor = models.TextField( help_text=OUTLINECOLOR_HELP )
+
+    ##### OUTLINEWIDTH [double|attribute] #####
+
+    OUTLINEWIDTH_HELP = '''
+    Width in pixels for the outline. Default is 0.0. The thickness of the
+    outline will not depend on the scale.
+
+    New in version 5.4.
+    '''
+
+    outlinewidth = models.TextField( help_text=ANGLE_HELP )
+
+    ##### PATTERN [double on] [double off] [double on] [double off] ... END #####
+
+    PATTERN_HELP = '''
+    Used to define a dash pattern for line work (lines, polygon outlines,
+    hatch lines, ...). The numbers (doubles) specify the lengths of the dashes
+    and gaps of the dash pattern in layer SIZEUNITS. When scaling of symbols is
+    in effect (SYMBOLSCALEDENOM is specified for the LAYER), the numbers specify
+    the lengths of the dashes and gaps in layer SIZEUNITS at the map scale
+    1:SYMBOLSCALEDENOM.
+
+    LINECAP, LINEJOIN and LINEJOINMAXSIZE can be used to control the appearance
+    of the dashed lines.
+
+    To specify a dashed line that is 5 units wide, with dash lengths of 5 units
+    and gaps of 5 units, the following style can be used:
+
+        STYLE
+          COLOR 0 0 0
+          WIDTH 5.0
+          LINECAP BUTT
+          PATTERN 5.0 5.0 END
+        END
+
+    Since version 6.2, PATTERN can be used to create dashed lines for SYMBOLs of
+    TYPE hatch. Patterns for hatches are always drawn with LINECAP butt. The
+    patterns are generated relative to the edges of the bounding box of the
+    polygon (an illustrated example can be found in the hatch fill section of
+    the symbol construction document).
+
+    New in version 6.0: moved from SYMBOL
+    '''
+
+    pattern = ArrayField( ArrayField( models.FloatField(), size=2 ),
+                          help_text=PATTERN_HELP  )
+
+    ##### POLAROFFSET [double|attribute] [double|attribute] #####
+
+    POLAROFFSET_HELP = '''
+    Offset given in polar coordinates.
+
+    The first parameter is a double value in layer SIZEUNITS (or the name of a
+    layer attribute) that specifies the radius/distance.
+
+    The second parameter is a double value (or the name of a layer attribute)
+    that specifies the angle (counter clockwise).
+
+    When scaling of symbols is in effect (SYMBOLSCALEDENOM is specified for the
+    LAYER), POLAROFFSET gives the distance in layer SIZEUNITS at the map scale
+    1:SYMBOLSCALEDENOM.
+
+    A POLAROFFSET of 20 40 will shift the geometry to a position that is 20
+    SIZEUNITS away along a line that is at an angle of 40 degrees with a line
+    that goes horizontally to the right.
+
+    When POLAROFFSET is used with layers that have CONNECTIONTYPE uvraster
+    (vector field), the special attributes uv_length, uv_length_2, uv_angle and
+    uv_minus_angle are available, making it convenient to specify arrow heads
+    and tails. Example:
+
+    LAYER
+      ...
+      TYPE POINT
+      CONNECTIONTYPE uvraster
+      ...
+      CLASS
+        STYLE
+          SYMBOL "arrowbody"
+          ANGLE [uv_angle]
+          SIZE [uv_length]
+          WIDTH 3
+          COLOR 100 255 0
+        END
+        STYLE
+          SYMBOL "arrowhead"
+          ANGLE [uv_angle]
+          SIZE 10
+          COLOR 255 0 0
+          POLAROFFSET [uv_length_2] [uv_angle]
+        END
+        STYLE
+          SYMBOL "arrowtail"
+          ANGLE [uv_angle]
+          SIZE 10
+          COLOR 255 0 0
+          POLAROFFSET [uv_length_2] [uv_minus_angle]
+        END
+      END #class
+    END #layer
+
+    New in version 6.2: (MS RFC 78: Vector Field Rendering
+    (CONNECTIONTYPE UVRASTER))
+    '''
+
+    polaroffset = models.TextField( help_text=POLAROFFSET_HELP )
+
+    ##### SIZE [double|attribute] #####
+
+    SIZE_HELP = '''
+    Height, in layer SIZEUNITS, of the symbol/pattern to be used. Default value
+    depends on the SYMBOL TYPE. For pixmap: the hight (in pixels) of the pixmap;
+    for ellipse and vector: the maximum y value of the SYMBOL POINTS parameter,
+    for hatch: 1.0, for truetype: 1.0.
+
+    When scaling of symbols is in effect (SYMBOLSCALEDENOM is specified for the
+    LAYER), SIZE gives the height, in layer SIZEUNITS, of the symbol/pattern to
+    be used at the map scale 1:SYMBOLSCALEDENOM.
+
+    For symbols of TYPE hatch, the SIZE is the center to center distance between
+    the lines. For its use with hatched lines, see Example#8 in the symbology
+    examples.
+
+    [attribute] was introduced in version 5.0, to specify the attribute to use
+    for size values. The hard brackets [] are required. For example, if your
+    data set has an attribute named "MYHIGHT" that holds size values for each
+    feature, your STYLE object for hatched lines might contain:
+
+        STYLE
+          SYMBOL 'hatch-test'
+          COLOR 255 0 0
+          ANGLE 45
+          SIZE [MYHIGHT]
+          WIDTH 3.0
+        END
+
+    The associated RFC document for this feature is MS RFC 19: Style & Label
+    attribute binding.
+
+    Starting from version 5.4, the value can also be a decimal value (and not
+    only integer).
+    '''
+
+    size = models.TextField( help_text=SIZE_HELP )
+
+    ##### SYMBOL [integer|string|filename|url|attribute] #####
+
+    SYMBOL_HELP = '''
+    The symbol to use for rendering the features.
+
+    Integer is the index of the symbol in the symbol set, starting at 1 (the 5th
+    symbol is symbol number 5).
+
+    String is the name of the symbol (as defined using the SYMBOL NAME parameter).
+
+    Filename specifies the path to a file containing a symbol. For example a PNG
+    file. Specify the path relative to the directory containing the mapfile.
+
+    URL specifies the address of a file containing a pixmap symbol. For example
+    a PNG file. A URL must start with "http":
+
+        SYMBOL "http://myserver.org/path/to/file.png"
+
+    New in version 6.0.
+
+    [attribute] allows individual rendering of features by using an attribute in
+    the dataset that specifies the symbol name (as defined in the SYMBOL NAME
+    parameter). The hard brackets [] are required.
+
+    New in version 5.6.
+
+    If SYMBOL is not specified, the behaviour depends on the type of feature.
+
+    For points, nothing will be rendered.
+    For lines, SYMBOL is only relevant if you want to style the lines using
+    symbols, so the absence of SYMBOL means that you will get lines as specified
+    using the relevant line rendering parameters (COLOR, WIDTH, PATTERN,
+    LINECAP, ...).
+    For polygons, the interior of the polygons will be rendered using a solid
+    fill of the color specified in the COLOR parameter.
+
+    See also SYMBOL
+    '''
+
+    symbol = models.TextField( help_text=SYMBOL_HELP )
+
+    ##### WIDTH [double|attribute] #####
+
+    WIDTH_HELP = '''
+    WIDTH refers to the thickness of line work drawn, in layer SIZEUNITS.
+    Default is 1.0.
+
+    When scaling of symbols is in effect (SYMBOLSCALEDENOM is specified for the
+    LAYER), WIDTH refers to the thickness of the line work in layer SIZEUNITS at
+    the map scale 1:SYMBOLSCALEDENOM.
+
+    If used with SYMBOL and OUTLINECOLOR, WIDTH specifies the width of the
+    symbol outlines. This applies to SYMBOL TYPE vector (polygons), ellipse and
+    truetype.
+    For lines, WIDTH specifies the width of the line.
+    For polygons, if used with OUTLINECOLOR, WIDTH specifies the thickness of
+    the polygon outline.
+    For a symbol of SYMBOL TYPE hatch, WIDTH specifies the thickness of the
+    hatched lines. For its use with hatched lines, see Example #7 in the
+    symbology examples.
+    [attribute] was added in version 5.4 to specify the attribute to use for the
+    width value. The hard brackets [] are required.
+    Starting from version 5.4, the value can also be a decimal value (and not
+    only integer).
+    '''
+
+    width = models.TextField( help_text=WIDTH_HELP )
 
 
 
@@ -161,11 +803,33 @@ class style(models.Model):
 
 class leader(models.Model):
 
-    #GRIDSTEP [integer]
-    gridstep            = models.IntegerField()
-    #MAXDISTANCE [integer]
-    MAXdistance         = models.IntegerField()
-    style               = models.ManyToManyField(style)
+    ##### GRIDSTEP [integer] #####
+
+    GRIDSTEP_HELP = '''
+    Specifies the number of pixels between positions that are tested for a label
+    line. You might start with a value of 5, and increase depending on
+    performance (see example below).
+    '''
+
+    gridstep = models.IntegerField( help_text=GRIDSTEP_HELP )
+
+    ##### MAXDISTANCE [integer] #####
+
+    MAXDISTANCE_HELP = '''
+    Specifies the maximum distance in pixels from the normal label location that
+    a leader line can be drawn. You might start with a value of 30, and increase
+    depending on the resulting placement (see example below).
+    '''
+
+    MAXdistance = models.IntegerField( help_text=MAXDISTANCE_HELP )
+
+    ##### STYLE #####
+
+    STYLE_HELP = '''
+    Signals the start of a STYLE object. Use this to style the leader line. 
+    '''
+
+    style = models.ManyToManyField(style, help_text=STYLE_HELP )
 
     class Meta:
         verbose_name = _( "leader" )
@@ -214,76 +878,556 @@ class label(models.Model):
         (TYPE_TRUETYPE, TYPE_TRUETYPE),
     );
 
-    #ALIGN [left|center|right]
-    align               = models.TextField(                  )
-    #ANGLE [double|auto|auto2|follow|attribute]
-    angle               = models.TextField(                  )
-    #ANTIALIAS [true|false]
-    antialias           = models.BooleanField(               default=False)
-    #BACKGROUNDCOLOR [r] [g] [b] removed
-    #d backgroundcolor     = ArrayField( models.IntegerField(), size=3)
-    #BACKGROUNDSHADOWCOLOR [r] [g] [b] removed
-    backgroundshadowcolor = ArrayField( models.IntegerField(), size=3)
-    #BACKGROUNDSHADOWSIZE [x][y] removed
-    backgroundshadowsize  = ArrayField( models.IntegerField(), size=3)
+    ##### ALIGN [left|center|right] #####
 
-    #BUFFER [integer]
-    buffer              = models.IntegerField()
-    #COLOR [r] [g] [b] | [attribute]
-    color               = models.TextField(                  )
-    #ENCODING [string]
-    encoding            = models.TextField(                  )
-    #EXPRESSION [string]
-    expression          = models.TextField(                  )
-    #FONT [name|attribute]
-    font                = models.TextField(                  )
-    #FORCE [true|false]
-    force               = models.help_text=()
-    #MAXLENGTH [integer]
-    maxlength           = models.IntegerField()
-    #MAXOVERLAPANGLE [double]
-    maxoverlapangle     = models.FloatField()
-    #MAXSCALEDENOM [double]
-    maxscaledenom       = models.FloatField()
-    #MAXSIZE [double]
-    maxsize             = models.FloatField()
-    #MINDISTANCE [integer]
-    mindistance         = models.IntegerField()
-    #MINFEATURESIZE [integer|auto]
-    minfeaturesize      = models.TextField(                  )
-    #MINSCALEDENOM [double]
-    minscaledenom       = models.FloatField()
-    #MINSIZE [double]
-    minsize             = models.FloatField()
-    #OFFSET [x][y]
-    offset              = ArrayField( models.IntegerField(), size=2)
-    #OUTLINECOLOR [r] [g] [b] | [attribute]
-    ourtlinecolor       = ArrayField( models.IntegerField(), size=3)
-    #OUTLINEWIDTH [integer]
-    outlinewidth        = models.IntegerField()
-    #PARTIALS [true|false]
-    partials            = models.NullBooleanField(           default=True)
-    #POSITION [ul|uc|ur|cl|cc|cr|ll|lc|lr|auto]
-    position            = models.TextField(                  choices = POSITION_CHOICES,
-                                                             default = 'auto')
-    #PRIORITY [integer]|[item_name]|[attribute]
-    proprity            = models.TextField(                  )
-    #REPEATDISTANCE [integer]
-    repeatdistance      = models.IntegerField()
-    #SHADOWCOLOR [r] [g] [b]
-    shadowcolor         = ArrayField( models.IntegerField(), size=3)
-    #SHADOWSIZE [x][y]|[attribute][attribute]|[x][attribute]|[attribute][y]
-    shadowsize          = ArrayField( models.IntegerField(), size=2)
-    #SIZE [double]|[tiny|small|medium|large|giant]|[attribute]
-    size                = models.IntegerField()
-    #STYLE
-    style               = models.ManyToManyField(style)
-    #TEXT [string|expression]
-    text                = models.TextField(                  )
-    #TYPE [bitmap|truetype]
-    type                = models.TextField(                  choices = TYPE_CHOICES )
-    #WRAP [character]
-    wrap                = models.TextField(                  max_length=1)
+    ALIGN_HELP = '''
+    Specifies text alignment for multiline labels (see WRAP) Note that the
+    alignment algorithm is far from precise, so don't expect fabulous results 
+    (especially for right alignment) if you're not using a fixed width font.
+
+    New in version 5.4.
+    '''
+
+    align = models.TextField( help_text=ALIGN_HELP )
+
+    ##### ANGLE [double|auto|auto2|follow|attribute] #####
+
+    ANGLE_HELP = '''
+    Angle, counterclockwise, given in degrees, to draw the label. Default is 0.
+
+    AUTO allows MapServer to compute the angle. Valid for LINE layers only.
+
+    AUTO2 same as AUTO, except no logic is applied to try to keep the text from
+    being rendered in reading orientation (i.e. the text may be rendered upside
+    down). Useful when adding text arrows indicating the line direction.
+
+    FOLLOW was introduced in version 4.10 and tells MapServer to compute a
+    curved label for appropriate linear features (see MS RFC 11: Support for
+    Curved Labels for specifics). See also MAXOVERLAPANGLE.
+
+    [Attribute] was introduced in version 5.0, to specify the item name in the
+    attribute table to use for angle values. The hard brackets [] are required.
+    For example, if your shapefile's DBF has a field named "MYANGLE" that holds
+    angle values for each record, your LABEL object might contain:
+
+        LABEL
+          COLOR  150 150 150
+          OUTLINECOLOR 255 255 255
+          FONT "sans"
+          TYPE truetype
+          SIZE 6
+          ANGLE [MYANGLE]
+          POSITION AUTO
+          PARTIALS FALSE
+        END
+
+    The associated RFC document for this feature is MS RFC 19: Style & Label
+    attribute binding.
+    '''
+
+    angle = models.TextField( help_text=ANGLE_HELP )
+
+    ##### ANTIALIAS [true|false] #####
+
+    ANTIALIAS_HELP = '''
+    Should text be antialiased? Note that this requires more available colors,
+    decreases drawing performance, and results in slightly larger output images.
+    Only useful for GD (gif) rendering. Default is false. Has no effect for the
+    other renderers (where anti-aliasing can not be turned off).
+    '''
+
+    antialias = models.BooleanField( default=False, help_text=ANTIALIAS_HELP )
+
+    ##### BACKGROUNDCOLOR [r] [g] [b] removed #####
+
+    BACKGROUNDCOLOR_HELP = '''
+    Color to draw a background rectangle (i.e. billboard). Off by default.
+
+    Note
+
+    Removed in 6.0. Use a LABEL STYLE object with GEOMTRANSFORM labelpoly and
+    COLOR.
+    '''
+
+    #d backgroundcolor = ArrayField( models.IntegerField(), size=3,
+    #                                help_text=BACKGROUNDCOLOR_HELP )
+
+    ##### BACKGROUNDSHADOWCOLOR [r] [g] [b] removed #####
+
+    BACKGROUNDSHADOWCOLOR_HELP = '''
+    Color to draw a background rectangle (i.e. billboard) shadow. Off by default.
+
+    Note
+
+    Removed in 6.0. Use a LABEL STYLE object with GEOMTRANSFORM labelpoly, COLOR
+    and OFFSET.
+    '''
+
+    #d backgroundshadowcolor = ArrayField( models.IntegerField(), size=3,
+    #                                      help_text=BACKGROUNDSHADOWCOLOR_HELP )
+
+    ##### BACKGROUNDSHADOWSIZE [x][y] removed #####
+
+    BACKGROUNDSHADOWSIZE_HELP = '''
+    How far should the background rectangle be offset? Default is 1.
+
+    Note
+
+    Removed in 6.0. Use a LABEL STYLE object with GEOMTRANSFORM labelpoly, COLOR
+    and OFFSET.
+    '''
+
+    #d backgroundshadowsize = ArrayField( models.IntegerField(), size=3,
+    #                                     help_text=backgroundshadowsize_HELP )
+
+    ##### BUFFER [integer] #####
+
+    BUFFER_HELP = '''
+    Padding, in pixels, around labels. Useful for maintaining spacing around
+    text to enhance readability. Available only for cached labels. Default is 0.
+    '''
+
+    buffer = models.IntegerField( help_text=BUFFER_HELP )
+
+    ##### COLOR [r] [g] [b] | [attribute] #####
+
+    COLOR_HELP = '''
+    Color to draw text with.
+
+    [Attribute] was introduced in version 5.0, to specify the item name in
+    the attribute table to use for color values. The hard brackets [] are
+    required. For example, if your shapefile's DBF has a field named "MYCOLOR"
+    that holds color values for each record, your LABEL object might contain:
+
+        LABEL
+          COLOR  [MYCOLOR]
+          OUTLINECOLOR 255 255 255
+          FONT "sans"
+          TYPE truetype
+          SIZE 6
+          POSITION AUTO
+          PARTIALS FALSE
+        END
+
+    The associated RFC document for this feature is MS RFC 19: Style & Label
+    attribute binding.
+    '''
+
+    color = models.TextField( help_text=COLOR_HELP )
+
+    ##### ENCODING [string] #####
+
+    ENCODING_HELP = '''
+    Supported encoding format to be used for labels. If the format is not
+    supported, the label will not be drawn. Requires the iconv library (present
+    on most systems). The library is always detected if present on the system,
+    but if not, the label will not be drawn.
+
+    Required for displaying international characters in MapServer. More
+    information can be found in the Label Encoding document.
+    '''
+
+    encoding = models.TextField( help_text=ENCODING_HELP )
+
+    ##### EXPRESSION [string] #####
+
+    EXPRESSION_HELP = '''
+    Expression that determines when the LABEL is to be applied. See EXPRESSION
+    in CLASS.
+
+    New in version 6.2.
+    '''
+
+    expression = models.TextField( help_text=EXPRESSION_HELP )
+
+    ##### FONT [name|attribute] #####
+
+    FONT_HELP = '''
+    Font alias (as defined in the FONTSET) to use for labeling.
+    [Attribute] was introduced in version 5.6 to specfify the font alias.
+    May contain a comma-separated list of up to MS_MAX_LABEL_FONTS (usually 5)
+    font aliases used as fallback fonts in renderers supporting it, if a glyph
+    is not available in a font. If specified directly, be sure to enclose the
+    list with quotes. See MS RFC 80: Font Fallback Support.
+    '''
+
+    font = models.TextField( help_text=FONT_HELP )
+
+    ##### FORCE [true|false] #####
+
+    FORCE_HELP = '''
+    Forces labels for a particular class on, regardless of collisions. Available
+    only for cached labels. Default is false. If FORCE is true and PARTIALS is
+    false, FORCE takes precedence, and partial labels are drawn.
+    '''
+
+    force = models.NullBooleanField( help_text=FORCE_HELP )
+
+    ##### MAXLENGTH [integer] #####
+
+    MAXLENGTH_HELP = '''
+    This keyword interacts with the WRAP keyword so that line breaks only occur
+    after the defined number of characters.
+    Interaction with WRAP keyword   maxlength = 0 maxlength > 0 maxlength < 0
+    wrap = 'char' always wrap at the WRAP character newline at the first WRAP
+    character after MAXLENGTH characters hard wrap (always break at exactly 
+    MAXLENGTH characters)
+    no wrap no processing skip label if it contains more than MAXLENGTH
+    characters hard wrap (always break at exactly MAXLENGTH characters)
+
+    The associated RFC document for this feature is MS RFC 40: Support Label
+    Text Transformations.
+
+    New in version 5.4.
+    '''
+
+    maxlength = models.IntegerField( help_text=MAXLENGTH_HELP )
+
+    ##### MAXOVERLAPANGLE [double] #####
+
+    MAXOVERLAPANGLE_HELP = '''
+    Angle threshold to use in filtering out ANGLE FOLLOW labels in which
+    characters overlap (floating point value in degrees). This filtering will be
+    enabled by default starting with MapServer 6.0. The default MAXOVERLAPANGLE
+    value will be 22.5 degrees, which also matches the default in GeoServer.
+    Users will be free to tune the value up or down depending on the type of
+    data they are dealing with and their tolerance to bad overlap in labels. As
+    per RFC 60, if MAXOVERLAPANGLE is set to 0, then we fall back on pre-6.0
+    behavior which was to use maxoverlapangle = 0.4*MS_PI (40% of 180 degrees =
+    72degree).
+
+    The associated RFC document for this feature is MS RFC 60: Labeling
+    enhancement: ability to skip ANGLE FOLLOW labels with too much character
+    overlap.
+    '''
+
+    maxoverlapangle = models.FloatField( help_text=MAXOVERLAPANGLE_HELP )
+
+    ##### MAXSCALEDENOM [double] #####
+
+    MAXSCALEDENOM_HELP = '''
+    Minimum scale at which this LABEL is drawn. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000.
+
+    New in version 5.4.
+
+    See also Map Scale
+    '''
+
+    maxscaledenom = models.FloatField( help_text=MAXSCALEDENOM_HELP )
+
+    ##### MAXSIZE [double] #####
+
+    MAXSIZE_HELP = '''
+    Maximum font size to use when scaling text (pixels). Default is 256.
+    Starting from version 5.4, the value can also be a fractional value (and not
+    only integer). See LAYER SYMBOLSCALEDENOM.
+    '''
+
+    maxsize = models.FloatField( help_text=MAXSIZE_HELP )
+
+    ##### MINDISTANCE [integer] #####
+
+    MINDISTANCE_HELP = '''
+    Minimum distance between duplicate labels. Given in pixels.
+    '''
+
+    mindistance = models.IntegerField( help_text=MINDISTANCE_HELP )
+
+    ##### MINFEATURESIZE [integer|auto] #####
+
+    MINFEATURESIZE_HELP = '''
+    Minimum size a feature must be to be labeled. Given in pixels. For line data
+    the overall length of the displayed line is used, for polygons features the
+    smallest dimension of the bounding box is used. "Auto" keyword tells
+    MapServer to only label features that are larger than their corresponding
+    label. Available for cached labels only.
+    '''
+
+    minfeaturesize = models.TextField( help_text=MINFEATURESIZE_HELP )
+
+    ##### MINSCALEDENOM [double] #####
+
+    MINSCALEDENOM_HELP = '''
+    Maximum scale at which this LABEL is drawn. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000.
+
+    New in version 5.4.
+
+    See also Map Scale
+    '''
+
+    minscaledenom = models.FloatField( help_text=MINSCALEDENOM_HELP )
+
+    ##### MINSIZE [double] #####
+
+    MINSIZE_HELP = '''
+    Minimum font size to use when scaling text (pixels). Default is 4. Starting
+    from version 5.4, the value can also be a fractional value (and not only
+    integer). See LAYER SYMBOLSCALEDENOM.
+    '''
+
+    minsize = models.FloatField( help_text=MINSIZE_HELP )
+
+    ##### OFFSET [x][y] #####
+
+    OFFSET_HELP = '''
+    Offset values for labels, relative to the lower left hand corner of the
+    label and the label point. Given in pixels. In the case of rotated text
+    specify the values as if all labels are horizontal and any rotation will be
+    compensated for.
+
+    When used with FOLLOW angle, two additional options are available to render
+    the label parallel to the original feature:
+
+        OFFSET x -99 : will render the label to the left or to the right of the
+                       feature, depending on the sign of {x}.
+        OFFSET x 99 : will render the label above or below the feature,
+                      depending on the sign of {x}.
+
+    See LAYER SYMBOLSCALEDENOM.
+    '''
+
+    offset = ArrayField( models.IntegerField(), size=2, help_text=OFFSET_HELP )
+
+    ##### OUTLINECOLOR [r] [g] [b] | [attribute] #####
+
+    OUTLINECOLOR_HELP = '''
+    Color to draw a one pixel outline around the characters in the text.
+
+    [attribute] was introduced in version 5.0, to specify the item name in the
+    attribute table to use for color values. The hard brackets [] are required.
+    For example, if your shapefile's DBF has a field named "MYOUTCOLOR" that
+    holds color values for each record, your LABEL object might contain:
+
+        LABEL
+          COLOR  150 150 150
+          OUTLINECOLOR [MYOUTCOLOR]
+          FONT "sans"
+          TYPE truetype
+          SIZE 6
+          POSITION AUTO
+          PARTIALS FALSE
+        END
+
+    The associated RFC document for this feature is MS RFC 19: Style & Label
+    attribute binding.
+    '''
+
+    ourtlinecolor = ArrayField( models.IntegerField(), size=3,
+                                help_text=OUTLINECOLOR_HELP )
+
+    ##### OUTLINEWIDTH [integer] #####
+
+    OUTLINEWIDTH_HELP = '''
+    Width of the outline if OUTLINECOLOR has been set. Defaults to 1. Currently
+    only the AGG renderer supports values greater than 1, and renders these as a
+    'halo' effect: recommended values are 3 or 5.
+    '''
+
+    outlinewidth = models.IntegerField( help_text=OUTLINEWIDTH_HELP )
+
+    ##### PARTIALS [true|false] #####
+
+    PARTIALS_HELP = '''
+    Can text run off the edge of the map? Default is true. If FORCE is true and
+    PARTIALS is false, FORCE takes precedence, and partial labels are drawn.
+    '''
+
+    partials = models.NullBooleanField( default=True, help_text=PARTIALS_HELP )
+
+    ##### POSITION [ul|uc|ur|cl|cc|cr|ll|lc|lr|auto] #####
+
+    POSITION_HELP = '''
+    Position of the label relative to the labeling point (layers only). First
+    letter is "Y" position, second letter is "X" position. "Auto" tells
+    MapServer to calculate a label position that will not interfere with other
+    labels. With points, MapServer selects from the 8 outer positions (i.e.
+    excluding cc). With polygons, MapServer selects from cc (added in MapServer
+    5.4), uc, lc, cl and cr as possible positions. With lines, it only uses lc
+    or uc, until it finds a position that doesn't collide with labels that have
+    already been drawn. If all positions cause a conflict, then the label is not
+    drawn (Unless the label's FORCE a parameter is set to "true"). "Auto"
+    placement is only available with cached labels.
+    '''
+
+    position = models.TextField( choices = POSITION_CHOICES,
+                                 default = 'auto', help_text=POSITION_HELP )
+
+    ##### PRIORITY [integer]|[item_name]|[attribute] #####
+
+    PRIORITY_HELP = '''
+    The priority parameter takes an integer value between 1 (lowest) and 10 
+    (highest). The default value is 1. It is also possible to bind the priority
+    to an attribute (item_name) using square brackets around the [item_name].
+    e.g. "PRIORITY [someattribute]"
+
+    Labels are stored in the label cache and rendered in order of priority, with
+    the highest priority levels rendered first. Specifying an out of range
+    PRIORITY value inside a map file will result in a parsing error. An out of
+    range value set via MapScript or coming from a shape attribute will be
+    clamped to the min/max values at rendering time. There is no expected impact
+    on performance for using label priorities.
+
+    [Attribute] was introduced in version 5.6.
+
+    New in version 5.0.
+    '''
+
+    proprity = models.TextField( help_text=PRIORITY_HELP )
+
+    ##### REPEATDISTANCE [integer] #####
+
+    REPEATDISTANCE_HELP = '''
+    The label will be repeated on every line of a multiline shape and will be
+    repeated multiple times along a given line at an interval of REPEATDISTANCE
+    pixels.
+
+    The associated RFC document for this feature is MS RFC 57: Labeling
+    enhancements: ability to repeat labels along a line/multiline.
+
+    New in version 5.6.
+    '''
+
+    repeatdistance = models.IntegerField( help_text=REPEATDISTANCE_HELP )
+
+    ##### SHADOWCOLOR [r] [g] [b] #####
+
+    SHADOWCOLOR_HELP = '''
+    Color of drop shadow. A label with the same text will be rendered in this
+    color before the main label is drawn, resulting in a shadow effect on the
+    the label characters. The offset of the renderered shadow is set with
+    SHADOWSIZE.
+    '''
+
+    shadowcolor = ArrayField( models.IntegerField(), size=3,
+                              help_text=SHADOWCOLOR_HELP )
+
+    ##### SHADOWSIZE [x][y]|[attribute][attribute]|[x][attribute]|[attribute][y] #####
+
+    SHADOWSIZE_HELP = '''
+    Shadow offset in pixels, see SHADOWCOLOR.
+
+    [Attribute] was introduced in version 6.0, and can be used like:
+
+    SHADOWSIZE 2 2
+    SHADOWSIZE [shadowsizeX] 2
+    SHADOWSIZE 2 [shadowsizeY]
+    SHADOWSIZE [shadowsize] [shadowsize]
+    '''
+
+    shadowsize = ArrayField( models.IntegerField(), size=2,
+                             help_text=SHADOWSIZE_HELP )
+
+    ##### SIZE [double]|[tiny|small|medium|large|giant]|[attribute] #####
+
+    SIZE_HELP = '''
+    Text size. Use a number to give the size in pixels of your TrueType font
+    based label, or any of the other 5 listed keywords for bitmap fonts.
+
+    When scaling is in effect (SYMBOLSCALEDENOM is specified for the LAYER),
+    SIZE gives the size of the font to be used at the map scale
+    1:SYMBOLSCALEDENOM.
+
+    Starting from version 5.4, the value can also be a fractional value
+    (and not only integer).
+
+    [Attribute] was introduced in version 5.0, to specify the item name in the
+    attribute table to use for size values. The hard brackets [] are required.
+    For example, if your shapefile's DBF has a field named "MYSIZE" that holds
+    size values for each record, your LABEL object might contain:
+
+        LABEL
+          COLOR  150 150 150
+          OUTLINECOLOR 255 255 255
+          FONT "sans"
+          TYPE truetype
+          SIZE [MYSIZE]
+          POSITION AUTO
+          PARTIALS FALSE
+        END
+
+    The associated RFC document for this feature is MS RFC 19: Style & Label
+    attribute binding.
+    '''
+
+    size = models.IntegerField( help_text=SIZE_HELP )
+
+    ##### STYLE #####
+
+    STYLE_HELP = '''
+    The start of a STYLE object.
+
+    Label specific mechanisms of the STYLE object are the GEOMTRANSFORM options:
+
+    GEOMTRANSFORM [labelpnt|labelpoly]
+
+    Creates a geometry that can be used for styling the label.
+
+        labelpnt draws a marker on the geographic position the label is attached
+        to. This corresponds to the center of the label text only if the label
+        is in position CC.
+        labelpoly generates the bounding rectangle for the text, with 1 pixel of
+        padding added in all directions.
+
+    The resulting geometries can be styled using the mechanisms available in the
+    STYLE object.
+
+        Example - draw a red background rectangle for the labels (i.e.
+        billboard) with a "shadow" in gray:
+
+            STYLE
+              GEOMTRANSFORM 'labelpoly'
+              COLOR 153 153 153
+              OFFSET 3 2
+            END # STYLE
+            STYLE
+              GEOMTRANSFORM 'labelpoly'
+              COLOR 255 0 0
+            END # STYLE
+
+    New in version 6.0.
+    '''
+
+    style = models.ManyToManyField(style, help_text=STYLE_HELP )
+
+    ##### TEXT [string|expression] #####
+
+    TEXT_HELP = '''
+    Text to label features with (useful when multiple labels are used).
+    Overrides values obtained from the LAYER LABELITEM and the CLASS TEXT. See
+    TEXT in CLASS.
+
+    New in version 6.2.
+    '''
+
+    text = models.TextField( help_text=TEXT_HELP )
+
+    ##### TYPE [bitmap|truetype] #####
+
+    TYPE_HELP = '''
+    Type of font to use. Generally bitmap fonts are faster to draw then TrueType
+    fonts. However, TrueType fonts are scalable and available in a variety of
+    faces. Be sure to set the FONT parameter if you select TrueType.
+
+    Note
+
+    Bitmap fonts are only supported with the AGG and GD renderers.
+    '''
+
+    type = models.TextField( choices = TYPE_CHOICES, help_text=TYPE_HELP )
+
+    ##### WRAP [character] #####
+
+    WRAP_HELP = '''
+    Character that represents an end-of-line condition in label text, thus
+    resulting in a multi-line label. Interacts with MAXLENGTH for conditional
+    line wrapping after a given number of characters 
+    '''
+
+    wrap = models.TextField( max_length=1, help_text=WRAP_HELP )
 
 
     class Meta:
@@ -314,7 +1458,6 @@ class label(models.Model):
 #  'taxid'         '^[A-Z]{2}[0-9]{6}$'
 #END
 #
-#If identical keys appear in more than one validation block then keys in more specialised blocks override those in more generalised blocks. i.e. CLASS overrides LAYER which overrides WEB.
 #
 ################################################################################
 
@@ -344,10 +1487,14 @@ class validation(models.Model):
         # %taxid% must be two capital letters and six digits
         'taxid'         '^[A-Z]{2}[0-9]{6}$'
     END
+
+    If identical keys appear in more than one validation block then keys in more
+    specialised blocks override those in more generalised blocks. i.e. CLASS
+    overrides LAYER which overrides WEB.
     '''
 
-    varname             = models.TextField( help_text = VALIDATION_HELP )
-    regex               = models.TextField( help_text = VALIDATION_HELP )
+    varname = models.TextField( help_text = VALIDATION_HELP )
+    regex = models.TextField( help_text = VALIDATION_HELP )
 
 
     class Meta:
@@ -392,6 +1539,7 @@ class Class(models.Model):
     MS RFC 28: Redesign of LOG/DEBUG output mechanisms
     '''
 
+    debug = models.NullBooleanField( help_text = DEBUG_HELP )
 
 ##### EXPRESSION [string] #####
 
@@ -430,6 +1578,7 @@ class Class(models.Model):
     at the layer level. You may mix expression types within the different
     classes of a layer.
     '''
+
     expression = models.TextField( help_text = EXPRESSION_HELP )
 
     ##### GROUP [string] #####
@@ -529,7 +1678,7 @@ class Class(models.Model):
     '''
 
     #d outlinecolor = ArrayField( models.IntegerField(), size=3,
-                                  help_text = OUTLINECOLOR_HELP )
+    #                              help_text = OUTLINECOLOR_HELP )
 
     ##### SIZE [integer] #####
 
@@ -603,16 +1752,6 @@ class Class(models.Model):
 
 ################################################################################
 ## cluster (child of layer)
-#
-#Since version 6.0, MapServer has the ability to combine multiple features from a point layer into single (aggregated) features based on their relative positions. Only POINT layers are supported. This feature was added through MS RFC 69: Support for clustering of features in point layers.
-#The following processing options can be used with the cluster layers:
-#
-#Supported Processing Options
-#
-#CLUSTER_GET_ALL_SHAPES
-#    Return all shapes contained by a cluster instead of a single shape. This setting affects both the drawing and the query processing.
-#
-#
 ################################################################################
 
 class cluster(models.Model):
@@ -676,14 +1815,66 @@ class cluster(models.Model):
 
 ################################################################################
 ## feature (child of layer)
+
+
+
+
 ################################################################################
 
 ##### FIXME need help text
 class feature(models.Model):
-    points              = ArrayField(ArrayField( models.IntegerField(), size=2))
-    items               = models.TextField(                  )
-    text                = models.TextField(                  )
-    wkt                 = models.TextField(                  )
+
+    ##### POINTS #####
+
+    POINTS_HELP = '''
+    A set of xy pairs terminated with an END, for example:
+
+    POINTS 1 1 50 50 1 50 1 1 END
+
+    Note
+
+    POLYGON/POLYLINE layers POINTS must start and end with the same point (i.e.
+    close the feature).
+    '''
+
+    points = ArrayField( ArrayField( models.IntegerField(), size=2),
+                         help_text = POINTS_HELP )
+
+    ##### ITEMS #####
+
+    ITEMS_HELP = '''
+    Comma separated list of the feature attributes:
+
+    ITEMS "value1;value2;value3"
+
+    Note
+
+    Specifying the same number of items is recommended for each features of the
+    same layer. The item names should be specified as a PROCESSING option of the
+    layer.
+    '''
+
+    items = models.TextField( help_text = ITEMS_HELP )
+
+    ##### TEXT [string] #####
+
+    TEXT_HELP = '''
+    String to use for labeling this feature.
+    '''
+
+    text = models.TextField( help_text = TEXT_HELP )
+
+    ##### WKT [string] #####
+
+    WKT_HELP = '''
+    A geometry expressed in OpenGIS Well Known Text geometry format. This
+    feature is only supported if MapServer is built with OGR or GEOS support.
+
+    WKT "POLYGON((500 500, 3500 500, 3500 2500, 500 2500, 500 500))"
+    WKT "POINT(2000 2500)"
+    '''
+
+    wkt = models.TextField( help_text = WKT_HELP )
 
     class Meta:
         verbose_name = _( "feature" )
@@ -692,50 +1883,77 @@ class feature(models.Model):
 
 ################################################################################
 ## grid (child of layer)
-#
-#
-#The GRID object can be used to add labeled graticule lines to your map. Initially developed in 2003 by John Novak, the GRID object is designed to be used inside a LAYER object to allow multiple GRID objects for a single map (allowing for example: a lat/long GRID, a State Plane GRID, and a UTM GRID to be displayed on the same map image).
-#Mapfile Parameters:
-#
-#
 ################################################################################
 
 class grid(models.Model):
 
-##### LABELFORMAT [DD|DDMM|DDMMSS|C format string] #####
-#    Format of the label. "DD" for degrees, "DDMM" for degrees minutes, and "DDMMSS" for degrees, minutes, seconds. A C-style formatting string is also allowed, such as  to show decimal degrees with a degree symbol. The default is decimal display of whatever SRS you're rendering the GRID with.
-#
-    labelformat         = models.TextField(                  )
-##### MINARCS [double] #####
+    ##### LABELFORMAT [DD|DDMM|DDMMSS|C format string] #####
 
-#    The minimum number of arcs to draw. Increase this parameter to get more lines. Optional.
-#
-    minarcs             = models.FloatField()
-##### MAXARCS [double] #####
+    LABELFORMAT_HELP = '''
+    Format of the label. "DD" for degrees, "DDMM" for degrees minutes, and
+    "DDMMSS" for degrees, minutes, seconds. A C-style formatting string is also
+    allowed, such as  to show decimal degrees with a degree symbol. The default
+    is decimal display of whatever SRS you're rendering the GRID with.
+    '''
 
-#    The maximum number of arcs to draw. Decrease this parameter to get fewer lines. Optional.
-#
-    maxarcs             = models.FloatField()
-##### MININTERVAL [double] #####
+    labelformat = models.TextField( help_text = LABELFORMAT_HELP )
 
-#    The minimum number of intervals to try to use. The distance between the grid lines, in the units of the grid's coordinate system. Optional.
-#
-    mininterval         = models.FloatField()
-##### MAXINTERVAL [double] #####
+    ##### MINARCS [double] #####
 
-#    The maximum number of intervals to try to use. The distance between the grid lines, in the units of the grid's coordinate system. Optional.
-#
-    maxinterval         = models.FloatField()
-##### MINSUBDIVIDE [double] #####
+    MINARCS_HELP = '''
+    The minimum number of arcs to draw. Increase this parameter to get more
+    lines. Optional.
+    '''
 
-#    The minimum number of segments to use when rendering an arc. If the lines should be very curved, use this to smooth the lines by adding more segments. Optional.
-#
-    minsubdivide        = models.FloatField()
-##### MAXSUBDIVIDE [double] #####
+    minarcs = models.FloatField( help_text = MINARCS_HELP )
 
-#    The maximum number of segments to use when rendering an arc. If the graticule should be very straight, use this to minimize the number of points for faster rendering. Optional, default 256.
-#
-    maxsubdivide        = models.FloatField()
+    ##### MAXARCS [double] #####
+
+    MAXARCS_HELP = '''
+    The maximum number of arcs to draw. Decrease this parameter to get fewer
+    lines. Optional.
+    '''
+
+    maxarcs = models.FloatField( help_text = MAXARCS_HELP )
+
+    ##### MININTERVAL [double] #####
+
+    MININTERVAL_HELP = '''
+
+    The minimum number of intervals to try to use. The distance between the grid
+    lines, in the units of the grid's coordinate system. Optional.
+    '''
+
+    mininterval = models.FloatField( help_text = MININTERVAL_HELP )
+
+    ##### MAXINTERVAL [double] #####
+
+    MAXINTERVAL_HELP = '''
+    The maximum number of intervals to try to use. The distance between the grid
+    lines, in the units of the grid's coordinate system. Optional.
+    '''
+
+    maxinterval = models.FloatField( help_text = MAXINTERVAL_HELP )
+
+    ##### MINSUBDIVIDE [double] #####
+
+    MINSUBDIVIDE_HELP = '''
+    The minimum number of segments to use when rendering an arc. If the lines
+    should be very curved, use this to smooth the lines by adding more segments.
+    Optional.
+    '''
+
+    minsubdivide = models.FloatField( help_text = MINSUBDIVIDE_HELP )
+
+    ##### MAXSUBDIVIDE [double] #####
+
+    MAXSUBDIVIDE_HELP = '''
+    The maximum number of segments to use when rendering an arc. If the
+    graticule should be very straight, use this to minimize the number of points
+    for faster rendering. Optional, default 256.
+    '''
+
+    maxsubdivide = models.FloatField( help_text = MAXSUBDIVIDE_HELP )
 
 
     class Meta:
@@ -746,51 +1964,6 @@ class grid(models.Model):
 
 ################################################################################
 ## join (child of layer)
-#
-#Joins are defined within a LAYER object. It is important to understand that JOINs are ONLY available once a query has been processed. You cannot use joins to affect the look of a map. The primary purpose is to enable lookup tables for coded data (e.g. 1 => Forest) but there are other possible uses.
-#Supported Formats
-#
-#    DBF/XBase files
-#    CSV (comma delimited text file)
-#    PostgreSQL tables
-#    MySQL tables
-#
-#Mapfile Parameters:
-#
-#CONNECTION [string]
-#
-#    Parameters required for the join table's database connection (not required for DBF or CSV joins). The following is an example connection for PostgreSQL:
-#
-#    CONNECTION "host=127.0.0.1 port=5432 user=pg password=pg dbname=somename"
-#    CONNECTIONTYPE POSTGRESQL
-#
-#CONNECTIONTYPE [csv|mysql|postgresql]
-#    Type of connection (not required for DBF joins). For PostgreSQL use postgresql, for CSV use csv, for MySQL use mysql.
-#
-#FOOTER [filename]
-#    Template to use after a layer's set of results have been sent. In other words, this header HTML will be displayed after the contents of the TEMPLATE HTML.
-#
-#FROM [column]
-#    Join column in the dataset. This is case sensitive.
-#
-#HEADER [filename]
-#    Template to use before a layer's set of results have been sent. In other words, this header HTML will be displayed before the contents of the TEMPLATE HTML.
-#
-#NAME [string]
-#    Unique name for this join. Required.
-#
-#TABLE [filename|tablename]
-#    For file-based joins this is the name of XBase or comma delimited file (relative to the location of the mapfile) to join TO. For PostgreSQL support this is the name of the PostgreSQL table to join TO.
-#
-#TEMPLATE [filename]
-#    Template to use with one-to-many joins. The template is processed once for each record and can only contain substitutions for columns in the joined table. Refer to the column in the joined table in your template like [joinname_columnname], where joinname is the NAME specified for the JOIN object.
-#
-#TO [column]
-#    Join column in the table to be joined. This is case sensitive.
-#
-#TYPE [ONE-TO-ONE|ONE-TO-MANY]
-#    The type of join. Default is one-to-one.
-#
 ################################################################################
 
 
@@ -818,17 +1991,103 @@ class join(models.Model):
         (TYPE_ONE_TO_MANY, TYPE_ONE_TO_MANY),
     )
 
-    connection          = models.TextField(                  )
-    connectiontype      = models.TextField(                  choices = CONNECTIONTYPE_CHOICES)
-    footer              = models.TextField(                  )
-    From                = models.TextField(                  )
-    header              = models.TextField(                  )
-    name                = models.TextField(                  )
-    table               = models.TextField(                  )
-    template            = models.TextField(                  )
-    to                  = models.TextField(                  )
-    Type                = models.TextField(                  choices = TYPE_CHOICES,
-                                                             default = TYPE_ONE_TO_ONE)
+
+    ##### CONNECTION [string] #####
+
+    CONNECTION_HELP = '''
+    Parameters required for the join table's database connection (not required
+    for DBF or CSV joins). The following is an example connection for PostgreSQL:
+
+    CONNECTION "host=127.0.0.1 port=5432 user=pg password=pg dbname=somename"
+    CONNECTIONTYPE POSTGRESQL
+    '''
+
+    connection = models.TextField( help_text = CONNECTION_HELP )
+
+    ##### CONNECTIONTYPE [csv|mysql|postgresql] #####
+
+    CONNECTIONTYPE_HELP = '''
+    Type of connection (not required for DBF joins). For PostgreSQL use
+    postgresql, for CSV use csv, for MySQL use mysql.
+    '''
+
+    connectiontype = models.TextField( choices = CONNECTIONTYPE_CHOICES, 
+                                       help_text = CONNECTIONTYPE_HELP )
+
+    ##### FOOTER [filename] #####
+
+    FOOTER_HELP = '''
+    Template to use after a layer's set of results have been sent. In other
+    words, this header HTML will be displayed after the contents of the TEMPLATE
+    HTML.
+    '''
+
+    footer = models.TextField( help_text = FOOTER_HELP )
+
+    ##### FROM [column] #####
+
+    FROM_HELP = '''
+    Join column in the dataset. This is case sensitive.
+    '''
+
+    From = models.TextField( help_text = FROM_HELP )
+
+    ##### HEADER [filename] #####
+
+    HEADER_HELP = '''
+    Template to use before a layer's set of results have been sent. In other
+    words, this header HTML will be displayed before the contents of the
+    TEMPLATE HTML.
+    '''
+
+    header = models.TextField( help_text = HEADER_HELP )
+
+    ##### NAME [string] #####
+
+    NAME_HELP = '''
+    Unique name for this join. Required.
+    '''
+
+    name = models.TextField( help_text = NAME_HELP )
+
+    ##### TABLE [filename|tablename] #####
+
+    TABLE_HELP = '''
+    For file-based joins this is the name of XBase or comma delimited file
+    (relative to the location of the mapfile) to join TO. For PostgreSQL support
+    this is the name of the PostgreSQL table to join TO.
+    '''
+
+    table = models.TextField( help_text = TABLE_HELP )
+
+    ##### TEMPLATE [filename] #####
+
+    TEMPLATE_HELP = '''
+    Template to use with one-to-many joins. The template is processed once for
+    each record and can only contain substitutions for columns in the joined
+    table. Refer to the column in the joined table in your template like
+    [joinname_columnname], where joinname is the NAME specified for the JOIN
+    object.
+    '''
+
+    template = models.TextField( help_text = TEMPLATE_HELP )
+
+    ##### TO [column] #####
+
+    TO_HELP = '''
+    Join column in the table to be joined. This is case sensitive.
+    '''
+
+    to = models.TextField( help_text = TO_HELP )
+
+    ##### TYPE [ONE-TO-ONE|ONE-TO-MANY] #####
+
+    TYPE_HELP = '''
+    The type of join. Default is one-to-one.
+    '''
+
+    Type = models.TextField( choices = TYPE_CHOICES, default = TYPE_ONE_TO_ONE,
+                             help_text = TYPE_HELP )
 
     class Meta:
         verbose_name = _( "join" )
@@ -941,7 +2200,7 @@ METADATA_KEY_CHOICES = (
 ################################################################################
 
 class projection(models.Model):
-    epsg               = models.TextField (                  )
+    epsg = models.TextField (                  )
 
     class Meta:
         verbose_name = _( "projection" )
@@ -977,8 +2236,8 @@ class transform(models.Model):
         (POSITION_LR, POSITION_LR),
     )
 
-    transform           = models.BooleanField(               default = True)
-    position            = models.TextField(                  choices = POSITION_CHOICES,
+    transform = models.BooleanField(               default = True)
+    position = models.TextField(                  choices = POSITION_CHOICES,
                                                              default = POSITION_LR)
 
     class Meta:
@@ -989,542 +2248,6 @@ class transform(models.Model):
 
 ################################################################################
 # layer (child of map)
-#
-#CLASS
-#
-#    Signals the start of a CLASS object.
-#
-#    Inside a layer, only a single class will be used for the rendering of a feature. Each feature is tested against each class in the order in which they are defined in the mapfile. The first class that matches the its min/max scale constraints and its EXPRESSION check for the current feature will be used for rendering.
-#
-#CLASSGROUP [string]
-#    Specify the class's group that would be considered at rendering time. The CLASS object's GROUP parameter must be used in combination with CLASSGROUP.
-#
-#CLASSITEM [attribute]
-#    Item name in attribute table to use for class lookups.
-#
-#CLUSTER
-#
-#    Signals the start of a CLUSTER object.
-#
-#    The CLUSTER configuration option provides to combine multiple features from the layer into single (aggregated) features based on their relative positions. Supported only for POINT layers.
-#
-#    See also
-#
-#    MS RFC 69: Support for clustering of features in point layers
-#
-#CONNECTION [string]
-#
-#    Database connection string to retrieve remote data.
-#
-#    An SDE connection string consists of a hostname, instance name, database name, username and password separated by commas.
-#
-#    A PostGIS connection string is basically a regular PostgreSQL connection string, it takes the form of "user=nobody password=****** dbname=dbname host=localhost port=5432"
-#
-#    An Oracle connection string: user/pass[@db]
-#
-#    See also
-#
-#    Vector Data for specific connection information for various data sources.
-#
-#CONNECTIONTYPE [contour|local|ogr|oraclespatial|plugin|postgis|sde|union|uvraster|wfs|wms]
-#
-#    Type of connection. Default is local. See additional documentation for any other type.
-#
-#    See also
-#
-#    Vector Data for specific connection information for various data sources. See Union Layer for combining layers, added in MapServer 6.0
-#
-#    Note
-#
-#    mygis is another connectiontype, but it is deprecated; please see the MySQL section of the Vector Data document for connection details.
-#
-#DATA [filename]|[sde parameters][postgis table/column][oracle table/column]
-#
-#    Full filename of the spatial data to process. No file extension is necessary for shapefiles. Can be specified relative to the SHAPEPATH option from the Map Object.
-#
-#    If this is an SDE layer, the parameter should include the name of the layer as well as the geometry column, i.e. "mylayer,shape,myversion".
-#
-#    If this is a PostGIS layer, the parameter should be in the form of "<columnname> from <tablename>", where "columnname" is the name of the column containing the geometry objects and "tablename" is the name of the table from which the geometry data will be read.
-#
-#    For Oracle, use "shape FROM table" or "shape FROM (SELECT statement)" or even more complex Oracle compliant queries! Note that there are important performance impacts when using spatial subqueries however. Try using MapServer's FILTER whenever possible instead. You can also see the SQL submitted by forcing an error, for instance by submitting a DATA parameter you know won't work, using for example a bad column name.
-#
-#    See also
-#
-#    Vector Data for specific connection information for various data sources.
-#
-#DEBUG [off|on|0|1|2|3|4|5]
-#
-#    Enables debugging of a layer in the current map.
-#
-#    Debugging with MapServer versions >= 5.0:
-#
-#    Verbose output is generated and sent to the standard error output (STDERR) or the MapServer errorfile if one is set using the "MS_ERRORFILE" environment variable. You can set the environment variable by using the CONFIG parameter at the MAP level of the mapfile, such as:
-#
-#    CONFIG "MS_ERRORFILE" "/ms4w/tmp/ms_error.txt"
-#
-#    You can also set the environment variable in Apache by adding the following to your httpd.conf:
-#
-#    SetEnv MS_ERRORFILE "/ms4w/tmp/ms_error.txt"
-#
-#    Once the environment variable is set, the DEBUG mapfile parameter can be used to control the level of debugging output. Here is a description of the possible DEBUG values:
-#
-#        DEBUG O or OFF - only msSetError() calls are logged to MS_ERRORFILE. No msDebug() output at all. This is the default and corresponds to the original behavior of MS_ERRORFILE in MapServer 4.x
-#        DEBUG 1 or ON - includes all output from DEBUG 0 plus msDebug() warnings about common pitfalls, failed assertions or non-fatal error situations (e.g. missing or invalid values for some parameters, missing shapefiles in tileindex, timeout error from remote WMS/WFS servers, etc.)
-#        DEBUG 2 - includes all output from DEBUG 1 plus notices and timing information useful for tuning mapfiles and applications
-#        DEBUG 3 - all of DEBUG 2 plus some debug output useful in troubleshooting problems such as WMS connection URLs being called, database connection calls, etc. This is the recommended level for debugging mapfiles.
-#        DEBUG 4 - DEBUG 3 plus even more details...
-#        DEBUG 5 - DEBUG 4 plus any msDebug() output that might be more useful to the developers than to the users.
-#
-#    You can also set the debug level by using the "MS_DEBUGLEVEL" environment variable.
-#
-#    The DEBUG setting can also be specified for the entire map, by setting the DEBUG parameter in the MAP object.
-#
-#    For more details on this debugging mechanism, please see MS RFC 28: Redesign of LOG/DEBUG output mechanisms.
-#
-#    Debugging with MapServer versions < 5:
-#
-#    Verbose output is generated and sent to the standard error output (STDERR) or the MapServer logfile if one is set using the LOG parameter in the WEB object. Apache users will see timing details for drawing in Apache's error_log file. Requires MapServer to be built with the DEBUG=MSDEBUG option (-with-debug configure option).
-#
-#DUMP [true|false]
-#
-#    Since 6.0, DUMP is not used anymore. LAYER METADATA is used instead.
-#
-#    Switch to allow MapServer to return data in GML format. Useful when used with WMS GetFeatureInfo operations. "false" by default.
-#
-#    Deprecated since version 6.0: LAYER METADATA is used instead.
-#
-#    See also
-#
-#    WMS Server
-#
-#EXTENT [minx] [miny] [maxx] [maxy]
-#    The spatial extent of the data. In most cases you will not need to specify this, but it can be used to avoid the speed cost of having MapServer compute the extents of the data. An application can also possibly use this value to override the extents of the map.
-#
-#FEATURE
-#    Signals the start of a FEATURE object.
-#
-#FILTER [string]
-#
-#    This parameter allows for data specific attribute filtering that is done at the same time spatial filtering is done, but before any CLASS expressions are evaluated. For OGR and shapefiles the string is simply a mapserver regular expression. For spatial databases the string is a SQL WHERE clause that is valid with respect to the underlying database.
-#
-#    For example: FILTER ([type]='road' and [size]<2)
-#
-#FILTERITEM [attribute]
-#    Item to use with simple FILTER expressions. OGR and shapefiles only.
-#
-#FOOTER [filename]
-#    Template to use after a layer's set of results have been sent. Multiresult query modes only.
-#
-#GEOMTRANSFORM [<expression>|<Javascript file>]
-#
-#    Used to indicate that the current feature will be transformed. Introduced in version 6.4.
-#
-#        <expression>: Applies the given expression to the geometry.
-#
-#        Supported expressions:
-#            (buffer([shape],dist)): Buffer the geometry ([shape]) using dist pixels as buffer distance. For polygons, a negative dist will produce a setback.
-#            (simplify([shape],tolerance)): simplifies a geometry ([shape]) using the standard Douglas-Peucker algorithm.
-#            (simplifypt([shape], tolerance)): simplifies a geometry ([shape]), ensuring that the result is a valid geometry having the same dimension and number of components as the input. tolerance must be non-negative.
-#            (generalize([shape],tolerance)): simplifies a geometry ([shape]) in way comparable to FME's ThinNoPoint algorithm. See http://trac.osgeo.org/gdal/ticket/966 for more information.
-#
-#            (smoothsia([shape], smoothing_size, smoothing_iteration, preprocessing)): will smooth a geometry ([shape]) using the SIA algorithm
-#
-#            See also
-#
-#            Geometry Transformations and Shape Smoothing
-#
-#        There is a difference between STYLE and LAYER GEOMTRANSFORM. LAYER-level will receive ground coordinates (meters, degress, etc) and STYLE-level will receive pixel coordinates. The argument to methods such as simplify() must be in the same units as the coordinates of the shapes at that point of the rendering workflow, i.e. pixels at the STYLE-level and in ground units at the LAYER-level.
-#
-#        LAYER NAME "my_layer"
-#            TYPE LINE
-#            STATUS DEFAULT
-#            DATA "lines.shp"
-#            GEOMTRANSFORM (simplify([shape], 10))  ## 10 ground units
-#            CLASS
-#                STYLE
-#                    GEOMTRANSFORM (buffer([shape], 5)  ## 5 pixels
-#                    WIDTH 2
-#                    COLOR 255 0 0
-#                END
-#            END
-#        END
-#
-#        The [map_cellsize] variable is available if you need to pass a pixel value at the LAYER-level.
-#
-#        LAYER NAME "my_layer"
-#            TYPE LINE
-#            STATUS DEFAULT
-#            DATA "lines.shp"
-#            UNITS meters
-#            # 10 * [map_cellsize] == 10 pixels converted to ground units
-#            GEOMTRANSFORM (simplify([shape], [map_cellsize]*10))
-#        ...
-#
-#        To get this variable working in the math expression parser, the [map_cellsize] has to be converted into the layer ground unit. If you choose to use [map_cellsize] in your GEOMTRANSFORM expression, you must explicitly set the UNITS option in the layer.
-#
-#        <Javascript file>: A Javascript file that returns a new geometry. See GEOMTRANSFORM Javascript.
-#
-#        LAYER
-#          ...
-#          GEOMTRANSFORM "javascript://transform.js" # relative path
-#        END
-#
-#        or
-#
-#        LAYER
-#          ...
-#          GEOMTRANSFORM "javascript:///home/user/transform.js" # absolute path
-#        END
-#
-#        New in version 7.0.
-#
-#        Note
-#
-#        Requires V8 MapScript Support.
-#
-#        See also
-#
-#        Geometry Transformations
-#
-#GRID
-#    Signals the start of a GRID object.
-#
-#GROUP [name]
-#
-#    Name of a group that this layer belongs to. The group name can then be reference as a regular layer name in the template files, allowing to do things like turning on and off a group of layers at once.
-#
-#    If a group name is present in the LAYERS parameter of a CGI request, all the layers of the group are returned (the STATUS of the LAYERs have no effect).
-#
-#HEADER [filename]
-#    Template to use before a layer's set of results have been sent. Multiresult query modes only.
-#
-#JOIN
-#    Signals the start of a JOIN object.
-#LABELANGLEITEM [attribute]
-#
-#    (As of MapServer 5.0 this parameter is no longer available. Please see the LABEL object's ANGLE parameter) For MapServer versions < 5.0, this is the item name in attribute table to use for class annotation angles. Values should be in degrees.
-#
-#    Deprecated since version 5.0.
-#
-#LABELCACHE [on|off]
-#    Specifies whether labels should be drawn as the features for this layer are drawn, or whether they should be cached and drawn after all layers have been drawn. Default is on. Label overlap removal, auto placement etc... are only available when the label cache is active.
-#
-#LABELITEM [attribute]
-#    Item name in attribute table to use for class annotation (i.e. labeling).
-#
-#LABELMAXSCALEDENOM [double]
-#
-#    Minimum scale at which this LAYER is labeled. Scale is given as the denominator of the actual scale fraction, for example for a map at a scale of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the deprecated LABELMAXSCALE parameter.
-#
-#    See also
-#
-#    Map Scale
-#
-#LABELMINSCALEDENOM [double]
-#
-#    Maximum scale at which this LAYER is labeled. Scale is given as the denominator of the actual scale fraction, for example for a map at a scale of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the deprecated LABELMINSCALE parameter.
-#
-#    See also
-#
-#    Map Scale
-#
-#LABELREQUIRES [expression]
-#
-#    Sets context for labeling this layer, for example:
-#
-#    LABELREQUIRES "![orthoquads]"
-#
-#    means that this layer would NOT be labeled if a layer named "orthoquads" is on. The expression consists of a boolean expression based on the status of other layers, each [layer name] substring is replaced by a 0 or a 1 depending on that layer's STATUS and then evaluated as normal. Logical operators AND and OR can be used.
-#LABELSIZEITEM [attribute]
-#
-#    (As of MapServer 5.0 this parameter is no longer available. Please see the LABEL object's SIZE parameter) For MapServer versions < 5.0, this is the item name in attribute table to use for class annotation sizes. Values should be in pixels.
-#
-#    Deprecated since version 5.0.
-#
-#MASK [layername]
-#
-#    The data from the current layer will only be rendered where it intersects features from the [layername] layer. [layername] must reference the NAME of another LAYER defined in the current mapfile. can be any kind of mapserver layer, i.e. vector or raster. If the current layer has labelling configured, then only labels who's label-point fall inside the unmasked area will be added to the labelcache (the actual glyphs for the label may be rendered ontop of the masked-out area.
-#
-#    Note
-#
-#    Unless you want the features of [layername] to actually appear on the generated map, [layername] should usually be set to STATUS OFF.
-#
-#    See also
-#
-#    MS RFC 79: Layer Masking
-#
-#MAXFEATURES [integer]
-#    Specifies the number of features that should be drawn for this layer in the CURRENT window. Has some interesting uses with annotation and with sorted data (i.e. lakes by area).
-#
-#MAXGEOWIDTH [double]
-#
-#    Maximum width, in the map's geographic units, at which this LAYER is drawn. If MAXSCALEDENOM is also specified then MAXSCALEDENOM will be used instead.
-#
-#    The width of a map in geographic units can be found by calculating the following from the extents:
-#
-#    [maxx] - [minx]
-#
-#    New in version 5.4.0.
-#
-#MAXSCALEDENOM [double]
-#
-#    Minimum scale at which this LAYER is drawn. Scale is given as the denominator of the actual scale fraction, for example for a map at a scale of 1:24,000 use 24000.
-#
-#    New in version 5.0.0: Replaced MAXSCALE.
-#
-#    See also
-#
-#    Map Scale
-#
-#METADATA
-#
-#    This keyword allows for arbitrary data to be stored as name value pairs. This is used with OGC WMS to define things such as layer title. It can also allow more flexibility in creating templates, as anything you put in here will be accessible via template tags.
-#
-#    Example:
-#
-#    METADATA
-#        "title" "My layer title"
-#        "author" "Me!"
-#    END
-#
-#MINGEOWIDTH [double]
-#
-#    Minimum width, in the map's geographic units, at which this LAYER is drawn. If MINSCALEDENOM is also specified then MINSCALEDENOM will be used instead.
-#
-#    The width of a map in geographic units can be found by calculating the following from the extents:
-#
-#    [maxx] - [minx]
-#
-#    New in version 5.4.0.
-#
-#MINSCALEDENOM [double]
-#
-#    Maximum scale at which this LAYER is drawn. Scale is given as the denominator of the actual scale fraction, for example for a map at a scale of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the deprecated MINSCALE parameter.
-#
-#    See also
-#
-#    Map Scale
-#
-#NAME [string]
-#    Short name for this layer. This name is the link between the mapfile and web interfaces that refer to this name. They must be identical. The name should be unique, unless one layer replaces another at different scales. Use the GROUP option to associate layers with each other. It is recommended that the name not contain spaces, special characters, or begin with a number (which could cause problems through interfaces such as OGC services).
-#
-#OFFSITE [r] [g] [b]
-#    Sets the color index to treat as transparent for raster layers.
-#
-#OPACITY [integer|alpha]
-#
-#    Sets the opacity level (or the inability to see through the layer) of all classed pixels for a given layer. The value can either be an integer in the range (0-100) or the named symbol "ALPHA". A value of 100 is opaque and 0 is fully transparent. Implemented in MapServer 5.0, to replace the deprecated TRANSPARENCY parameter.
-#
-#    The "ALPHA" symbol directs the MapServer rendering code to honor the indexed or alpha transparency of pixmap symbols used to style a layer. This is only needed in the case of RGB output formats, and should be used only when necessary as it is expensive to render transparent pixmap symbols onto an RGB map image.
-#
-#PLUGIN [filename]
-#
-#    Additional library to load by MapServer, for this layer. This is commonly used to load specific support for SDE and Microsoft SQL Server layers, such as:
-#
-#        CONNECTIONTYPE PLUGIN
-#        CONNECTION "hostname,port:xxx,database,username,password"
-#        PLUGIN "C:/ms4w/Apache/specialplugins/msplugin_sde_92.dll"
-#        DATA "layername,geometrycolumn,SDE.DEFAULT"
-#
-#POSTLABELCACHE [true|false]
-#    Tells MapServer to render this layer after all labels in the cache have been drawn. Useful for adding neatlines and similar elements. Default is false.
-#
-#PROCESSING [string]
-#
-#    Passes a processing directive to be used with this layer. The supported processing directives vary by layer type, and the underlying driver that processes them.
-#
-#        Attributes Directive - The ITEMS processing option allows to specify the name of attributes for inline layers or specify the subset of the attributes to be used by the layer, such as:
-#
-#        PROCESSING "ITEMS=itemname1,itemname2,itemname3"
-#
-#        Connection Pooling Directive - This is where you can enable connection pooling for certain layer layer types. Connection pooling will allow MapServer to share the handle to an open database or layer connection throughout a single map draw process. Additionally, if you have FastCGI enabled, the connection handle will stay open indefinitely, or according to the options specified in the FastCGI configuration. Oracle Spatial, ArcSDE, OGR and PostGIS/PostgreSQL currently support this approach.
-#
-#        PROCESSING "CLOSE_CONNECTION=DEFER"
-#
-#        Label Directive - The LABEL_NO_CLIP processing option can be used to skip clipping of shapes when determining associated label anchor points. This avoids changes in label position as extents change between map draws. It also avoids duplicate labels where features appear in multiple adjacent tiles when creating tiled maps.
-#
-#        PROCESSING "LABEL_NO_CLIP=True"
-#
-#        Line Rendering Directive - The POLYLINE_NO_CLIP processing option can be used to skip clipping of shapes when rendering styled lines (dashed or styled with symbols). This avoids changes in the line styling as extents change between map draws. It also avoids edge effects where features appear in multiple adjacent tiles when creating tiled maps.
-#
-#        PROCESSING "POLYLINE_NO_CLIP=True"
-#
-#        OGR Styles Directive - This directive can be used for obtaining label styles through MapScript. For more information see the MapServer's OGR document.
-#
-#        PROCESSING "GETSHAPE_STYLE_ITEMS=all"
-#
-#        AGG renderer tweaking - This directive can be used for setting the linear gamma to be used when rendering polygon features. The default value of 0.75 (that can be overriden at the OUTPUTFORMAT level) can be set to a lower value to limit/remove the faint outlines that appear between adjacent polygons. A value of 0.5 is usually good enough.
-#
-#        PROCESSING "GAMMA=0.5"
-#
-#        Raster Directives - All raster processing options are described in Raster Data. Here we see the SCALE and BANDs directives used to autoscale raster data and alter the band mapping.
-#
-#        PROCESSING "SCALE=AUTO"
-#        PROCESSING "BANDS=3,2,1"
-#
-#PROJECTION
-#    Signals the start of a PROJECTION object.
-#
-#REQUIRES [expression]
-#    Sets context for displaying this layer (see LABELREQUIRES).
-#
-#SIZEUNITS [feet|inches|kilometers|meters|miles|nauticalmiles|pixels]
-#    Sets the unit of CLASS object SIZE values (default is pixels). Useful for simulating buffering. nauticalmiles was added in MapServer 5.6.
-#
-#STATUS [on|off|default]
-#
-#    Sets the current status of the layer. Often modified by MapServer itself. Default turns the layer on permanently.
-#
-#    Note
-#
-#    In CGI mode, layers with STATUS DEFAULT cannot be turned off using normal mechanisms. It is recommended to set layers to STATUS DEFAULT while debugging a problem, but set them back to ON/OFF in normal use.
-#
-#    Note
-#
-#    For WMS, layers in the server mapfile with STATUS DEFAULT are always sent to the client.
-#
-#    Note
-#
-#    The STATUS of the individual layers of a GROUP has no effect when the group name is present in the LAYERS parameter of a CGI request - all the layers of the group will be returned.
-#
-#STYLEITEM [<attribute>|auto|<javascript file>]
-#
-#    Styling based on attributes or generated with Javascript
-#
-#        <attribute>: Item to use for feature specific styling. The style information may be represented by a separate attribute (style string) attached to the feature. MapServer supports the following style string representations:
-#
-#            MapServer STYLE definition - The style string can be represented as a MapServer STYLE block according to the following example:
-#
-#            STYLE BACKGROUNDCOLOR 128 0 0 COLOR 0 0 208 END
-#
-#            MapServer CLASS definition - By specifying the entire CLASS instead of a single style allows to use further options (like setting expressions, label attributes, multiple styles) on a per feature basis.
-#
-#            OGR Style String - MapServer support rendering the OGR style string format according to the OGR - Feature Style Specification documentation. Currently only a few data sources support storing the styles along with the features (like MapInfo, AutoCAD DXF, Microstation DGN), however those styles can easily be transferred to many other data sources as a separate attribute by using the ogr2ogr command line tool as follows:
-#
-#            ogr2ogr -sql "select *, OGR_STYLE from srclayer" "dstlayer" "srclayer"
-#
-#        AUTO: The value: AUTO can be used for automatic styling.
-#            Automatic styling can be provided by the driver. Currently, only the OGR driver supports automatic styling.
-#            When used for a Union Layer, the styles from the source layers will be used.
-#
-#        <Javascript file>: A Javascript file that returns a new string containing either a STYLE definition or a CLASS definition with one or multiple styles. See STYLEITEM Javascript.
-#
-#        LAYER
-#          ...
-#          STYLEITEM "javascript://myscript.js" # relative path
-#          CLASS
-#          END
-#        END
-#
-#        or
-#
-#        LAYER
-#          ...
-#          STYLEITEM "javascript:///home/user/myscript.js" # absolute path
-#          CLASS
-#          END
-#        END
-#
-#        New in version 6.6.
-#
-#        Note
-#
-#        Requires V8 MapScript Support.
-#
-#SYMBOLSCALEDENOM [double]
-#
-#    The scale at which symbols and/or text appear full size. This allows for dynamic scaling of objects based on the scale of the map. If not set then this layer will always appear at the same size. Scaling only takes place within the limits of MINSIZE and MAXSIZE as described above. Scale is given as the denominator of the actual scale fraction, for example for a map at a scale of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the deprecated SYMBOLSCALE parameter.
-#
-#    See also
-#
-#    Map Scale
-#
-#TEMPLATE [file|url]
-#    Used as a global alternative to CLASS TEMPLATE. See Templating for more info.
-#
-#TILEINDEX [filename|layername]
-#
-#    Name of the tileindex file or layer. A tileindex is similar to an ArcInfo library index. The tileindex contains polygon features for each tile. The item that contains the location of the tiled data is given using the TILEITEM parameter. When a file is used as the tileindex for shapefile or raster layers, the tileindex should be a shapefile. For CONNECTIONTYPE OGR layers, any OGR supported datasource can be a tileindex. Normally the location should contain the path to the tile file relative to the shapepath, not relative to the tileindex itself. If the DATA parameter contains a value then it is added to the end of the location. When a tileindex layer is used, it works similarly to directly referring to a file, but any supported feature source can be used (ie. postgres, oracle).
-#
-#    Note
-#
-#    All files in the tileindex should have the same coordinate system, and for vector files the same set of attributes in the same order.
-#
-#    Note
-#
-#    Starting with MapServer 6.4, raster layers can use a tileindex with tiles of different projections. For that, the TILESRS parameter must be specified.
-#
-#TILEITEM [attribute]
-#    Item that contains the location of an individual tile, default is "location".
-#
-#TILESRS [attribute]
-#
-#    Name of the attribute that contains the SRS of an individual tile. That SRS can be expressed in WKT format, as an EPSG:XXXX code or as a PROJ.4 string. If the tileindex contains rasters in different projections, this option must be specified. If the tileindex has been generated with gdaltindex (GDAL >= 2.0), the value of TILESRS is the value of the -src_srs_name option of gdaltindex. See Tileindexes with tiles in different projections
-#
-#    Note
-#
-#    This option is currently available only on raster layers.
-#
-#TOLERANCE [double]
-#    Sensitivity for point based queries (i.e. via mouse and/or map coordinates). Given in TOLERANCEUNITS. If the layer is a POINT or a LINE, the default is 3. For all other layer types, the default is 0. To restrict polygon searches so that the point must occur in the polygon set the tolerance to zero. This setting does not apply to WFS GetFeature operations.
-#
-#TOLERANCEUNITS [pixels|feet|inches|kilometers|meters|miles|nauticalmiles|dd]
-#    Units of the TOLERANCE value. Default is pixels. Nauticalmiles was added in MapServer 5.6.
-#
-#TRANSPARENCY [integer|alpha] - deprecated
-#
-#    Deprecated since version 5.0: Use OPACITY instead.
-#
-#TRANSFORM [true|false ul|uc|ur|lc|cc|lr|ll|lc|lr]
-#
-#    Tells MapServer whether or not a particular layer needs to be transformed from some coordinate system to image coordinates. Default is true. This allows you to create shapefiles in image/graphics coordinates and therefore have features that will always be displayed in the same location on every map. Ideal for placing logos or text in maps. Remember that the graphics coordinate system has an origin in the upper left hand corner of the image, contrary to most map coordinate systems.
-#
-#    Version 4.10 introduces the ability to define features with coordinates given in pixels (or percentages, see UNITS), most often inline features, relative to something other than the UL corner of an image. That is what 'TRANSFORM FALSE' means. By setting an alternative origin it allows you to anchor something like a copyright statement to another portion of the image in a way that is independent of image size.
-#
-#TYPE [chart|circle|line|point|polygon|raster|query]
-#
-#    Specifies how the data should be drawn. Need not be the same as the shapefile type. For example, a polygon shapefile may be drawn as a point layer, but a point shapefile may not be drawn as a polygon layer. Common sense rules.
-#
-#    In order to differentiate between POLYGONs and POLYLINEs (which do not exist as a type), simply respectively use or omit the COLOR keyword when classifying. If you use it, it's a polygon with a fill color, otherwise it's a polyline with only an OUTLINECOLOR.
-#
-#    A circle must be defined by a a minimum bounding rectangle. That is, two points that define the smallest square that can contain it. These two points are the two opposite corners of said box. The following is an example using inline points to draw a circle:
-#
-#    LAYER
-#      NAME 'inline_circles'
-#      TYPE CIRCLE
-#      STATUS ON
-#      FEATURE
-#        POINTS
-#          74.01 -53.8
-#          110.7 -22.16
-#        END
-#      END
-#      CLASS
-#        STYLE
-#          COLOR 0 0 255
-#        END
-#      END
-#    END
-#
-#    TYPE query means the layer can be queried but not drawn.
-#
-#    Note
-#
-#    TYPE annotation has been deprecated since version 6.2. Identical functionality can be obtained by adding LABEL level STYLE blocks, and do not require loading the datasets twice in two different layers as was the case with layers of TYPE annotation.
-#
-#    See also
-#
-#    The Dynamic Charting HowTo for TYPE chart.
-#
-#UNITS [dd|feet|inches|kilometers|meters|miles|nauticalmiles|percentages|pixels]
-#    Units of the layer. percentages (in this case a value between 0 and 1) was added in MapServer 4.10 and is mostly geared for inline features. nauticalmiles was added in MapServer 5.6.
-#
-#VALIDATION
-#
-#    Signals the start of a VALIDATION block.
-#
-#    As of MapServer 5.4.0, VALIDATION blocks are the preferred mechanism for specifying validation patterns for CGI param runtime substitutions. See Run-time Substitution.
-#
 ################################################################################
 
 class layer(models.Model):
@@ -1624,65 +2347,1031 @@ class layer(models.Model):
         (UNITS_PIXELS, UNITS_PIXELS),
     )
 
-    Class               = models.ForeignKey('Class')
-    classgroup          = models.TextField(                  )
-    classitem           = models.TextField(                  )
-    cluster             = models.ForeignKey('cluster')
-    connection          = models.TextField(                  )
-    connectiontype      = models.TextField(                  choices = CONNECTIONTYPE_CHOICES,
-                                                             default = CONNECTIONTYPE_LOCAL)
-    data                = models.TextField(                  )
-    #  DEBUG [off|on|0|1|2|3|4|5] */
-    #d dump                = models.NullBooleanField()
-    extent              = ArrayField( models.FloatField(), size=4)
-    feature             = models.ManyToManyField(feature)
-    Filter              = models.TextField(                  )
-    filteritem          = models.TextField(                  )
-    footer              = models.TextField(                  )
-    grid                = models.ForeignKey('grid')
-    group               = models.TextField(                  )
-    header              = models.TextField(                  )
-    join                = models.ForeignKey('join')
-    #d labelangleitem      = models.TextField(                  )
-    labelcache          = models.BooleanField(               default = True)
-    labelitem           = models.TextField(                  )
-    labelmaxscaledenom  = models.FloatField()
-    labelminscaledenom  = models.FloatField()
-    labelrequires       = models.TextField(                  )
-    #d labelsizeitem       = models.TextField(                  )
-    mask                = models.TextField(                  )
-    maxfeatures         = models.IntegerField()
-    maxgeowidth         = models.FloatField()
-    maxscaledenom       = models.FloatField()
-    metadata            = ArrayField( ArrayField(models.TextField(), size=2) )
-    mimgeowidth         = models.FloatField()
-    minscaledenom       = models.FloatField()
-    name                = models.TextField(                  )
-    offsite             = ArrayField( models.IntegerField(), size=3)
-    opacity             = models.TextField(                  )
-    plugin              = models.TextField(                  )
-    postlabelcache      = models.BooleanField(               default = False )
-    processing          = ArrayField( ArrayField(models.TextField(), size=2) )
-    projection          = models.ForeignKey('projection')
-    requires            = models.TextField(                  )
-    sizeunits           = models.TextField(                  choices = SIZEUNITS_CHOICES,
-                                                             default = SIZEUNITS_PIXELS)
-    status              = models.TextField(                  choices = STATUS_CHOICES,
-                                                             default = STATUS_DEFAULT)
-    styleitem           = models.TextField(                  )
-    symbolscaledenom    = models.FloatField()
-    template            = models.TextField(                  )
-    tileindex           = models.TextField(                  )
-    tileitem            = models.TextField(                  )
-    tolerance           = models.FloatField()
-    toleranceunits      = models.TextField(                  )
-    #d transparency        = models.NullBooleanField()*/
-    transform           = models.ForeignKey('transform')
-    Type                = models.TextField(                  choices = TYPE_CHOICES,
-                                                             default = TYPE_RASTER)
-    units               = models.TextField(                  choices = UNITS_CHOICES,
-                                                             default=UNITS_MILES)
-    validation          = models.ManyToManyField(validation)
+
+    ##### CLASS ####
+
+    CLASS_HELP = '''
+    Signals the start of a CLASS object.
+
+    Inside a layer, only a single class will be used for the rendering of a
+    feature. Each feature is tested against each class in the order in which
+    they are defined in the mapfile. The first class that matches the its
+    min/max scale constraints and its EXPRESSION check for the current feature
+    will be used for rendering.
+    '''
+
+    Class = models.ForeignKey('Class', help_text = CLASS_HELP )
+
+    ##### CLASSGROUP [string] ####
+
+    CLASSGROUP_HELP = '''
+    Specify the class's group that would be considered at rendering time. The
+    CLASS object's GROUP parameter must be used in combination with CLASSGROUP.
+    '''
+
+    classgroup = models.TextField( help_text = CLASSGROUP_HELP )
+
+    ##### CLASSITEM [attribute] ####
+
+    CLASSITEM_HELP = '''
+    Item name in attribute table to use for class lookups.
+    '''
+
+    classitem = models.TextField( help_text = CLASSITEM_HELP )
+
+    ##### CLUSTER ####
+
+    CLUSTER_HELP = '''
+    Signals the start of a CLUSTER object.
+
+    The CLUSTER configuration option provides to combine multiple features from
+    the layer into single (aggregated) features based on their relative 
+    positions. Supported only for POINT layers.
+
+    See also
+
+    MS RFC 69: Support for clustering of features in point layers
+    '''
+
+    cluster = models.ForeignKey('cluster', help_text = CLUSTER_HELP )
+
+    ##### CONNECTION [string] ####
+
+    CONNECTION_HELP = '''
+    Database connection string to retrieve remote data.
+
+    An SDE connection string consists of a hostname, instance name, database
+    name, username and password separated by commas.
+
+    A PostGIS connection string is basically a regular PostgreSQL connection
+    string, it takes the form of
+    "user=nobody password=****** dbname=dbname host=localhost port=5432"
+
+    An Oracle connection string: user/pass[@db]
+
+    See also
+
+    Vector Data for specific connection information for various data sources.
+    '''
+
+    connection = models.TextField( help_text = CONNECTION_HELP )
+
+    ##### CONNECTIONTYPE [contour|local|ogr|oraclespatial|plugin|postgis|sde|union|uvraster|wfs|wms] ####
+
+    CONNECTIONTYPE_HELP = '''
+    Type of connection. Default is local. See additional documentation for any
+    other type.
+
+    See also
+
+    Vector Data for specific connection information for various data sources.
+    See Union Layer for combining layers, added in MapServer 6.0
+
+    Note
+
+    mygis is another connectiontype, but it is deprecated; please see the MySQL
+    section of the Vector Data document for connection details.
+    '''
+
+    connectiontype = models.TextField( choices = CONNECTIONTYPE_CHOICES,
+                                       default = CONNECTIONTYPE_LOCAL,
+                                       help_text = CONNECTIONTYPE_HELP )
+
+    ##### DATA [filename]|[sde parameters][postgis table/column][oracle table/column] ####
+
+    DATA_HELP = '''
+    Full filename of the spatial data to process. No file extension is necessary
+    for shapefiles. Can be specified relative to the SHAPEPATH option from the
+    Map Object.
+
+    If this is an SDE layer, the parameter should include the name of the layer
+    as well as the geometry column, i.e. "mylayer,shape,myversion".
+
+    If this is a PostGIS layer, the parameter should be in the form of
+    "<columnname> from <tablename>", where "columnname" is the name of the
+    column containing the geometry objects and "tablename" is the name of the
+    table from which the geometry data will be read.
+
+    For Oracle, use "shape FROM table" or "shape FROM (SELECT statement)" or
+    even more complex Oracle compliant queries! Note that there are important
+    performance impacts when using spatial subqueries however. Try using
+    MapServer's FILTER whenever possible instead. You can also see the SQL
+    submitted by forcing an error, for instance by submitting a DATA parameter
+    you know won't work, using for example a bad column name.
+
+    See also
+
+    Vector Data for specific connection information for various data sources.
+    '''
+
+    data = models.TextField( help_text = DATA_HELP )
+
+    ##### DEBUG [off|on|0|1|2|3|4|5] ####
+
+    DEBUG_HELP = '''
+    Enables debugging of a layer in the current map.
+
+    Debugging with MapServer versions >= 5.0:
+
+    Verbose output is generated and sent to the standard error output (STDERR)
+    or the MapServer errorfile if one is set using the "MS_ERRORFILE"
+    environment variable. You can set the environment variable by using the
+    CONFIG parameter at the MAP level of the mapfile, such as:
+
+    CONFIG "MS_ERRORFILE" "/ms4w/tmp/ms_error.txt"
+
+    You can also set the environment variable in Apache by adding the following
+    to your httpd.conf:
+
+    SetEnv MS_ERRORFILE "/ms4w/tmp/ms_error.txt"
+
+    Once the environment variable is set, the DEBUG mapfile parameter can be
+    used to control the level of debugging output. Here is a description of the
+    possible DEBUG values:
+
+        DEBUG O or OFF - only msSetError() calls are logged to MS_ERRORFILE. No
+        msDebug() output at all. This is the default and corresponds to the
+        original behavior of MS_ERRORFILE in MapServer 4.x
+        DEBUG 1 or ON - includes all output from DEBUG 0 plus msDebug() warnings
+        about common pitfalls, failed assertions or non-fatal error situations 
+        (e.g. missing or invalid values for some parameters, missing shapefiles
+        in tileindex, timeout error from remote WMS/WFS servers, etc.)
+        DEBUG 2 - includes all output from DEBUG 1 plus notices and timing
+        information useful for tuning mapfiles and applications
+        DEBUG 3 - all of DEBUG 2 plus some debug output useful in
+        troubleshooting problems such as WMS connection URLs being called,
+        database connection calls, etc. This is the recommended level for
+        debugging mapfiles.
+        DEBUG 4 - DEBUG 3 plus even more details...
+        DEBUG 5 - DEBUG 4 plus any msDebug() output that might be more useful
+        to the developers than to the users.
+
+    You can also set the debug level by using the "MS_DEBUGLEVEL" environment
+    variable.
+
+    The DEBUG setting can also be specified for the entire map, by setting the
+    DEBUG parameter in the MAP object.
+
+    For more details on this debugging mechanism, please see MS RFC 28: Redesign
+    of LOG/DEBUG output mechanisms.
+
+    Debugging with MapServer versions < 5:
+
+    Verbose output is generated and sent to the standard error output (STDERR)
+    or the MapServer logfile if one is set using the LOG parameter in the WEB
+    object. Apache users will see timing details for drawing in Apache's
+    error_log file. Requires MapServer to be built with the DEBUG=MSDEBUG option
+    (-with-debug configure option).
+    '''
+
+
+
+    ##### DUMP [true|false] ####
+
+    DUMP_HELP = '''
+    Since 6.0, DUMP is not used anymore. LAYER METADATA is used instead.
+
+    Switch to allow MapServer to return data in GML format. Useful when used
+    with WMS GetFeatureInfo operations. "false" by default.
+
+    Deprecated since version 6.0: LAYER METADATA is used instead.
+
+    See also WMS Server
+    '''
+
+    #d dump = models.NullBooleanField( help_text = DUMP_HELP )
+
+    ##### EXTENT [minx] [miny] [maxx] [maxy] ####
+
+    EXTENT_HELP = '''
+    The spatial extent of the data. In most cases you will not need to specify
+    this, but it can be used to avoid the speed cost of having MapServer compute
+    the extents of the data. An application can also possibly use this value to
+    override the extents of the map.
+    '''
+
+    extent = ArrayField( models.FloatField(), size=4, help_text = EXTENT_HELP )
+
+
+    ##### FEATURE ####
+
+    FEATURE_HELP = '''
+    Signals the start of a FEATURE object.
+    '''
+
+    feature = models.ManyToManyField(feature, help_text = FEATURE_HELP )
+
+    ##### FILTER [string] ####
+
+    FILTER_HELP = '''
+    This parameter allows for data specific attribute filtering that is done at
+    the same time spatial filtering is done, but before any CLASS expressions
+    are evaluated. For OGR and shapefiles the string is simply a mapserver
+    regular expression. For spatial databases the string is a SQL WHERE clause
+    that is valid with respect to the underlying database.
+
+    For example: FILTER ([type]='road' and [size]<2)
+    '''
+
+    Filter = models.TextField( help_text = FILTER_HELP )
+
+    ##### FILTERITEM [attribute] ####
+
+    FILTERITEM_HELP = '''
+    Item to use with simple FILTER expressions. OGR and shapefiles only.
+    '''
+
+    filteritem = models.TextField( help_text = FILTERITEM_HELP )
+
+    ##### FOOTER [filename] ####
+
+    FOOTER_HELP = '''
+    Template to use after a layer's set of results have been sent. Multiresult
+    query modes only.
+    '''
+
+    footer = models.TextField( help_text = FOOTER_HELP )
+
+    ##### GEOMTRANSFORM [<expression>|<Javascript file>] ####
+
+    GEOMTRANSFORM_HELP = '''
+    Used to indicate that the current feature will be transformed. Introduced in
+    version 6.4.
+
+    <expression>: Applies the given expression to the geometry.
+
+    Supported expressions:
+        (buffer([shape],dist)): Buffer the geometry ([shape]) using dist pixels
+        as buffer distance. For polygons, a negative dist will produce a setback.
+        (simplify([shape],tolerance)): simplifies a geometry ([shape]) using the
+        standard Douglas-Peucker algorithm.
+        (simplifypt([shape], tolerance)): simplifies a geometry ([shape]),
+        ensuring that the result is a valid geometry having the same dimension
+        and number of components as the input. tolerance must be non-negative.
+        (generalize([shape],tolerance)): simplifies a geometry ([shape]) in way
+        comparable to FME's ThinNoPoint algorithm. See
+        http://trac.osgeo.org/gdal/ticket/966 for more information.
+
+        (smoothsia([shape], smoothing_size, smoothing_iteration, preprocessing)):
+        will smooth a geometry ([shape]) using the SIA algorithm
+
+    See also
+
+    Geometry Transformations and Shape Smoothing
+
+    There is a difference between STYLE and LAYER GEOMTRANSFORM. LAYER-level
+    will receive ground coordinates (meters, degress, etc) and STYLE-level will
+    receive pixel coordinates. The argument to methods such as simplify() must
+    be in the same units as the coordinates of the shapes at that point of the
+    rendering workflow, i.e. pixels at the STYLE-level and in ground units at
+    the LAYER-level.
+
+        LAYER NAME "my_layer"
+            TYPE LINE
+            STATUS DEFAULT
+            DATA "lines.shp"
+            GEOMTRANSFORM (simplify([shape], 10))  ## 10 ground units
+            CLASS
+                STYLE
+                    GEOMTRANSFORM (buffer([shape], 5)  ## 5 pixels
+                    WIDTH 2
+                    COLOR 255 0 0
+                END
+            END
+        END
+
+        The [map_cellsize] variable is available if you need to pass a pixel value at the LAYER-level.
+
+        LAYER NAME "my_layer"
+            TYPE LINE
+            STATUS DEFAULT
+            DATA "lines.shp"
+            UNITS meters
+            # 10 * [map_cellsize] == 10 pixels converted to ground units
+            GEOMTRANSFORM (simplify([shape], [map_cellsize]*10))
+        ...
+
+    To get this variable working in the math expression parser, the [map_cellsize] has to be converted into the layer ground unit. If you choose to use [map_cellsize] in your GEOMTRANSFORM expression, you must explicitly set the UNITS option in the layer.
+
+    <Javascript file>: A Javascript file that returns a new geometry. See GEOMTRANSFORM Javascript.
+
+        LAYER
+          ...
+          GEOMTRANSFORM "javascript://transform.js" # relative path
+        END
+
+        or
+
+        LAYER
+          ...
+          GEOMTRANSFORM "javascript:///home/user/transform.js" # absolute path
+        END
+
+        New in version 7.0.
+
+        Note
+
+        Requires V8 MapScript Support.
+
+        See also
+
+        Geometry Transformations
+    '''
+
+
+
+
+    ##### GRID ####
+
+    GRID_HELP = '''
+    Signals the start of a GRID object.
+    '''
+
+    grid = models.ForeignKey('grid', help_text = GRID_HELP )
+
+    ##### GROUP [name] ####
+
+    GROUP_HELP = '''
+    Name of a group that this layer belongs to. The group name can then be
+    reference as a regular layer name in the template files, allowing to do
+    things like turning on and off a group of layers at once.
+
+    If a group name is present in the LAYERS parameter of a CGI request, all the
+    layers of the group are returned (the STATUS of the LAYERs have no effect).
+    '''
+
+    group = models.TextField( help_text = GROUP_HELP )
+
+    ##### HEADER [filename] ####
+
+    HEADER_HELP = '''
+    Template to use before a layer's set of results have been sent. Multiresult
+    query modes only.
+    '''
+
+    header = models.TextField( help_text = HEADER_HELP )
+
+    ##### JOIN ####
+
+    JOIN_HELP = '''
+    Signals the start of a JOIN object.
+    '''
+
+    join = models.ForeignKey('join', help_text = JOIN_HELP )
+
+    ##### LABELANGLEITEM [attribute] ####
+
+    LABELANGLEITEM_HELP = '''
+    (As of MapServer 5.0 this parameter is no longer available. Please see the
+    LABEL object's ANGLE parameter) For MapServer versions < 5.0, this is the
+    item name in attribute table to use for class annotation angles. Values
+    should be in degrees.
+
+    Deprecated since version 5.0.
+    '''
+
+    #d labelangleitem = models.TextField( help_text = LABELANGLEITEM_HELP )
+
+    ##### LABELCACHE [on|off] ####
+
+    LABELCACHE_HELP = '''
+    Specifies whether labels should be drawn as the features for this layer are
+    drawn, or whether they should be cached and drawn after all layers have been
+    drawn. Default is on. Label overlap removal, auto placement etc... are only
+    available when the label cache is active.
+    '''
+
+    labelcache = models.BooleanField( default = True,
+                                      help_text = LABELCACHE_HELP )
+
+    ##### LABELITEM [attribute] ####
+
+    LABELITEM_HELP = '''
+    Item name in attribute table to use for class annotation (i.e. labeling).
+    '''
+
+    labelitem = models.TextField( help_text = LABELITEM_HELP )
+
+    ##### LABELMAXSCALEDENOM [double] ####
+
+    LABELMAXSCALEDENOM_HELP = '''
+    Minimum scale at which this LAYER is labeled. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the
+    deprecated LABELMAXSCALE parameter.
+
+    See also Map Scale
+    '''
+
+    labelmaxscaledenom = models.FloatField( help_text = LABELMAXSCALEDENOM_HELP )
+
+    ##### LABELMINSCALEDENOM [double] ####
+
+    LABELMINSCALEDENOM_HELP = '''
+    Maximum scale at which this LAYER is labeled. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the
+    deprecated LABELMINSCALE parameter.
+
+    See also Map Scale
+    '''
+
+    labelminscaledenom = models.FloatField( help_text = LABELMINSCALEDENOM_HELP )
+
+    ##### LABELREQUIRES [expression] ####
+
+    LABELREQUIRES_HELP = '''
+    Sets context for labeling this layer, for example:
+
+    LABELREQUIRES "![orthoquads]"
+
+    means that this layer would NOT be labeled if a layer named "orthoquads" is
+    on. The expression consists of a boolean expression based on the status of
+    other layers, each [layer name] substring is replaced by a 0 or a 1
+    depending on that layer's STATUS and then evaluated as normal. Logical
+    operators AND and OR can be used.
+    '''
+
+    labelrequires = models.TextField( help_text = LABELREQUIRES_HELP )
+
+    ##### LABELSIZEITEM [attribute] ####
+
+    LABELSIZEITEM_HELP = '''
+    (As of MapServer 5.0 this parameter is no longer available. Please see the
+    LABEL object's SIZE parameter) For MapServer versions < 5.0, this is the
+    item name in attribute table to use for class annotation sizes. Values
+    should be in pixels.
+
+    Deprecated since version 5.0.
+    '''
+
+    #d labelsizeitem = models.TextField( help_text = LABELSIZEITEM_HELP )
+
+    ##### MASK [layername] ####
+
+    MASK_HELP = '''
+    The data from the current layer will only be rendered where it intersects
+    features from the [layername] layer. [layername] must reference the NAME of
+    another LAYER defined in the current mapfile. can be any kind of mapserver
+    layer, i.e. vector or raster. If the current layer has labelling configured,
+    then only labels who's label-point fall inside the unmasked area will be
+    added to the labelcache (the actual glyphs for the label may be rendered
+    ontop of the masked-out area.
+
+    Note
+
+    Unless you want the features of [layername] to actually appear on the
+    generated map, [layername] should usually be set to STATUS OFF.
+
+    See also MS RFC 79: Layer Masking
+    '''
+
+    mask = models.TextField( help_text = MASK_HELP )
+
+    ##### MAXFEATURES [integer] ####
+
+    MAXFEATURES_HELP = '''
+    Specifies the number of features that should be drawn for this layer in the
+    CURRENT window. Has some interesting uses with annotation and with sorted
+    data (i.e. lakes by area).
+    '''
+
+    maxfeatures = models.IntegerField( help_text = MAXFEATURES_HELP )
+
+    ##### MAXGEOWIDTH [double] ####
+
+    MAXGEOWIDTH_HELP = '''
+    Maximum width, in the map's geographic units, at which this LAYER is drawn.
+    If MAXSCALEDENOM is also specified then MAXSCALEDENOM will be used instead.
+
+    The width of a map in geographic units can be found by calculating the
+`   following from the extents:
+
+    [maxx] - [minx]
+
+    New in version 5.4.0.
+    '''
+
+    maxgeowidth = models.FloatField( help_text = MAXGEOWIDTH_HELP )
+
+    ##### MAXSCALEDENOM [double] ####
+
+    MAXSCALEDENOM_HELP = '''
+    Minimum scale at which this LAYER is drawn. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000.
+
+    New in version 5.0.0: Replaced MAXSCALE.
+
+    See also
+
+    Map Scale
+    '''
+
+    maxscaledenom = models.FloatField( help_text = MAXSCALEDENOM_HELP )
+
+    ##### METADATA ####
+
+    METADATA_HELP = '''
+    This keyword allows for arbitrary data to be stored as name value pairs.
+    This is used with OGC WMS to define things such as layer title. It can also
+    allow more flexibility in creating templates, as anything you put in here
+    will be accessible via template tags.
+
+    Example:
+
+    METADATA
+        "title" "My layer title"
+        "author" "Me!"
+    END
+    '''
+
+    metadata = ArrayField( ArrayField(models.TextField(), size=2),
+                           help_text = METADATA_HELP )
+
+    ##### MINGEOWIDTH [double] ####
+
+    MINGEOWIDTH_HELP = '''
+    Minimum width, in the map's geographic units, at which this LAYER is drawn.
+    If MINSCALEDENOM is also specified then MINSCALEDENOM will be used instead.
+
+    The width of a map in geographic units can be found by calculating the
+    following from the extents:
+
+    [maxx] - [minx]
+
+    New in version 5.4.0.
+    '''
+
+    mimgeowidth = models.FloatField( help_text = MINGEOWIDTH_HELP )
+
+    ##### MINSCALEDENOM [double] ####
+
+    MINSCALEDENOM_HELP = '''
+    Maximum scale at which this LAYER is drawn. Scale is given as the
+    denominator of the actual scale fraction, for example for a map at a scale
+    of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the
+    deprecated MINSCALE parameter.
+
+    See also
+
+    Map Scale
+    '''
+
+    minscaledenom = models.FloatField( help_text = MINSCALEDENOM_HELP )
+
+    ##### NAME [string] ####
+
+    NAME_HELP = '''
+    Short name for this layer. This name is the link between the mapfile and web
+    interfaces that refer to this name. They must be identical. The name should
+    be unique, unless one layer replaces another at different scales. Use the
+    GROUP option to associate layers with each other. It is recommended that the
+    name not contain spaces, special characters, or begin with a number
+    (which could cause problems through interfaces such as OGC services).
+    '''
+
+    name = models.TextField( help_text = NAME_HELP )
+
+    ##### OFFSITE [r] [g] [b] ####
+
+    OFFSITE_HELP = '''
+    Sets the color index to treat as transparent for raster layers.
+    '''
+
+    offsite = ArrayField( models.IntegerField(), size=3, help_text = OFFSITE_HELP )
+
+    ##### OPACITY [integer|alpha] ####
+
+    OPACITY_HELP = '''
+    Sets the opacity level (or the inability to see through the layer) of all
+    classed pixels for a given layer. The value can either be an integer in the
+    range (0-100) or the named symbol "ALPHA". A value of 100 is opaque and 0 is
+    fully transparent. Implemented in MapServer 5.0, to replace the deprecated
+    TRANSPARENCY parameter.
+
+    The "ALPHA" symbol directs the MapServer rendering code to honor the indexed
+    or alpha transparency of pixmap symbols used to style a layer. This is only
+    needed in the case of RGB output formats, and should be used only when
+    necessary as it is expensive to render transparent pixmap symbols onto an
+    RGB map image.
+    '''
+
+    opacity = models.TextField( help_text = OPACITY_HELP )
+
+    ##### PLUGIN [filename] ####
+
+    PLUGIN_HELP = '''
+    Additional library to load by MapServer, for this layer. This is commonly
+    used to load specific support for SDE and Microsoft SQL Server layers,
+    such as:
+
+        CONNECTIONTYPE PLUGIN
+        CONNECTION "hostname,port:xxx,database,username,password"
+        PLUGIN "C:/ms4w/Apache/specialplugins/msplugin_sde_92.dll"
+        DATA "layername,geometrycolumn,SDE.DEFAULT"
+    '''
+
+    # plugin = models.TextField( help_text = PLUGIN_HELP )
+
+    ##### POSTLABELCACHE [true|false] ####
+
+    POSTLABELCACHE_HELP = '''
+    Tells MapServer to render this layer after all labels in the cache have been
+    drawn. Useful for adding neatlines and similar elements. Default is false.
+    '''
+
+    postlabelcache = models.BooleanField( default = False,
+                                          help_text = POSTLABELCACHE_HELP )
+
+    ##### PROCESSING [string] ####
+
+    PROCESSING_HELP = '''
+    Passes a processing directive to be used with this layer. The supported
+    processing directives vary by layer type, and the underlying driver that
+    processes them.
+
+    Attributes Directive - The ITEMS processing option allows to specify the
+    name of attributes for inline layers or specify the subset of the attributes
+    to be used by the layer, such as:
+
+    PROCESSING "ITEMS=itemname1,itemname2,itemname3"
+
+    Connection Pooling Directive - This is where you can enable connection
+    pooling for certain layer layer types. Connection pooling will allow
+    MapServer to share the handle to an open database or layer connection
+    throughout a single map draw process. Additionally, if you have FastCGI
+    enabled, the connection handle will stay open indefinitely, or according to
+    the options specified in the FastCGI configuration. Oracle Spatial, ArcSDE,
+    OGR and PostGIS/PostgreSQL currently support this approach.
+
+    PROCESSING "CLOSE_CONNECTION=DEFER"
+
+    Label Directive - The LABEL_NO_CLIP processing option can be used to skip
+    clipping of shapes when determining associated label anchor points. This
+    avoids changes in label position as extents change between map draws. It
+    also avoids duplicate labels where features appear in multiple adjacent
+    tiles when creating tiled maps.
+
+    PROCESSING "LABEL_NO_CLIP=True"
+
+    Line Rendering Directive - The POLYLINE_NO_CLIP processing option can be
+    used to skip clipping of shapes when rendering styled lines (dashed or
+    styled with symbols). This avoids changes in the line styling as extents
+    change between map draws. It also avoids edge effects where features appear
+    in multiple adjacent tiles when creating tiled maps.
+
+    PROCESSING "POLYLINE_NO_CLIP=True"
+
+    OGR Styles Directive - This directive can be used for obtaining label styles
+    through MapScript. For more information see the MapServer's OGR document.
+
+    PROCESSING "GETSHAPE_STYLE_ITEMS=all"
+
+    AGG renderer tweaking - This directive can be used for setting the linear
+    gamma to be used when rendering polygon features. The default value of 0.75
+    (that can be overriden at the OUTPUTFORMAT level) can be set to a lower
+    value to limit/remove the faint outlines that appear between adjacent
+    polygons. A value of 0.5 is usually good enough.
+
+    PROCESSING "GAMMA=0.5"
+
+    Raster Directives - All raster processing options are described in Raster
+    Data. Here we see the SCALE and BANDs directives used to autoscale raster
+    data and alter the band mapping.
+
+    PROCESSING "SCALE=AUTO"
+    PROCESSING "BANDS=3,2,1"
+    '''
+
+    processing = ArrayField( ArrayField(models.TextField(), size=2),
+                             help_text = PROCESSING_HELP )
+
+    ##### PROJECTION ####
+
+    PROJECTION_HELP = '''
+    Signals the start of a PROJECTION object.
+    '''
+
+    projection = models.ForeignKey('projection', help_text = PROJECTION_HELP )
+
+    ##### REQUIRES [expression] ####
+
+    REQUIRES_HELP = '''
+    Sets context for displaying this layer (see LABELREQUIRES).
+    '''
+
+    requires = models.TextField( help_text = REQUIRES_HELP )
+
+    ##### SIZEUNITS [feet|inches|kilometers|meters|miles|nauticalmiles|pixels] ####
+
+    SIZEUNITS_HELP = '''
+    Sets the unit of CLASS object SIZE values (default is pixels). Useful for
+    simulating buffering. nauticalmiles was added in MapServer 5.6.
+    '''
+
+    sizeunits = models.TextField( choices = SIZEUNITS_CHOICES,
+                                  default = SIZEUNITS_PIXELS,
+                                  help_text = SIZEUNITS_HELP )
+
+
+    ##### STATUS [on|off|default] ####
+
+    STATUS_HELP = '''
+    Sets the current status of the layer. Often modified by MapServer itself.
+    Default turns the layer on permanently.
+
+    Note
+
+    In CGI mode, layers with STATUS DEFAULT cannot be turned off using normal
+    mechanisms. It is recommended to set layers to STATUS DEFAULT while
+    debugging a problem, but set them back to ON/OFF in normal use.
+
+    Note
+
+    For WMS, layers in the server mapfile with STATUS DEFAULT are always sent to
+    the client.
+
+    Note
+
+    The STATUS of the individual layers of a GROUP has no effect when the group
+    name is present in the LAYERS parameter of a CGI request - all the layers of
+    the group will be returned.
+    '''
+
+    status = models.TextField( choices = STATUS_CHOICES,
+                               default = STATUS_DEFAULT,
+                               help_text = STATUS_HELP )
+
+    ##### STYLEITEM [<attribute>|auto|<javascript file>] ####
+
+    STYLEITEM_HELP = '''
+    Styling based on attributes or generated with Javascript
+
+    <attribute>: Item to use for feature specific styling. The style information
+    may be represented by a separate attribute (style string) attached to the
+    feature. MapServer supports the following style string representations:
+
+        MapServer STYLE definition - The style string can be represented as a
+        MapServer STYLE block according to the following example:
+
+        STYLE BACKGROUNDCOLOR 128 0 0 COLOR 0 0 208 END
+
+        MapServer CLASS definition - By specifying the entire CLASS instead of a
+        single style allows to use further options (like setting expressions,
+        label attributes, multiple styles) on a per feature basis.
+
+        OGR Style String - MapServer support rendering the OGR style string
+        format according to the OGR - Feature Style Specification documentation.
+        Currently only a few data sources support storing the styles along with
+        the features (like MapInfo, AutoCAD DXF, Microstation DGN), however
+        those styles can easily be transferred to many other data sources as a
+        separate attribute by using the ogr2ogr command line tool as follows:
+
+        ogr2ogr -sql "select *, OGR_STYLE from srclayer" "dstlayer" "srclayer"
+
+    AUTO: The value: AUTO can be used for automatic styling.
+        Automatic styling can be provided by the driver. Currently, only the OGR
+        driver supports automatic styling.
+        When used for a Union Layer, the styles from the source layers will be
+        used.
+
+    <Javascript file>: A Javascript file that returns a new string containing
+        either a STYLE definition or a CLASS definition with one or multiple
+        styles. See STYLEITEM Javascript.
+
+        LAYER
+          ...
+          STYLEITEM "javascript://myscript.js" # relative path
+          CLASS
+          END
+        END
+
+        or
+
+        LAYER
+          ...
+          STYLEITEM "javascript:///home/user/myscript.js" # absolute path
+          CLASS
+          END
+        END
+
+    New in version 6.6.
+
+    Note
+
+    Requires V8 MapScript Support.
+    '''
+
+    styleitem = models.TextField( help_text = STYLEITEM_HELP )
+
+
+    ##### SYMBOLSCALEDENOM [double] ####
+
+    SYMBOLSCALEDENOM_HELP = '''
+    The scale at which symbols and/or text appear full size. This allows for
+    dynamic scaling of objects based on the scale of the map. If not set then
+    this layer will always appear at the same size. Scaling only takes place
+    within the limits of MINSIZE and MAXSIZE as described above. Scale is given
+    as the denominator of the actual scale fraction, for example for a map at a
+    scale of 1:24,000 use 24000. Implemented in MapServer 5.0, to replace the
+    deprecated SYMBOLSCALE parameter.
+
+    See also  Map Scale
+    '''
+
+    symbolscaledenom = models.FloatField( help_text = SYMBOLSCALEDENOM_HELP )
+
+    ##### TEMPLATE [file|url] ####
+
+    TEMPLATE_HELP = '''
+    Used as a global alternative to CLASS TEMPLATE. See Templating for more info.
+    '''
+
+    template = models.TextField( help_text = TEMPLATE_HELP )
+
+
+    ##### TILEINDEX [filename|layername] ####
+
+    TILEINDEX_HELP = '''
+    Name of the tileindex file or layer. A tileindex is similar to an ArcInfo
+    library index. The tileindex contains polygon features for each tile. The
+    item that contains the location of the tiled data is given using the
+    TILEITEM parameter. When a file is used as the tileindex for shapefile or
+    raster layers, the tileindex should be a shapefile. For CONNECTIONTYPE OGR
+    layers, any OGR supported datasource can be a tileindex. Normally the
+    location should contain the path to the tile file relative to the shapepath,
+    not relative to the tileindex itself. If the DATA parameter contains a value
+    then it is added to the end of the location. When a tileindex layer is used,
+    it works similarly to directly referring to a file, but any supported
+    feature source can be used (ie. postgres, oracle).
+
+    Note
+
+    All files in the tileindex should have the same coordinate system, and for
+    vector files the same set of attributes in the same order.
+
+    Note
+
+    Starting with MapServer 6.4, raster layers can use a tileindex with tiles of
+    different projections. For that, the TILESRS parameter must be specified.
+    '''
+
+    tileindex = models.TextField( help_text = TILEINDEX_HELP )
+
+
+    ##### TILEITEM [attribute] ####
+
+    TILEITEM_HELP = '''
+    Item that contains the location of an individual tile, default is "location".
+    '''
+
+    tileitem = models.TextField( help_text = TILEITEM_HELP )
+
+
+    ##### TILESRS [attribute] ####
+
+    TILESRS_HELP = '''
+    Name of the attribute that contains the SRS of an individual tile. That SRS
+    can be expressed in WKT format, as an EPSG:XXXX code or as a PROJ.4 string.
+    If the tileindex contains rasters in different projections, this option must
+    be specified. If the tileindex has been generated with gdaltindex
+    (GDAL >= 2.0), the value of TILESRS is the value of the -src_srs_name option
+    of gdaltindex. See Tileindexes with tiles in different projections
+
+    Note
+
+    This option is currently available only on raster layers.
+    '''
+
+
+
+    ##### TOLERANCE [double] ####
+
+    TOLERANCE_HELP = '''
+    Sensitivity for point based queries (i.e. via mouse and/or map coordinates).
+    Given in TOLERANCEUNITS. If the layer is a POINT or a LINE, the default is
+    3. For all other layer types, the default is 0. To restrict polygon searches
+    so that the point must occur in the polygon set the tolerance to zero. This
+    setting does not apply to WFS GetFeature operations.
+    '''
+
+    tolerance = models.FloatField( help_text = TOLERANCE_HELP )
+
+
+    ##### TOLERANCEUNITS [pixels|feet|inches|kilometers|meters|miles|nauticalmiles|dd] ####
+
+    TOLERANCEUNITS_HELP = '''
+    Units of the TOLERANCE value. Default is pixels.
+    Nauticalmiles was added in MapServer 5.6.
+    '''
+
+    toleranceunits = models.TextField( help_text = TOLERANCEUNITS_HELP )
+
+    ##### TRANSPARENCY [integer|alpha] - deprecated ####
+
+    TRANSPARENCY_HELP = '''
+    Deprecated since version 5.0: Use OPACITY instead.
+    '''
+
+    #d transparency = models.NullBooleanField( help_text = TRANSPARENCY_HELP )
+
+    ##### TRANSFORM [true|false ul|uc|ur|lc|cc|lr|ll|lc|lr] ####
+
+    TRANSFORM_HELP = '''
+    Tells MapServer whether or not a particular layer needs to be transformed
+    from some coordinate system to image coordinates. Default is true. This
+    allows you to create shapefiles in image/graphics coordinates and therefore
+    have features that will always be displayed in the same location on every
+    map. Ideal for placing logos or text in maps. Remember that the graphics
+    coordinate system has an origin in the upper left hand corner of the image,
+    contrary to most map coordinate systems.
+
+    Version 4.10 introduces the ability to define features with coordinates
+    given in pixels (or percentages, see UNITS), most often inline features,
+    relative to something other than the UL corner of an image. That is what
+    'TRANSFORM FALSE' means. By setting an alternative origin it allows you to
+    anchor something like a copyright statement to another portion of the image
+    in a way that is independent of image size.
+    '''
+
+    transform = models.ForeignKey('transform', help_text = TRANSFORM_HELP )
+
+    ##### TYPE [chart|circle|line|point|polygon|raster|query] ####
+
+    TYPE_HELP = '''
+    Specifies how the data should be drawn. Need not be the same as the
+    shapefile type. For example, a polygon shapefile may be drawn as a point
+    layer, but a point shapefile may not be drawn as a polygon layer. Common
+    sense rules.
+
+    In order to differentiate between POLYGONs and POLYLINEs (which do not exist
+    as a type), simply respectively use or omit the COLOR keyword when
+    classifying. If you use it, it's a polygon with a fill color, otherwise
+    it's a polyline with only an OUTLINECOLOR.
+
+    A circle must be defined by a a minimum bounding rectangle. That is, two
+    points that define the smallest square that can contain it. These two points
+    are the two opposite corners of said box. The following is an example using
+    inline points to draw a circle:
+
+    LAYER
+      NAME 'inline_circles'
+      TYPE CIRCLE
+      STATUS ON
+      FEATURE
+        POINTS
+          74.01 -53.8
+          110.7 -22.16
+        END
+      END
+      CLASS
+        STYLE
+          COLOR 0 0 255
+        END
+      END
+    END
+
+    TYPE query means the layer can be queried but not drawn.
+
+    Note
+
+    TYPE annotation has been deprecated since version 6.2. Identical
+    functionality can be obtained by adding LABEL level STYLE blocks, and do not
+    require loading the datasets twice in two different layers as was the case
+    with layers of TYPE annotation.
+
+    See also
+
+    The Dynamic Charting HowTo for TYPE chart.
+    '''
+
+    Type = models.TextField( choices = TYPE_CHOICES, default = TYPE_RASTER,
+                             help_text = TYPE_HELP )
+
+    ##### UNITS [dd|feet|inches|kilometers|meters|miles|nauticalmiles|percentages|pixels] ####
+
+    UNITS_HELP = '''
+    Units of the layer. percentages (in this case a value between 0 and 1) was
+    added in MapServer 4.10 and is mostly geared for inline features.
+    nauticalmiles was added in MapServer 5.6.
+    '''
+
+    units = models.TextField( choices = UNITS_CHOICES, default=UNITS_MILES,
+                              help_text = UNITS_HELP )
+
+    ##### VALIDATION ####
+
+    VALIDATION_HELP = '''
+    Signals the start of a VALIDATION block.
+
+    As of MapServer 5.4.0, VALIDATION blocks are the preferred mechanism for
+    specifying validation patterns for CGI param runtime substitutions. See
+    Run-time Substitution.
+    '''
+
+    validation = models.ManyToManyField( validation,
+                                         help_text = VALIDATION_HELP )
 
     class Meta:
         verbose_name = _( "layer" )
@@ -1771,19 +3460,19 @@ class legend(models.Model):
     )
 
 
-    imagecolor          = ArrayField( models.IntegerField(), size=3)
-    #d interlace           = models.NullBooleanField()
-    keysize             = ArrayField( models.IntegerField(), size=2)
-    keyspacing          = ArrayField( models.IntegerField(), size=2)
-    label               = models.ManyToManyField(label)
-    outlinecolor        = ArrayField( models.IntegerField(), size=3)
-    position            = models.TextField(                  choices = POSITION_CHOICES,
+    imagecolor = ArrayField( models.IntegerField(), size=3)
+    #d interlace = models.NullBooleanField()
+    keysize = ArrayField( models.IntegerField(), size=2)
+    keyspacing = ArrayField( models.IntegerField(), size=2)
+    label = models.ManyToManyField(label)
+    outlinecolor = ArrayField( models.IntegerField(), size=3)
+    position = models.TextField(                  choices = POSITION_CHOICES,
                                                              default = POSITION_LR)
-    postlabelcache      = models.BooleanField(               default = False)
-    status              = models.TextField(                  choices = STATUS_CHOICES,
+    postlabelcache = models.BooleanField(               default = False)
+    status = models.TextField(                  choices = STATUS_CHOICES,
                                                              default = STATUS_OFF)
-    template            = models.TextField(                  )
-    #d transparent         = models.NullBooleanField()
+    template = models.TextField(                  )
+    #d transparent = models.NullBooleanField()
 
     class Meta:
         verbose_name = _( "legend" )
@@ -1826,10 +3515,10 @@ class querymap(models.Model):
         (STYLE_SELECTED, STYLE_SELECTED),
     )
 
-    color               = ArrayField( models.IntegerField(), size=3)
-    size                = ArrayField( models.IntegerField(), size=2)
-    status              = models.BooleanField(               default=False)
-    style               = models.TextField(                  choices = STYLE_CHOICES,
+    color = ArrayField( models.IntegerField(), size=3)
+    size = ArrayField( models.IntegerField(), size=2)
+    status = models.BooleanField(               default=False)
+    style = models.TextField(                  choices = STYLE_CHOICES,
                                                              default=STYLE_NORMAL)
 
     class Meta:
@@ -1875,16 +3564,16 @@ class querymap(models.Model):
 ################################################################################
 
 class reference(models.Model):
-    color               = ArrayField( models.IntegerField(), size=3)
-    extent              = ArrayField( models.FloatField(), size=4)
-    image               = models.TextField(                  )
-    marker              = models.TextField(                  )
-    markersize          = models.IntegerField()
-    minboxsize          = models.IntegerField()
-    maxboxsize          = models.IntegerField()
-    outlinecolor        = ArrayField( models.IntegerField(), size=3)
-    size                = ArrayField( models.IntegerField(), size=2)
-    status              = models.NullBooleanField(           default=False)
+    color = ArrayField( models.IntegerField(), size=3)
+    extent = ArrayField( models.FloatField(), size=4)
+    image = models.TextField(                  )
+    marker = models.TextField(                  )
+    markersize = models.IntegerField()
+    minboxsize = models.IntegerField()
+    maxboxsize = models.IntegerField()
+    outlinecolor = ArrayField( models.IntegerField(), size=3)
+    size = ArrayField( models.IntegerField(), size=2)
+    status = models.NullBooleanField(           default=False)
 
 
     class Meta:
@@ -2009,24 +3698,24 @@ class scalebar(models.Model):
         (POSITION_LR, POSITION_LR),
     )
 
-    align               = models.TextField(                  choices = ALIGN_CHOICES,
+    align = models.TextField(                  choices = ALIGN_CHOICES,
                                                              default = ALIGN_CENTER)
-    backgroundcolor     = ArrayField( models.IntegerField(), size=3)
-    color               = ArrayField( models.IntegerField(), size=3)
-    imagecolor          = ArrayField( models.IntegerField(), size=3)
-    #d interlace           = models.NullBooleanField()
-    intervals           = models.IntegerField()
-    label               = models.ManyToManyField(label)
-    outlinecolor        = ArrayField( models.IntegerField(), size=3)
-    position            = models.TextField(                  choices = POSITION_CHOICES,
+    backgroundcolor = ArrayField( models.IntegerField(), size=3)
+    color = ArrayField( models.IntegerField(), size=3)
+    imagecolor = ArrayField( models.IntegerField(), size=3)
+    #d interlace = models.NullBooleanField()
+    intervals = models.IntegerField()
+    label = models.ManyToManyField(label)
+    outlinecolor = ArrayField( models.IntegerField(), size=3)
+    position = models.TextField(                  choices = POSITION_CHOICES,
                                                              default=POSITION_LR)
-    postlabelcache      = models.BooleanField(               default=False)
-    size                = ArrayField( models.IntegerField(), size=2)
-    status              = models.TextField(                  choices = STATUS_CHOICES,
+    postlabelcache = models.BooleanField(               default=False)
+    size = ArrayField( models.IntegerField(), size=2)
+    status = models.TextField(                  choices = STATUS_CHOICES,
                                                              default=STATUS_OFF )
-    style               = models.IntegerField()
-    #d transparent         = models.NullBooleanField()
-    units               = models.TextField(                  choices = UNITS_CHOICES,
+    style = models.IntegerField()
+    #d transparent = models.NullBooleanField()
+    units = models.TextField(                  choices = UNITS_CHOICES,
                                                              default=UNITS_MILES)
 
     class Meta:
@@ -2137,16 +3826,16 @@ class symbol(models.Model):
         (TYPE_TRUETYPE, TYPE_TRUETYPE),
         (TYPE_VECTOR, TYPE_VECTOR),
     )
-    anchorpoint         = ArrayField( models.IntegerField(), size=2)
-    antialias           = models.BooleanField(               default=False)
-    character           = models.TextField(                  max_length=1)
-    filled              = models.BooleanField(               default=False)
-    font                = models.TextField(                  )
-    image               = models.TextField(                  )
-    name                = models.TextField(                  )
-    points              = ArrayField(ArrayField( models.IntegerField(), size=2))
-    transparent         = models.TextField(                  )
-    Type                = models.TextField(                  choices = TYPE_CHOICES)
+    anchorpoint = ArrayField( models.IntegerField(), size=2)
+    antialias = models.BooleanField(               default=False)
+    character = models.TextField(                  max_length=1)
+    filled = models.BooleanField(               default=False)
+    font = models.TextField(                  )
+    image = models.TextField(                  )
+    name = models.TextField(                  )
+    points = ArrayField(ArrayField( models.IntegerField(), size=2))
+    transparent = models.TextField(                  )
+    Type = models.TextField(                  choices = TYPE_CHOICES)
 
     class Meta:
         verbose_name = _( "symbol" )
@@ -2302,26 +3991,26 @@ class symbol(models.Model):
 ################################################################################
 
 class web(models.Model):
-    browseformat        = models.TextField(                  )
-    empty               = models.TextField(                  )
-    error               = models.TextField(                  )
-    footer              = models.TextField(                  )
-    header              = models.TextField(                  )
-    imagepath           = models.TextField(                  )
-    imageurl            = models.TextField(                  )
-    legendformat        = models.TextField(                  )
+    browseformat = models.TextField(                  )
+    empty = models.TextField(                  )
+    error = models.TextField(                  )
+    footer = models.TextField(                  )
+    header = models.TextField(                  )
+    imagepath = models.TextField(                  )
+    imageurl = models.TextField(                  )
+    legendformat = models.TextField(                  )
     #d log = models.TextField(                  )*/
-    maxscaledenom       = models.FloatField()
-    #d maxscale            = models.FloatField()*/
-    maxtemplate         = models.TextField(                  )
-    metadata            = ArrayField( ArrayField(models.TextField(), size=2) )
-    minscaledenom       = models.FloatField()
-    #d minscale            = models.FloatField()*/
-    mintemplate         = models.TextField(                  )
-    queryformat         = models.TextField(                  )
-    template            = models.TextField(                  )
-    temppath            = models.TextField(                  )
-    validation          = models.ManyToManyField(validation)
+    maxscaledenom = models.FloatField()
+    #d maxscale = models.FloatField()*/
+    maxtemplate = models.TextField(                  )
+    metadata = ArrayField( ArrayField(models.TextField(), size=2) )
+    minscaledenom = models.FloatField()
+    #d minscale = models.FloatField()*/
+    mintemplate = models.TextField(                  )
+    queryformat = models.TextField(                  )
+    template = models.TextField(                  )
+    temppath = models.TextField(                  )
+    validation = models.ManyToManyField(validation)
 
 
 
@@ -2444,15 +4133,15 @@ class outputformat(models.Model):
         (IMAGEMODE_FEATURE, IMAGEMODE_FEATURE),
         (IMAGEMODE_NULL, IMAGEMODE_NULL),
     )
-    name                = models.TextField(                  )
-    driver              = models.TextField(                  )
-    extension           = models.TextField(                  )
-    imagemode           = models.TextField(                   choices=IMAGEMODE_CHOICES)
-    formatoption        = ArrayField( models.TextField()     )
-    mimetype            = models.TextField(                  )
-    transparent         = models.NullBooleanField()
+    name = models.TextField(                  )
+    driver = models.TextField(                  )
+    extension = models.TextField(                  )
+    imagemode = models.TextField(                   choices=IMAGEMODE_CHOICES)
+    formatoption = ArrayField( models.TextField()     )
+    mimetype = models.TextField(                  )
+    transparent = models.NullBooleanField()
     #fixme
-    #formatoption        = models.TextField(                  )
+    #formatoption = models.TextField(                  )
     
 
     class Meta:
@@ -2708,49 +4397,49 @@ class Map(models.Model):
         (UNITS_NAUTICALMILES, UNITS_NAUTICALMILES),
         (UNITS_PIXELS, UNITS_PIXELS),
     )
-    angle               = models.FloatField(                 help_text='Angle, given in degrees, to rotate the map in a clockwise direction.',
+    angle = models.FloatField(                 help_text='Angle, given in degrees, to rotate the map in a clockwise direction.',
                                                              default = 0.0)
-    config              = ArrayField( ArrayField(models.TextField(), size=2) )
-    datapattern         = models.TextField(                  )
-    debug               = models.IntegerField(               DEBUG_CHOICES,
+    config = ArrayField( ArrayField(models.TextField(), size=2) )
+    datapattern = models.TextField(                  )
+    debug = models.IntegerField(               DEBUG_CHOICES,
                                                              default = DEBUG_OFF)
-    defresolution       = models.IntegerField(               help_text='Sets the reference resolution (pixels per inch) used for symbology.',
+    defresolution = models.IntegerField(               help_text='Sets the reference resolution (pixels per inch) used for symbology.',
                                                              default = 72)
-    extent              = ArrayField( models.FloatField(), size=4)
-    fontset             = models.TextField(                  )
-    imagecolor          = ArrayField( models.IntegerField(), help_text='Color to initialize the map with (i.e. background color)',
+    extent = ArrayField( models.FloatField(), size=4)
+    fontset = models.TextField(                  )
+    imagecolor = ArrayField( models.IntegerField(), help_text='Color to initialize the map with (i.e. background color)',
                                                              size=3)
-    #d imagequality        = models.IntegerField()*/
-    imagetype           = models.TextField(                  )
-    #d interlace           = models.NullBooleanField()
-    layer               = models.ManyToManyField(layer)
-    legend              = models.ForeignKey('legend')
-    name                = models.TextField(                  max_length = 25)
-    maxsize             = models.IntegerField(               help_text='Sets the maximum size of the map image.',
+    #d imagequality = models.IntegerField()*/
+    imagetype = models.TextField(                  )
+    #d interlace = models.NullBooleanField()
+    layer = models.ManyToManyField(layer)
+    legend = models.ForeignKey('legend')
+    name = models.TextField(                  max_length = 25)
+    maxsize = models.IntegerField(               help_text='Sets the maximum size of the map image.',
                                                              default = 2048)
-    outputformat        = models.ManyToManyField(outputformat)
-    projection          = models.ForeignKey('projection')
+    outputformat = models.ManyToManyField(outputformat)
+    projection = models.ForeignKey('projection')
     
-    querymap            = models.ForeignKey('querymap')
-    reference           = models.ForeignKey('reference')
-    resolution          = models.IntegerField()
-    scaledenom          = models.FloatField(                 help_text='Computed scale of the map',
+    querymap = models.ForeignKey('querymap')
+    reference = models.ForeignKey('reference')
+    resolution = models.IntegerField()
+    scaledenom = models.FloatField(                 help_text='Computed scale of the map',
                                                              null=True)
-    scalebar            = models.ForeignKey('scalebar')
-    shapepath           = models.TextField(                  )
-    size                = ArrayField( models.IntegerField(), help_text='Size in pixels of the output image (i.e. the map).',
+    scalebar = models.ForeignKey('scalebar')
+    shapepath = models.TextField(                  )
+    size = ArrayField( models.IntegerField(), help_text='Size in pixels of the output image (i.e. the map).',
                                                              size=2,
                                                              default=[256,256])
-    status              = models.IntegerField(               STATUS_CHOICES,
+    status = models.IntegerField(               STATUS_CHOICES,
                                                              default = STATUS_ON)
-    symbolset           = models.TextField(                  )
-    symbol              = models.ManyToManyField(symbol)
-    templatepattern     = models.TextField(                  )
-    #d transparent      = models.NullBooleanField()
-    units               = models.IntegerField(               help_text='Units of the map coordinates. Used for scale computations',
+    symbolset = models.TextField(                  )
+    symbol = models.ManyToManyField(symbol)
+    templatepattern = models.TextField(                  )
+    #d transparent = models.NullBooleanField()
+    units = models.IntegerField(               help_text='Units of the map coordinates. Used for scale computations',
                                                              choices = UNITS_CHOICES,
                                                              )
-    web                 = models.ForeignKey('web')
+    web = models.ForeignKey('web')
 
 
     class Meta:
