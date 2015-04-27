@@ -63,7 +63,7 @@ dojo.ready(function() {
     MapLayers.Time.loop = false;
     MapLayers.Time.rock = false;
     MapLayers.Time.backwards = false;
-    MapLayers.Time.speed = 1000;
+    MapLayers.Time.speed = 500;
     MapLayers.Time.incr = 1 * 60 * 60 * 1000;
     
     require(["dojo/fx/Toggler"], function(Toggler) {
@@ -94,7 +94,7 @@ function MapLayers_Time_Node(treenode, timestamp) {
 function MapLayers_Time_CreateSlider() {
     
     //fixme grab the hash vars!
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_CreateSlider()");
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateSlider()");
 
     
     MapLayers.Time.toolbar = new dijit.Toolbar({}, "timebar");
@@ -267,7 +267,7 @@ function MapLayers_Time_CreateSlider() {
 
 function MapLayers_Time_setVisible(bool) {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_setVisible(bool)", bool);
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_setVisible(bool)", bool);
     
     if (bool) { 
         MapLayers.Time.hidetoggler.show();
@@ -286,7 +286,7 @@ function MapLayers_Time_setVisible(bool) {
 
 function MapLayers_Time_Speedslider_change( newValueb ) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Speedslider_change( newValue )",newValue);
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Speedslider_change( newValue )",newValue);
     
     /***** set the new value *****/
 
@@ -307,31 +307,25 @@ function MapLayers_Time_Speedslider_change( newValueb ) {
 
 function MapLayers_Time_expire_remaining() {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_expire_remaining()");
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_expire_remaining()");
     
     var node;
 
     if (MapLayers.Time.backwards) {
     
         for (node = MapLayers.Time.BegCurrentNode ; node ; node = node.prev) {
-            if (node.data.treenode.layer.getVisibility()) {
-                node.data.treenode.layer.setVisibility(false);
-            }
+            node.data.treenode.Layer_off();
         }
         
     } else {
         
         for (node = MapLayers.Time.EndCurrentNode ; node ; node = node.next) {
-            if (node.data.treenode.layer.getVisibility()) {
-                node.data.treenode.layer.setVisibility(false);
-            }
+            node.data.treenode.Layer_off();
         }
     }
 
     if (MapLayers.Time.TSCurrentNode) {
-        if (node.data.treenode.layer.getVisibility()) {
-            MapLayers.Time.TSCurrentNode.data.treenode.layer.setVisibility(false);
-        }
+        MapLayers.Time.TSCurrentNode.data.treenode.Layer_off();
     }
 
 }
@@ -340,60 +334,134 @@ function MapLayers_Time_expire_remaining() {
 
 /******************************************************************************
  * 
- * @brief function go forward though the layers to turn on/off layes for
- * the current timestamp
+ * @brief function go forward though the layers to turn on/off layers for the current timeslider value
  * 
 ******************************************************************************/
 
-/***** fixme fix flicker *****/
+function MapLayers_Time_Advance( fromaddnode ) {
 
-function MapLayers_Time_Advance() {
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Advance()");
+
     var last_timespan;
+    var stop = false;
+    var timee = MapLayers.Time.time;
 
-    
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Advance()");
-    
-    while ( ( MapLayers.Time.EndCurrentNode
-              && ts >= MapLayers.Time.EndCurrentNode.data.timestamp
-            ) ||
-            ( MapLayers.Time.BegCurrentNode
-              && ts >= MapLayers.Time.BegCurrentNode.data.timestamp
-            ) ||
-            ( MapLayers.Time.TSCurrentNode
-              && ts >= MapLayers.Time.TSCurrentNode.data.timestamp
-            )
+    var End = MapLayers.Time.EndCurrentNode;
+    var Beg = MapLayers.Time.BegCurrentNode;
+    var TS = MapLayers.Time.TSCurrentNode;
+
+    while ( ! stop
+            && (
+                    ( End && timee >= End.data.timestamp )
+                  ||
+                    ( Beg && timee >= Beg.data.timestamp )
+                  ||
+                    ( TS  && timee >= TS.data.timestamp )
+               )
           ) {
 
+        var last_off = null;
+
         /***** timespans *****/
-        
-        if ( MapLayers.Time.EndCurrentNode
-             && ts >= MapLayers.Time.EndCurrentNode.data.timestamp
-           ) {
-            MapLayers.Time.EndCurrentNode.data.treenode.Layer_off();
-            MapLayers.Time.EndCurrentNode = MapLayers.Time.EndCurrentNode.next;
+        console.log(" End && timee >= End.data.timestamp  ; ", timee >= End.data.timestamp);
+        if ( End && timee >= End.data.timestamp ) {
+
+            /***** if there is layers left go ahead and advance *****/
+
+            if ( End.next ) {
+                console.log("Layers left turning off ", End.data.treenode.id);
+                End.data.treenode.Layer_off();
+                last_off = End.data.treenode.id;
+
+                MapLayers.Time.EndCurrentNode = End.next;
+                End = MapLayers.Time.EndCurrentNode;
+                
+            /***** no layers left but but still timpstamp *****/
+            /***** layers, just turn our layer off        *****/
+
+            } else if ( MapLayers.Time.TSList.tail
+                        && MapLayers.Time.TSList.tail.data.timestamp
+                           > End.data.timestamp
+                      ) {
+                console.log("no layers left but but still timpstamp turning off ", End.data.treenode.id);
+                End.data.treenode.Layer_off();
+                last_off = End.data.treenode.id;
+
+            /***** there is not timpstamp layers left either  *****/
+            /***** so lets hold this one on and stop the loop *****/
+
+            } else {
+                console.log("not timpstamp layers left either");
+                stop = true;
+            }
+                
         }
 
-        if ( MapLayers.Time.BegCurrentNode
-             && ts >= MapLayers.Time.BegCurrentNode.data.timestamp ) {
-            MapLayers.Time.BegCurrentNode.data.treenode.Layer_on();
-            last_timespan = MapLayers.Time.BegCurrentNode.data.timestamp;
-            MapLayers.Time.BegCurrentNode = MapLayers.Time.BegCurrentNode.next;
+        console.log(" timee >= Beg.data.timestamp  ; ", timee >= Beg.data.timestamp);
+        
+        if ( Beg && timee >= Beg.data.timestamp ) {
+            
+            /***** if there is layers left go ahead and advance *****/
+
+            if (fromaddnode || (last_off && last_off != Beg.data.treenode.id) ) {
+                Beg.data.treenode.Layer_on();
+                last_timespan = Beg.data.timestamp;
+                console.log("turning on ", Beg.data.treenode.id);
+            }
+
+            if ( Beg.next ) {            
+                MapLayers.Time.BegCurrentNode = Beg.next;
+                Beg = MapLayers.Time.BegCurrentNode;
+
+            /***** no layers left but but still timpstamp layers *****/
+
+            } else if ( MapLayers.Time.TSList.tail
+                        && MapLayers.Time.TSList.tail.data.timestamp
+                           > Beg.data.timestamp
+                      ) {
+
+            /***** there is not timpstamp layers left either stop the loop *****/
+
+            } else {
+                stop = true;
+            }
         }
 
         /***** sync the timpstamps in with the time spans          *****/
         /***** if theres no (more?) timespans we can advance       *****/
         /***** or we can advance if the last timespan is also past *****/
 
-        if ( MapLayers.Time.TSCurrentNode
-             && ts >= MapLayers.Time.TSCurrentNode.data.timestamp 
-             && ( ! MapLayers.Time.BegCurrentNode
-                  || last_timespan >= MapLayers.Time.TSCurrentNode.data.timestamp
-                )
+
+        if ( TS && timee >= TS.data.timestamp 
+             && ( ! Beg || TS.data.timestamp >= last_timespan )
+
            ) {
-            MapLayers.Time.TSCurrentNode.data.treenode.Layer_off();
-            MapLayers.Time.TSCurrentNode = MapLayers.Time.TSCurrentNode.next;
-            MapLayers.Time.TSCurrentNode.data.treenode.Layer_on();
+
+            /***** if there is layers left go ahead and advance *****/
+
+            if ( TS.next ) {
+                TS.data.treenode.Layer_off();
+                MapLayers.Time.TSCurrentNode = TS.next;
+                TS = MapLayers.Time.TSCurrentNode;
+                TS.data.treenode.Layer_on();
+
+            /***** no layers left but but still timespan *****/
+            /***** layers, just turn our layer off       *****/
+
+            } else if ( MapLayers.Time.EndList.tail
+                        && MapLayers.Time.EndList.tail.data.timestamp
+                           > MapLayers.Time.TSCurrentNode.data.timestamp
+                      ) {
+               TS.data.treenode.Layer_off();
+
+            /***** there is not timespan layers left either   *****/
+            /***** so lets hold this one on and stop the loop *****/
+
+            } else {
+                stop = true;
+            }
         }
+    }
 
 }
 
@@ -404,56 +472,124 @@ function MapLayers_Time_Advance() {
  * 
 ******************************************************************************/
 
-/***** fixme fix flicker *****/
+function MapLayers_Time_Retard( fromaddnode ) {
 
-function MapLayers_Time_Retard() {
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Retard()");
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Retard() ", MapLayers.Time.time);
-    
     var last_timespan;
+    var stop = false;
+    var timee = MapLayers.Time.time;
 
-    while ( ( MapLayers.Time.BegCurrentNode
-              && ts <= MapLayers.Time.BegCurrentNode.data.timestamp
-            ) ||
-            ( MapLayers.Time.EndCurrentNode
-              && ts <= MapLayers.Time.EndCurrentNode.data.timestamp
-            ) ||
-            ( MapLayers.Time.TSCurrentNode
-              && ts <= MapLayers.Time.TSCurrentNode.data.timestamp
-            )
+    var End = MapLayers.Time.EndCurrentNode;
+    var Beg = MapLayers.Time.BegCurrentNode;
+    var TS = MapLayers.Time.TSCurrentNode;
+
+    while ( ! stop
+            && (
+                    ( End && timee <= End.data.timestamp )
+                  ||
+                    ( Beg && timee <= Beg.data.timestamp )
+                  ||
+                    ( TS  && timee <= TS.data.timestamp )
+               )
           ) {
+        
+        var last_off = null;
 
         /***** timespans *****/
-        
-        if ( MapLayers.Time.BegCurrentNode
-             && ts <= MapLayers.Time.BegCurrentNode.data.timestamp
-           ) {
-            MapLayers.Time.BegCurrentNode.data.treenode.Layer_off();
-            MapLayers.Time.BegCurrentNode = MapLayers.Time.BegCurrentNode.prev;
+
+        if ( Beg && timee <= Beg.data.timestamp ) {
+
+            /***** if there is layers left go ahead and advance *****/
+
+            if ( Beg.prev ) {
+                Beg.data.treenode.Layer_off();
+                last_off = Beg.data.treenode.id;
+
+                MapLayers.Time.BegCurrentNode = Beg.prev;
+                Beg = MapLayers.Time.BegCurrentNode;
+
+            /***** no layers left but but still timpstamp *****/
+            /***** layers, just turn our layer off        *****/
+
+            } else if ( MapLayers.Time.TSList.tail
+                        && MapLayers.Time.TSList.tail.data.timestamp
+                           < Beg.data.timestamp
+                      ) {
+                Beg.data.treenode.Layer_off();
+                last_off = Beg.data.treenode.id;
+
+            /***** there is not timpstamp layers left either  *****/
+            /***** so lets hold this one on and stop the loop *****/
+
+            } else {
+                stop = true;
+            }
+                
         }
 
-        if ( MapLayers.Time.EndCurrentNode
-             && ts <= MapLayers.Time.EndCurrentNode.data.timestamp ) {
-            MapLayers.Time.EndCurrentNode.data.treenode.Layer_on();
-            last_timespan = MapLayers.Time.EndCurrentNode.data.timestamp;
-            MapLayers.Time.EndCurrentNode = MapLayers.Time.EndCurrentNode.prev;
+        if ( End && timee <= End.data.timestamp ) {
+            
+            /***** if there is layers left go ahead and advance *****/
+
+            if (fromaddnode || (last_off && last_off != End.data.treenode.id) ) {
+                End.data.treenode.Layer_on();
+                last_timespan = End.data.timestamp;
+            }
+
+            if (End.prev) {
+                MapLayers.Time.EndCurrentNode = End.prev;
+                End = MapLayers.Time.EndCurrentNode;
+
+            /***** no layers left but but still timpstamp layers *****/
+
+            } else if ( MapLayers.Time.TSList.tail
+                        && MapLayers.Time.TSList.tail.data.timestamp
+                           < End.data.timestamp
+                      ) {
+
+            /***** there is not timpstamp layers left either stop the loop *****/
+
+            } else {
+                stop = true;
+            }
         }
 
         /***** sync the timpstamps in with the time spans          *****/
         /***** if theres no (more?) timespans we can advance       *****/
         /***** or we can advance if the last timespan is also past *****/
 
-        if ( MapLayers.Time.TSCurrentNode
-             && ts <= MapLayers.Time.TSCurrentNode.data.timestamp 
-             && ( ! MapLayers.Time.BegCurrentNode
-                  || last_timespan <= MapLayers.Time.TSCurrentNode.data.timestamp
-                )
-           ) {
-            MapLayers.Time.TSCurrentNode.data.treenode.Layer_off();
-            MapLayers.Time.TSCurrentNode = MapLayers.Time.TSCurrentNode.prev;
-            MapLayers.Time.TSCurrentNode.data.treenode.Layer_on();
-        }
 
+        if ( TS && timee <= TS.data.timestamp 
+             && ( ! Beg || TS.data.timestamp >= last_timespan )
+
+           ) {
+
+            /***** if there is layers left go ahead and advance *****/
+
+            if ( TS.prev ) {
+                TS.data.treenode.Layer_off();
+                MapLayers.Time.TSCurrentNode = TS.prev;
+                TS = MapLayers.Time.TSCurrentNode;
+                TS.data.treenode.Layer_on();
+
+            /***** no layers left but but still timespan *****/
+            /***** layers, just turn our layer off       *****/
+
+            } else if ( MapLayers.Time.BegList.tail
+                        && MapLayers.Time.BegList.tail.data.timestamp
+                           < MapLayers.Time.TSCurrentNode.data.timestamp
+                      ) {
+               TS.data.treenode.Layer_off();
+
+            /***** there is not timespan layers left either   *****/
+            /***** so lets hold this one on and stop the loop *****/
+
+            } else {
+                stop = true;
+            }
+        }
+    }
 
 }
 
@@ -466,7 +602,7 @@ function MapLayers_Time_Retard() {
 
 function MapLayers_Time_Timeslider_change( newValue ) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Timeslider_change( newValue)", newValue);
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Timeslider_change( newValue)", newValue);
     
     if (MapLayers.Time.IgnoreSliderChange) return;
     
@@ -506,8 +642,8 @@ function MapLayers_Time_Timeslider_change( newValue ) {
         MapLayers_Time_Advance();
 
     }
-
 }
+
 
 /******************************************************************************
  * 
@@ -518,7 +654,7 @@ function MapLayers_Time_Timeslider_change( newValue ) {
 
 function MapLayers_Time_Incrbox_change( newValue ) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Incrbox_change( newValue )", newValue );
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Incrbox_change( newValue )", newValue );
     
     /***** set the new value *****/
     var incr = MapLayers.Time.incrStore.query({name:newValue})[0];
@@ -543,7 +679,7 @@ function MapLayers_Time_Incrbox_change( newValue ) {
 
 function MapLayers_Time_Interval_Update() {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Update() ");
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Interval_Update() ");
 
     var stopped = false;
     var looped = false;
@@ -561,7 +697,7 @@ function MapLayers_Time_Interval_Update() {
 
         /***** past the begining? *****/
 
-        if (MapLayers.Time.time < MapLayers.Time.SliderMinValue ) {
+        if (MapLayers.Time.time <= MapLayers.Time.SliderMinValue ) {
         
             /***** is the loop or rock button pressed *****/
             
@@ -602,7 +738,7 @@ function MapLayers_Time_Interval_Update() {
         
         /***** past the end time? *****/
 
-        if (MapLayers.Time.time > MapLayers.Time.SliderMaxValue ) {
+        if (MapLayers.Time.time >= MapLayers.Time.SliderMaxValue ) {
             
             /***** is the loop or rock button pressed *****/
             
@@ -632,8 +768,8 @@ function MapLayers_Time_Interval_Update() {
                 MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
                 MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
                 MapLayers.Time.TSCurrentNode = MapLayers.Time.TSList.head;
+                MapLayers_Time_Advance(true);
             }
-
         }
     }
 
@@ -664,14 +800,14 @@ function MapLayers_Time_Interval_Update() {
 
 function MapLayers_Time_Interval_Play() {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Play()");
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Interval_Play()");
     
     MapLayers.Time.firstplay = true;
     
     if (MapLayers.Time.timer == null) {
         
         MapLayers.Time.timer = setInterval( MapLayers_Time_Interval_Update ,
-                                           MapLayers.Time.speed);
+                                            MapLayers.Time.speed);
                                            
         MapLayers.Time.playbutton.set('label', 'Pause');
         MapLayers.Time.Timeslider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
@@ -689,7 +825,7 @@ function MapLayers_Time_Interval_Play() {
 
 function MapLayers_Time_Interval_Pause() {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_Interval_Pause()");
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Interval_Pause()");
     
     if (MapLayers.Time.timer != null) {
         clearInterval(MapLayers.Time.timer);
@@ -716,7 +852,7 @@ function MapLayers_Time_Interval_Pause() {
 
 function MapLayers_Time_setends(begin, end) {
         
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_setends(begin, end)", begin, end);
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_setends(begin, end)", begin, end);
     
     MapLayers.Time.IgnoreSliderChange = true;
     
@@ -818,7 +954,7 @@ function MapLayers_Time_Insert_Node_Before(list, newnode, ts) {
 
 function MapLayers_Time_addnode(treenode) {
 
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_addnode(treenode)", treenode);
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_addnode(treenode)", treenode);
     
     var timestamp = null;
     var begin = null;
@@ -892,7 +1028,7 @@ function MapLayers_Time_addnode(treenode) {
         function () {
             window.clearInterval(MapLayers.Time.updatetimer);
             MapLayers.Time.updatetimer = null;
-            MapLayers_Time_Advance();
+            MapLayers_Time_Advance( true);
         },
         5000
     );
@@ -928,12 +1064,17 @@ function MapLayers_Time_removenode_sub (list, treenode) {
 
 function MapLayers_Time_removenode(treenode) {
     
-    //if (MapLayers.Settings.debug) console.log("MapLayers_Time_removenode(treenode)", treenode);
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_removenode(treenode)", treenode);
     
     var node = null;
     var bext = null;
     var found = 0;
 
+    /***** stop if playing *****/
+    
+    if (MapLayers.Time.timer != null) {
+        MapLayers_Time_Interval_Pause();
+    }
 
     /***** is it a timestamp? *****/
     
@@ -941,7 +1082,9 @@ function MapLayers_Time_removenode(treenode) {
         
         node = MapLayers_Time_removenode_sub(TSList, treenode);
         
-        if (MapLayers.Time.TSCurrentNode.data.treenode.id == node.data.treenode.id) {
+        if ( MapLayers.Time.TSCurrentNode
+             && MapLayers.Time.TSCurrentNode.data.treenode.id == node.data.treenode.id
+           ) {
             MapLayers.Time.TSCurrentNode = null;
         }
 
@@ -959,12 +1102,16 @@ function MapLayers_Time_removenode(treenode) {
     else if (treenode.begin_timespan != null && treenode.end_timespan != null ) {
         
         node = MapLayers_Time_removenode_sub(MapLayers.Time.BegList, treenode);
-        if (MapLayers.Time.BegCurrentNode.data.treenode.id == node.data.treenode.id) {
+        if ( MapLayers.Time.BegCurrentNode
+             && MapLayers.Time.BegCurrentNode.data.treenode.id == node.data.treenode.id
+           ) {
             MapLayers.Time.BegCurrentNode = null;
         }
 
         node = MapLayers_Time_removenode_sub(MapLayers.Time.EndList, treenode);
-        if (MapLayers.Time.EndCurrentNode.data.treenode.id == node.data.treenode.id) {
+        if ( MapLayers.Time.EndCurrentNode
+             && MapLayers.Time.EndCurrentNode.data.treenode.id == node.data.treenode.id
+           ) {
             MapLayers.Time.EndCurrentNode = null;
         }
 
