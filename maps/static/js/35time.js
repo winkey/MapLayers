@@ -969,6 +969,10 @@ function MapLayers_Time_addnode(treenode) {
     
     //treenode.layer.options.removeBackBufferDelay=0;
     
+    /***** turn off the transition effect *****/
+
+    treenode.layer.transitionEffect = null;
+
     /***** is it a timestamp? *****/
     
     if (treenode.timestamp != null) {
