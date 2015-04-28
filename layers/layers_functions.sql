@@ -748,7 +748,7 @@ $$ LANGUAGE SQL;
 /*******************************************************************************
 *******************************************************************************/
 
-CREATE OR REPLACE FUNCTION layers_add_tilecache_cgf_by_id
+CREATE OR REPLACE FUNCTION layers_add_tilecache_cfg_by_id
 (
     int
 ) RETURNS void AS
