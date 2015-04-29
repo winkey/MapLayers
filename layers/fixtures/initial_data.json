@@ -1956,6 +1956,27 @@
       "isBaseLayer": false,
       "attribution": "<img src='http://atmos.ucsd.edu/kml/images/925t.png' />"
     }
+  },
+  {
+	"model": "layers.link",
+    "pk": 72,
+    "fields": {
+      "name": "testlink",
+      "target": 10
+    }
+  },
+  {
+    "model": "layers.layertreenode",
+    "pk": 72,
+    "fields": {
+      "polymorphic_ctype": 19,
+      "lft": 0,
+      "rght": 0,
+      "tree_id": 1,
+      "level": 2,
+      "parent": 8,
+      "nodetype": "Link"
+    }
   }
 
 ]

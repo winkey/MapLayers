@@ -44,7 +44,7 @@ require(['dojo/_base/declare'], function(declare) {
 
 function MapLayers_Tree_GetPath( result ) {
 
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_GetPath( result)", result);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_GetPath( result)", result);
 
     /***** the tree isnt expanded posibly so we need to folow it to our node *****/
     var path = new Array();
@@ -60,7 +60,7 @@ function MapLayers_Tree_GetPath( result ) {
 
 function MapLayers_Tree_ExpandPath( path ) {
 
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_ExpandPath( path)", path);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_ExpandPath( path)", path);
 
     /***** loop over the path and expand the nodes *****/
 
@@ -77,7 +77,7 @@ function MapLayers_Tree_ExpandPath( path ) {
 
 function MapLayers_Tree_Find_Layers_callback( result ) {
 
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_Layers_callback( result)", result);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_Layers_callback( result)", result);
     if ( result && result.Checkable ) {
 
         var path = MapLayers_Tree_GetPath( result );
@@ -92,7 +92,7 @@ function MapLayers_Tree_Find_Layers_callback( result ) {
 
 function MapLayers_Tree_Open_Layers_callback( result ) {
 
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Open_Layers_callback( result)", result);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Open_Layers_callback( result)", result);
     if ( result ) {
 
         var path = MapLayers_Tree_GetPath( result );
@@ -108,7 +108,7 @@ function MapLayers_Tree_Open_Layers_callback( result ) {
 
 function MapLayers_Tree_Find_and_Open_Layers( layers, expand) {
 
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_and_Open_Layers( layers, expand)", layers, expand);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Find_and_Open_Layers( layers, expand)", layers, expand);
 
     /***** loop over the layers in the url *****/
 
@@ -636,7 +636,7 @@ declare("MapLayers.Tree.Node",null,{
 
 function MapLayers_Tree_Create_TemFolder(ParentNode) {
 
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_TemFolder(ParentNode) ", ParentNode );
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_TemFolder(ParentNode) ", ParentNode );
     if (!MapLayers.Tree.tempid ) {
         var newNode = {
             id: "temp",
@@ -679,7 +679,7 @@ function MapLayers_Tree_Create_TemFolder(ParentNode) {
 
 function MapLayers_Tree_Create_Templayer(Lname, Layer, Controll) {
 
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_Templayer(Lname, Layer, Controll :", Lname, Layer, Controll);
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_Templayer(Lname, Layer, Controll :", Lname, Layer, Controll);
 
     var newNode = ({
         leaf: true,
@@ -715,9 +715,16 @@ function MapLayers_Tree_Create_Templayer(Lname, Layer, Controll) {
 *******************************************************************************/
 
 function MapLayers_Tree_CreateTreeNode (args) {
-     //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_CreateTreeNode (args) ", args);
+     //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_CreateTreeNode (args) ", args);
+
+    var olditem = args.item;
+
+    if (args.item.nodetype == 'Link' ) {
+        args.item = MapLayers.Store.Memory.get( args.item.target )
+    }
 
     tnode = new dijit._TreeNode(args);
+    tnode.olditem = args.item;
     tnode.labelNode.innerHTML = args.label;
 
      
@@ -759,7 +766,7 @@ function MapLayers_Tree_CreateTreeNode (args) {
 }
 
 function MapLayers_Tree_Parse (newNode, ParentNode) {
-    ////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse (newNode, ParentNode)", newNode, ParentNode );
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Parse (newNode, ParentNode)", newNode, ParentNode );
 
 
     var node = new MapLayers.Tree.Node(newNode, ParentNode);
@@ -769,7 +776,7 @@ function MapLayers_Tree_Parse (newNode, ParentNode) {
 }
 
 function MapLayers_Tree_Create_querycallback(NodeData) {
-    ////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_querycallback(NodeData)", NodeData );
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create_querycallback(NodeData)", NodeData );
     NodeData.querycallback();
 }
 
@@ -783,7 +790,7 @@ function MapLayers_Tree_Create_querycallback(NodeData) {
 
 function MapLayers_Tree_Create () {
     
-    //////if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create()");
+    //if (MapLayers.Settings.debug) console.log("MapLayers_Tree_Create()");
 
     /***** make the store *****/
 
