@@ -281,7 +281,8 @@ function MapLayers_Setcenter() {
     /***** if lat and lon are set in the url, override default *****/
     
     if ( slat && slat != "" && slon && slon != "" ) {
-        MapLayers.Settings.center = new OpenLayers.LonLat(slon, slat);
+
+        MapLayers.Settings.mycenter = new OpenLayers.LonLat(slon, slat);
     }
     
     /***** if zoom is set in the url, override default *****/
@@ -292,9 +293,10 @@ function MapLayers_Setcenter() {
     
     /***** if map center and zoom arent set, set them *****/
     
-    if (!MapLayers.Map.map.getCenter() || MapLayers.Map.map.getCenter().lon == 0) {
-        var proj = new OpenLayers.Projection("EPSG:4326");
-        MapLayers.Map.map.setCenter(MapLayers.Settings.mycenter.transform(proj, MapLayers.Map.map.getProjectionObject()), MapLayers.Settings.zoom);
-    }
+    var ToProj   = MapLayers.Map.map.getProjectionObject();
+    var FromProj = new OpenLayers.Projection("EPSG:4326");
+    var NewCenter = MapLayers.Settings.mycenter.transform(FromProj, ToProj);
+    MapLayers.Map.map.setCenter(NewCenter, MapLayers.Settings.zoom);
+
     
 }
