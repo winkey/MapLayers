@@ -27,9 +27,6 @@
  * DEALINGS IN THE SOFTWARE.
 ******************************************************************************/
 
-/***** fixme some of these shoiuld get stored in the hash     *****/
-/***** if you were to share a link or bookmark the current    *****/
-/***** time, loop settings, speed settings, and incr settings *****/
 
 dojo.require("dojo");
 dojo.require("dijit/form/HorizontalSlider");
@@ -40,13 +37,15 @@ dojo.require("dojo/store/Memory");
 dojo.require("dijit/form/ComboBox");
 //dojo.require("dojo/dom-style");
 dojo.require("dojo/fx/Toggler");
+dojo.require("dijit/form/DateTextBox");
+dojo.require("dijit/form/TimeTextBox");
 
 dojo.ready(function() {
 
     MapLayers.Time = new Object();
-    MapLayers.Time.timer = null;
-    MapLayers.Time.updatetimer = null;
-    MapLayers.Time.firstplay = false;
+    MapLayers.Time.Timer = null;
+    MapLayers.Time.UpdateTimer = null;
+    MapLayers.Time.FirstPlayState = false;
     
     MapLayers.Time.TSList = new DLList();
     MapLayers.Time.TSCurrentNode = null;
@@ -59,13 +58,15 @@ dojo.ready(function() {
     MapLayers.Time.SliderMaxValue = null;
     MapLayers.Time.IgnoreSliderChange = false;
     
-    MapLayers.Time.time = null;
-    MapLayers.Time.loop = false;
-    MapLayers.Time.rock = false;
-    MapLayers.Time.backwards = false;
-    MapLayers.Time.speed = 500;
-    MapLayers.Time.incr = 1 * 60 * 60 * 1000;
+    MapLayers.Time.Time = null;
+    MapLayers.Time.LoopState = false;
+    MapLayers.Time.RockState = false;
+    MapLayers.Time.BackwardsState = false;
+    MapLayers.Time.Speed = 500;
+    MapLayers.Time.Incr = 1 * 60 * 60 * 1000;
     
+    MapLayers.Time.Toolbar = null;
+
     require(["dojo/fx/Toggler"], function(Toggler) {
 
         MapLayers.Time.hidetoggler = new Toggler({
@@ -91,90 +92,235 @@ function MapLayers_Time_Node(treenode, timestamp) {
 
 }
 
-function MapLayers_Time_CreateSlider() {
-    
-    //fixme grab the hash vars!
-    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateSlider()");
+/*******************************************************************************
+ function to create the playbutton for the timeslider
+*******************************************************************************/
 
-    
-    MapLayers.Time.toolbar = new dijit.Toolbar({}, "timebar");
+function MapLayers_Time_CreatePlayButton() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreatePlayButton()");
 
     /***** play/pause button *****/
     
-    MapLayers.Time.playbutton = new dijit.form.Button({
-            label: "Play",
-            showLabel: true,
-            onClick: MapLayers_Time_Interval_Play
-    }, "playbutton");
+    MapLayers.Time.PlayButton = new dijit.form.Button({
+        label: "Play",
+        showLabel: true,
+        style: "width:6ch;",
+        onClick: MapLayers_Time_Interval_Play
+    }, "PlayButton");
 
-    MapLayers.Time.toolbar.addChild(MapLayers.Time.playbutton)
-    MapLayers.Time.playbutton.startup();
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.PlayButton);
+    MapLayers.Time.PlayButton.startup();
+}
+
+/*******************************************************************************
+ function to create the forward button for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateForwardButton() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateForwardButton()");
 
     /***** forward button *****/
 
-    MapLayers.Time.forwardbutton = new dijit.form.ToggleButton({
-            label: "Fwd",
-            showLabel: true,
-            checked: true,
-            onChange: function(val){ MapLayers.Time.backwards = !val; }
-    }, "forwardbutton");
+    var fwd_state = MapLayers_Hash_Get("forward");
+    if ( !fwd_state ) fwd_state = false;
 
-    MapLayers.Time.toolbar.addChild(MapLayers.Time.forwardbutton)
-    MapLayers.Time.forwardbutton.startup();
+    MapLayers.Time.ForwardButton = new dijit.form.ToggleButton({
+        label: "Fwd",
+        showLabel: true,
+        checked: fwd_state,
+        style: "width:6ch;",
+        onChange: function(val){
+
+            /***** update the hash *****/
+
+            MapLayers_Hash_Replace("forward", val);
+
+            MapLayers.Time.BackwardsState = !val;
+        }
+    }, "ForwardButton");
+
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.ForwardButton);
+    MapLayers.Time.ForwardButton.startup();
+}
+
+/*******************************************************************************
+ function to create the time slider for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateTimeSlider() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateTimeSlider()");
 
     /***** time slider *****/
     
-    MapLayers.Time.Timeslider = new dijit.form.HorizontalSlider({
-        value: 50,
-        minimum: 0,
-        maximum: 100000,
+    var slider_min = 0;
+    if ( MapLayers.Time.SliderMinValue ) {
+        slider_min = MapLayers.Time.SliderMinValue;
+    }
+
+    var slider_max = 50;
+    if ( MapLayers.Time.SliderMaxValue ) {
+        slider_max = MapLayers.Time.SliderMaxValue;
+    }
+
+    var TimeSlider_state = MapLayers_Hash_Get("time");
+    if ( !TimeSlider_state ) {
+        TimeSlider_state = 0;
+    } else {
+        MapLayers.Time.Time = TimeSlider_state;
+    }
+
+    MapLayers.Time.TimeSlider = new dijit.form.HorizontalSlider({
+        tooltip: "Time",
+        value: TimeSlider_state,
+        minimum: slider_min,
+        maximum: slider_max,
         intermediateChanges: true, //discreteValues
         style: "width:200px;",
-        onChange: MapLayers_Time_Timeslider_change
+        onChange: MapLayers_Time_TimeSlider_change
     }, "timeslider");
 
-    MapLayers.Time.toolbar.addChild(MapLayers.Time.Timeslider)
-    MapLayers.Time.Timeslider.startup();
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.TimeSlider);
+    MapLayers.Time.TimeSlider.startup();
+}
 
+/******************************************************************************
+ * 
+ * @brief callback function for when the time slider changes
+ * 
+ * 
+******************************************************************************/
+
+function MapLayers_Time_TimeSlider_change( newValue ) {
     
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_TimeSlider_change( newValue)", newValue);
+    
+    if (MapLayers.Time.IgnoreSliderChange) return;
+    
+
+    /***** stop if playing *****/
+    
+    if (MapLayers.Time.Timer != null) {
+        MapLayers_Time_Interval_Pause();
+    }
+    
+    /***** move backwards? *****/
+    
+    if (newValue < MapLayers.Time.Time ) {
+    
+        MapLayers.Time.Time = newValue;
+
+        /***** update the hash *****/
+        
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.Time);
+
+        /***** now we can go ahead and update the display *****/
+        
+        MapLayers_Time_Retard( false, true, false );
+    
+    /***** forward move *****/
+    
+    } else {
+
+        MapLayers.Time.Time = newValue;
+
+        /***** update the hash *****/
+        
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.Time);
+
+        /***** now we can go ahead and update the display *****/
+        
+        MapLayers_Time_Advance( false, true, false);
+
+    }
+}
+
+/*******************************************************************************
+ function to create the loop button for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateLoopButton() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateLoopButton()");
+
     /***** loop button *****/
 
-    MapLayers.Time.loopbutton = new dijit.form.ToggleButton({
-            label: "Loop",
-            showLabel: true,
-            checked: false,
-            onChange: function(val){
-                MapLayers.Time.loop = val
-                if (val) {
-                    MapLayers.Time.rockbutton.set("checked", false);
-                }
-            }
-    }, "loopbutton");
+    var loop_state = MapLayers_Hash_Get("loop");
+    if ( !loop_state ) loop_state = false;
 
-    MapLayers.Time.toolbar.addChild(MapLayers.Time.loopbutton)
-    MapLayers.Time.loopbutton.startup();
+    MapLayers.Time.LoopButton = new dijit.form.ToggleButton({
+        label: "Loop",
+        showLabel: true,
+        checked: loop_state,
+        style: "width:7ch;",
+        onChange: function(val){
+            MapLayers.Time.LoopState = val
+
+            /***** update the hash *****/
+
+            MapLayers_Hash_Replace("loop", val);
+
+            if (val) {
+                MapLayers.Time.RockButton.set("checked", false);
+            }
+        }
+    }, "LoopButton");
+
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.LoopButton);
+    MapLayers.Time.LoopButton.startup();
+}
+
+
+/*******************************************************************************
+ function to create the rock button for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateRockButton() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateRockButton()");
 
     /***** rock button *****/
 
-    MapLayers.Time.rockbutton = new dijit.form.ToggleButton({
-            label: "Rock",
-            showLabel: true,
-            checked: false,
-            onChange: function(val){
-                MapLayers.Time.rock = val
-                if (val) {
-                    MapLayers.Time.loopbutton.set("checked", false);
-                }
-            }
-            
-    }, "rockbutton");
+    var rock_state = MapLayers_Hash_Get("rock");
+    if ( !rock_state ) rock_state = false;
 
-    MapLayers.Time.toolbar.addChild(MapLayers.Time.rockbutton)
-    MapLayers.Time.rockbutton.startup();
+    MapLayers.Time.RockButton = new dijit.form.ToggleButton({
+        label: "Rock",
+        showLabel: true,
+        checked: rock_state,
+        style: "width:7ch;",
+        onChange: function(val){
+            MapLayers.Time.RockState = val
+            /***** update the hash *****/
+
+            MapLayers_Hash_Replace("rock", val);
+
+            if (val) {
+                MapLayers.Time.LoopButton.set("checked", false);
+            }
+        }
+            
+    }, "RockButton");
+
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.RockButton);
+    MapLayers.Time.RockButton.startup();
+
+
+}
+
+/*******************************************************************************
+ function to create the increment chooser for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateIncrBox() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateIncrBox()");
 
     /***** increment chooser *****/
     
-    MapLayers.Time.incrStore = new dojo.store.Memory({
+    MapLayers.Time.IncrStore = new dojo.store.Memory({
         data: [
             { name:"Second",     value: 1 * 1 * 1000},
             { name:"5 Seconds",  value: 5 * 1 * 1000},
@@ -218,41 +364,338 @@ function MapLayers_Time_CreateSlider() {
         ]
     });
 
-    MapLayers.Time.Incrbox = new dijit.form.ComboBox({
+//fixme we need to do the hash lookup
+
+    MapLayers.Time.IncrBox = new dijit.form.ComboBox({
         id: "timeincrbox",
-        name: "state",
+        name: "timeincrbox",
         value: "Hour",
-        store: MapLayers.Time.incrStore,
+        store: MapLayers.Time.IncrStore,
         searchAttr: "name",
         labelAttr: "name",
-        onChange: MapLayers_Time_Incrbox_change
+        style: "width:12ch;",
+        onChange: MapLayers_Time_IncrBox_change
     }, "timeincrbox");
 
-    MapLayers.Time.toolbar.addChild(MapLayers.Time.Incrbox)
-    MapLayers.Time.Incrbox.startup();
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.IncrBox);
+    MapLayers.Time.IncrBox.startup();
+}
 
-/*    
-    /***** speed slider ****
+/******************************************************************************
+ * 
+ * @brief callback function for when the time slider changes
+ * 
+ * 
+******************************************************************************/
+
+function MapLayers_Time_IncrBox_change( newValue ) {
     
-    MapLayers.Time.Speedslider = new Ext.slider.SingleSlider({
-            fieldLabel: "Time",
-            width: 200,
-            value: MapLayers.Time.speed,
-            increment: 125,
-            minValue: 250,
-            maxValue: 10000,
-            hideLabel: true,
-            useTips: false
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_IncrBox_change( newValue )", newValue );
+    
+    /***** set the new value *****/
+    var incr = MapLayers.Time.IncrStore.query({name:newValue})[0];
+    
+    MapLayers.Time.Incr = incr.value;
+    
+    /***** update the hash *****/
+        
+    MapLayers_Hash_Replace("incrbox", MapLayers.Time.Incr);
+
+    /***** restart the timer with the new speed *****/
+    
+    MapLayers_Time_Interval_Pause();
+    MapLayers_Time_Interval_Play();
+
+}
+
+/*******************************************************************************
+ function to create the speed slider for the timeslider
+*******************************************************************************/
+
+//fixme do we even want this?
+
+function MapLayers_Time_CreateSpeedSlider() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateSpeedSlider()");
+
+    /***** speed slider *****/
+    
+    var SpeedSlider_state = MapLayers_Hash_Get("speed");
+    if ( !SpeedSlider_state ) {
+        SpeedSlider_state = MapLayers.Time.Speed;
+    } else {
+        MapLayers.Time.Speed = SpeedSlider_state;
+    }
+
+    MapLayers.Time.SpeedSlider = new dijit.form.HorizontalSlider({
+        tooltip: "Speed",
+        value: SpeedSlider_state,
+        minimum: 100,
+        maximum: 10000,
+        intermediateChanges: true, //discreteValues
+        style: "width:100px;",
+        onChange: MapLayers_Time_SpeedSlider_change
+    }, "speedslider");
+
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.SpeedSlider);
+    MapLayers.Time.SpeedSlider.startup();
+
+}
+
+/******************************************************************************
+ * 
+ * @brief callback function for when the speed slider changes
+ * 
+ * 
+******************************************************************************/
+
+function MapLayers_Time_SpeedSlider_change( newValue ) {
+    
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_SpeedSlider_change( newValue )",newValue);
+    
+    /***** set the new value *****/
+
+    MapLayers.Time.Speed = newValue;
+    
+    /***** restart the timer with the new speed *****/
+    
+    MapLayers_Time_Interval_Pause();
+    MapLayers_Time_Interval_Play();
+}
+
+/*******************************************************************************
+ function to create the date box for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateDateBox() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateDateBox()");
+
+    /***** date box *****/
+
+    MapLayers.Time.DateBox = new dijit.form.DateTextBox({
+        id: "DateBox",
+        name: "DateBox",
+        style: "width:12ch;",
+        onChange: MapLayers_Time_DateBox_change
+    }, "DateBox" );
+
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.DateBox);
+    MapLayers.Time.DateBox.startup();
+}
+
+/******************************************************************************
+ * 
+ * @brief callback function for when the date box changes
+ * 
+ * 
+******************************************************************************/
+
+function MapLayers_Time_DateBox_change( newValue ) {
+    
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_DateBox_change( newValue)", newValue);
+    
+    if (MapLayers.Time.IgnoreSliderChange) return;
+    
+
+    /***** stop if playing *****/
+    
+    if (MapLayers.Time.Timer != null) {
+        MapLayers_Time_Interval_Pause();
+    }
+    
+    /***** get the date value *****/
+
+    var mytime = MapLayers.Time.TimeBox.get('value')
+
+    var time = mytime.getTime();
+
+    newValue.setTime(time)
+
+    var ts = moment(newValue).valueOf();
+
+    if (ts > MapLayers.Time.SliderMaxValue) {
+        ts = MapLayers.Time.SliderMaxValue;
+
+        //fixme fix the current time box value
+    }
+
+    if (ts < MapLayers.Time.SliderMinValue) {
+        ts = MapLayers.Time.SliderMinValue;
+
+        //fixme fix the current time box value
+
+    }
+
+    /***** move backwards? *****/
+    
+    if (ts < MapLayers.Time.Time ) {
+    
+        MapLayers.Time.Time = ts;
+
+        /***** update the hash *****/
+        
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.Time);
+
+        /***** now we can go ahead and update the display *****/
+        
+        MapLayers_Time_Retard( false, false, true );
+    
+    /***** forward move *****/
+    
+    } else {
+
+        MapLayers.Time.Time = ts;
+
+        /***** update the hash *****/
+        
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.Time);
+
+        /***** now we can go ahead and update the display *****/
+        
+        MapLayers_Time_Advance( false, false, true );
+
+    }
+}
+
+
+
+/*******************************************************************************
+ function to create the time box for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateTimeBox() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateTimeBox()");
+
+    /***** time box *****/
+
+    MapLayers.Time.TimeBox = new dijit.form.TimeTextBox({
+        ID: "TimeBox",
+        name: "TimeBox",
+        style: "width:11ch;",
+        onChange: MapLayers_Time_TimeBox_change,
+        constraints: {
+            timePattern: 'HH:mm:ss'
+        }
     });
-    
-    MapLayers.Time.Speedslider.addListener('change', MapLayers_Time_Speedslider_change)
-    */
 
-    MapLayers_Time_setVisible(false);
+    MapLayers.Time.Toolbar.addChild(MapLayers.Time.TimeBox);
+    MapLayers.Time.TimeBox.startup();
+
+
+}
+
+/******************************************************************************
+ * 
+ * @brief callback function for when the time box changes
+ * 
+ * 
+******************************************************************************/
+
+function MapLayers_Time_TimeBox_change( newValue ) {
+    
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_TimeBox_change( newValue)", newValue);
+    
+    if (MapLayers.Time.IgnoreSliderChange) return;
+    
+
+    /***** stop if playing *****/
+    
+    if (MapLayers.Time.Timer != null) {
+        MapLayers_Time_Interval_Pause();
+    }
+    
+
+    /***** get the date value *****/
+
+    var mydate = MapLayers.Time.DateBox.get('value')
+
+    var day = mydate.getUTCDate();
+    var month = mydate.getUTCMonth();
+    var year = mydate.getUTCFullYear();
+
+    newValue.setUTCFullYear(year, month, day);
+
+    var ts = moment(newValue).valueOf();
+
+    if (ts > MapLayers.Time.SliderMaxValue) {
+        ts = MapLayers.Time.SliderMaxValue;
+    }
+    if (ts < MapLayers.Time.SliderMinValue) {
+        ts = MapLayers.Time.SliderMinValue;
+    }
+
+
+    /***** move backwards? *****/
+    
+    if (ts < MapLayers.Time.Time ) {
+    
+        MapLayers.Time.Time = ts;
+
+        /***** update the hash *****/
+        
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.Time);
+
+        /***** now we can go ahead and update the display *****/
+        
+        MapLayers_Time_Retard( false, false, true );
+    
+    /***** forward move *****/
+    
+    } else {
+
+        MapLayers.Time.Time = ts;
+
+        /***** update the hash *****/
+        
+        MapLayers_Hash_Replace("timeslider", MapLayers.Time.Time);
+
+        /***** now we can go ahead and update the display *****/
+        
+        MapLayers_Time_Advance( false, false, true );
+
+    }
+}
+
+/*******************************************************************************
+ function to create the toolbar for the timeslider
+*******************************************************************************/
+
+function MapLayers_Time_CreateSlider() {
+
+    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateSlider()");
 
     
-    MapLayers.Time.toolbar.placeAt("TimebarPane");
-    MapLayers.Time.toolbar.startup();
+    MapLayers.Time.Toolbar = new dijit.Toolbar({}, "timebar");
+
+    MapLayers_Time_CreatePlayButton();
+    MapLayers_Time_CreateForwardButton();
+    MapLayers_Time_CreateTimeSlider();
+    MapLayers_Time_CreateLoopButton();
+    MapLayers_Time_CreateRockButton();
+    MapLayers_Time_CreateIncrBox();
+    MapLayers_Time_CreateSpeedSlider();
+    MapLayers_Time_CreateDateBox();
+    MapLayers_Time_CreateTimeBox();
+
+    
+    if ( MapLayers.Time.SliderMinValue ) {
+        MapLayers_Time_TimeBox_setends ( moment(MapLayers.Time.SliderMinValue),
+                                         moment(MapLayers.Time.SliderMaxValue) );
+        MapLayers_Time_UpdateToobar(MapLayers.Time.Time, true, false);
+    
+    }
+    
+    if ( MapLayers.Time.SliderMinValue ) {
+        MapLayers_Time_setVisible(true);
+    } else {
+        MapLayers_Time_setVisible(false);
+    }
+
+
+    MapLayers.Time.Toolbar.placeAt("TimebarPane");
+    MapLayers.Time.Toolbar.startup();
 
 }
 
@@ -269,34 +712,17 @@ function MapLayers_Time_setVisible(bool) {
 
     //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_setVisible(bool)", bool);
     
-    if (bool) { 
-        MapLayers.Time.hidetoggler.show();
-    } else {
-        MapLayers.Time.hidetoggler.hide();
+    if ( MapLayers.Time.Toolbar ) {
+        if ( bool ) { 
+            MapLayers.Time.hidetoggler.show();
+        } else {
+            MapLayers.Time.hidetoggler.hide();
+        }
     }
-
 }
 
-/******************************************************************************
- * 
- * @brief callback function for when the speed slider changes
- * 
- * 
-******************************************************************************/
 
-function MapLayers_Time_Speedslider_change( newValueb ) {
-    
-    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Speedslider_change( newValue )",newValue);
-    
-    /***** set the new value *****/
 
-    MapLayers.Time.speed = newValue;
-    
-    /***** restart the timer with the new speed *****/
-    
-    MapLayers_Time_Interval_Pause();
-    MapLayers_Time_Interval_Play();
-}
 
 /******************************************************************************
  * 
@@ -311,7 +737,7 @@ function MapLayers_Time_expire_remaining() {
     
     var node;
 
-    if (MapLayers.Time.backwards) {
+    if (MapLayers.Time.BackwardsState) {
     
         for (node = MapLayers.Time.BegCurrentNode ; node ; node = node.prev) {
             node.data.treenode.Layer_off();
@@ -330,7 +756,94 @@ function MapLayers_Time_expire_remaining() {
 
 }
 
+function MapLayers_Time_UpdateToobar(ts, FromSlider, FromDateTimeBox) {
 
+    if(!FromSlider) {
+        MapLayers.Time.TimeSlider.set("value", ts, false);
+    }
+
+    if (!FromDateTimeBox) {
+        var date = moment(ts).toDate();
+
+        /***** temp remove the constraints becase its slow *****/
+
+        if ( MapLayers.Time.DateBox.constraints.min != undefined ) {
+            var date_min = MapLayers.Time.DateBox.constraints.min;
+            delete MapLayers.Time.DateBox.constraints.min;
+        }
+        if ( MapLayers.Time.DateBox.constraints.max != undefined ) {
+            var date_max = MapLayers.Time.DateBox.constraints.max;
+            delete MapLayers.Time.DateBox.constraints.max;
+        }
+
+        MapLayers.Time.DateBox.set("value", date, false);
+
+        if ( date_min != undefined ) {
+            MapLayers.Time.DateBox.constraints.min = date_min;
+        }
+        if ( date_max != undefined ) {
+            MapLayers.Time.DateBox.constraints.max = date_max;
+        }
+
+
+        if ( MapLayers.Time.TimeBox.constraints.min != undefined ) {
+            var time_min = MapLayers.Time.TimeBox.constraints.min;
+            delete MapLayers.Time.TimeBox.constraints.min;
+        }
+        if ( MapLayers.Time.TimeBox.constraints.max != undefined ) {
+            var time_max = MapLayers.Time.TimeBox.constraints.max;
+            delete MapLayers.Time.TimeBox.constraints.max;
+        }
+
+        MapLayers.Time.TimeBox.set("value", date, false);
+
+        if ( time_min != undefined ) {
+            MapLayers.Time.DateBox.constraints.min = time_min;
+        }
+        if ( time_max != undefined ) {
+            MapLayers.Time.DateBox.constraints.max = time_max;
+        }
+
+    }
+
+}
+
+function MapLayers_Time_TimeBox_setends ( beg_date, end_date ) {
+   return; 
+    if ( moment(MapLayers.Time.Time).isSame( beg_date, "year") 
+         && moment(MapLayers.Time.Time).isSame( beg_date, "month") 
+         && moment(MapLayers.Time.Time).isSame( beg_date, "day")
+       ) {
+         var beg_time = beg_date.toDate();
+         MapLayers.Time.TimeBox.constraints.min = beg_time;
+
+         if ( MapLayers.Time.TimeBox.constraints.max ) {
+            delete MapLayers.Time.TimeBox.constraints.max;
+         }
+         
+    } else if ( moment(MapLayers.Time.Time).isSame( end_date, "year") 
+                && moment(MapLayers.Time.Time).isSame( end_date, "month") 
+                && moment(MapLayers.Time.Time).isSame( end_date, "day")
+       ) {
+         if ( MapLayers.Time.TimeBox.constraints.min ) {
+            delete MapLayers.Time.TimeBox.constraints.min;
+         }
+
+         var end_time = end_date.toDate();
+         MapLayers.Time.TimeBox.constraints.max = end_time;
+
+    } else {
+        
+         if ( MapLayers.Time.TimeBox.constraints.min ) {
+            delete MapLayers.Time.TimeBox.constraints.min;
+         }
+
+         if ( MapLayers.Time.TimeBox.constraints.max ) {
+            delete MapLayers.Time.TimeBox.constraints.max;
+         }
+    }
+
+}
 
 /******************************************************************************
  * 
@@ -338,13 +851,13 @@ function MapLayers_Time_expire_remaining() {
  * 
 ******************************************************************************/
 
-function MapLayers_Time_Advance( fromaddnode ) {
+function MapLayers_Time_Advance( fromaddnode, FromSlider, FromDateTimeBox ) {
 
     //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Advance()");
 
     var last_timespan;
     var stop = false;
-    var timee = MapLayers.Time.time;
+    var timee = MapLayers.Time.Time;
 
     var End = MapLayers.Time.EndCurrentNode;
     var Beg = MapLayers.Time.BegCurrentNode;
@@ -360,16 +873,16 @@ function MapLayers_Time_Advance( fromaddnode ) {
                )
           ) {
 
+    
         var last_off = null;
 
         /***** timespans *****/
-        console.log(" End && timee >= End.data.timestamp  ; ", timee >= End.data.timestamp);
+
         if ( End && timee >= End.data.timestamp ) {
 
             /***** if there is layers left go ahead and advance *****/
 
             if ( End.next ) {
-                console.log("Layers left turning off ", End.data.treenode.id);
                 End.data.treenode.Layer_off();
                 last_off = End.data.treenode.id;
 
@@ -383,7 +896,6 @@ function MapLayers_Time_Advance( fromaddnode ) {
                         && MapLayers.Time.TSList.tail.data.timestamp
                            > End.data.timestamp
                       ) {
-                console.log("no layers left but but still timpstamp turning off ", End.data.treenode.id);
                 End.data.treenode.Layer_off();
                 last_off = End.data.treenode.id;
 
@@ -391,22 +903,21 @@ function MapLayers_Time_Advance( fromaddnode ) {
             /***** so lets hold this one on and stop the loop *****/
 
             } else {
-                console.log("not timpstamp layers left either");
                 stop = true;
             }
                 
         }
 
-        console.log(" timee >= Beg.data.timestamp  ; ", timee >= Beg.data.timestamp);
-        
         if ( Beg && timee >= Beg.data.timestamp ) {
             
             /***** if there is layers left go ahead and advance *****/
 
             if (fromaddnode || (last_off && last_off != Beg.data.treenode.id) ) {
                 Beg.data.treenode.Layer_on();
+                MapLayers_Time_UpdateToobar( Beg.data.timestamp,
+                                             FromSlider,
+                                             FromDateTimeBox);
                 last_timespan = Beg.data.timestamp;
-                console.log("turning on ", Beg.data.treenode.id);
             }
 
             if ( Beg.next ) {            
@@ -444,6 +955,9 @@ function MapLayers_Time_Advance( fromaddnode ) {
                 MapLayers.Time.TSCurrentNode = TS.next;
                 TS = MapLayers.Time.TSCurrentNode;
                 TS.data.treenode.Layer_on();
+                MapLayers_Time_UpdateToobar( TS.data.timestamp,
+                                             FromSlider,
+                                             FromDateTimeBox);
 
             /***** no layers left but but still timespan *****/
             /***** layers, just turn our layer off       *****/
@@ -463,6 +977,9 @@ function MapLayers_Time_Advance( fromaddnode ) {
         }
     }
 
+    MapLayers_Time_TimeBox_setends ( moment(MapLayers.Time.SliderMinValue),
+                                     moment(MapLayers.Time.SliderMaxValue) );
+
 }
 
 /******************************************************************************
@@ -472,13 +989,13 @@ function MapLayers_Time_Advance( fromaddnode ) {
  * 
 ******************************************************************************/
 
-function MapLayers_Time_Retard( fromaddnode ) {
+function MapLayers_Time_Retard( fromaddnode, FromSlider, FromDateTimeBox) {
 
     //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Retard()");
 
     var last_timespan;
     var stop = false;
-    var timee = MapLayers.Time.time;
+    var timee = MapLayers.Time.Time;
 
     var End = MapLayers.Time.EndCurrentNode;
     var Beg = MapLayers.Time.BegCurrentNode;
@@ -534,6 +1051,9 @@ function MapLayers_Time_Retard( fromaddnode ) {
 
             if (fromaddnode || (last_off && last_off != End.data.treenode.id) ) {
                 End.data.treenode.Layer_on();
+                MapLayers_Time_UpdateToobar( End.data.timestamp,
+                                             FromSlider,
+                                             FromDateTimeBox);
                 last_timespan = End.data.timestamp;
             }
 
@@ -572,6 +1092,9 @@ function MapLayers_Time_Retard( fromaddnode ) {
                 MapLayers.Time.TSCurrentNode = TS.prev;
                 TS = MapLayers.Time.TSCurrentNode;
                 TS.data.treenode.Layer_on();
+                MapLayers_Time_UpdateToobar( TS.data.timestamp,
+                                             FromSlider,
+                                             FromDateTimeBox);
 
             /***** no layers left but but still timespan *****/
             /***** layers, just turn our layer off       *****/
@@ -591,82 +1114,16 @@ function MapLayers_Time_Retard( fromaddnode ) {
         }
     }
 
-}
-
-/******************************************************************************
- * 
- * @brief callback function for when the time slider changes
- * 
- * 
-******************************************************************************/
-
-function MapLayers_Time_Timeslider_change( newValue ) {
-    
-    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Timeslider_change( newValue)", newValue);
-    
-    if (MapLayers.Time.IgnoreSliderChange) return;
-    
-
-    /***** stop if playing *****/
-    
-    if (MapLayers.Time.timer != null) {
-        MapLayers_Time_Interval_Pause();
-    }
-    
-    /***** move backwards? *****/
-    
-    if (newValue < MapLayers.Time.time ) {
-    
-        MapLayers.Time.time = newValue;
-
-        /***** update the hash *****/
-        
-        MapLayers_Hash_Replace("timeslider", MapLayers.Time.time);
-
-        /***** now we can go ahead and update the display *****/
-        
-        MapLayers_Time_Retard();
-    
-    /***** forward move *****/
-    
-    } else {
-
-        MapLayers.Time.time = newValue;
-
-        /***** update the hash *****/
-        
-        MapLayers_Hash_Replace("timeslider", MapLayers.Time.time);
-
-        /***** now we can go ahead and update the display *****/
-        
-        MapLayers_Time_Advance();
-
-    }
-}
-
-
-/******************************************************************************
- * 
- * @brief callback function for when the time slider changes
- * 
- * 
-******************************************************************************/
-
-function MapLayers_Time_Incrbox_change( newValue ) {
-    
-    //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Incrbox_change( newValue )", newValue );
-    
-    /***** set the new value *****/
-    var incr = MapLayers.Time.incrStore.query({name:newValue})[0];
-    
-    MapLayers.Time.incr = incr.value;
-    
-    /***** restart the timer with the new speed *****/
-    
-    MapLayers_Time_Interval_Pause();
-    MapLayers_Time_Interval_Play();
+    MapLayers_Time_TimeBox_setends ( moment(MapLayers.Time.SliderMinValue),
+                                     moment(MapLayers.Time.SliderMaxValue) );
 
 }
+
+
+
+
+
+
 
 /******************************************************************************
  * 
@@ -685,23 +1142,23 @@ function MapLayers_Time_Interval_Update() {
     var looped = false;
     var node = null;
    
-    var incr = MapLayers.Time.incr;
+    var incr = MapLayers.Time.Incr;
     
-    var lastvalue = MapLayers.Time.time;
+    var lastvalue = MapLayers.Time.Time;
 
 
     /***** are we going backwards? *****/
 
-    if (MapLayers.Time.backwards) {
-        MapLayers.Time.time = lastvalue - incr;
+    if (MapLayers.Time.BackwardsState) {
+        MapLayers.Time.Time = lastvalue - incr;
 
         /***** past the begining? *****/
 
-        if (MapLayers.Time.time <= MapLayers.Time.SliderMinValue ) {
+        if (MapLayers.Time.Time <= MapLayers.Time.SliderMinValue ) {
         
             /***** is the loop or rock button pressed *****/
             
-            if ( MapLayers.Time.loop && ! MapLayers.Time.rock ) {
+            if ( MapLayers.Time.LoopState && ! MapLayers.Time.RockState ) {
                 MapLayers_Time_Interval_Pause();
                 stopped = true
             }
@@ -709,10 +1166,10 @@ function MapLayers_Time_Interval_Update() {
             /***** rock? *****/
                 //fixme if were rocking should we still wait a cycle to incr?
 
-            if (MapLayers.Time.rock) {
-                MapLayers.Time.time = MapLayers.Time.SliderMinValue;
-                MapLayers.Time.backwards = false;
-                MapLayers.Time.forwardbutton.set("checked", true);
+            if (MapLayers.Time.RockState) {
+                MapLayers.Time.Time = MapLayers.Time.SliderMinValue;
+                MapLayers.Time.BackwardsState = false;
+                MapLayers.Time.ForwardButton.set("checked", true);
 
                 MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
                 MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
@@ -721,7 +1178,7 @@ function MapLayers_Time_Interval_Update() {
             /***** loop *****/
 
             } else {
-                MapLayers.Time.time = MapLayers.Time.SliderMaxValue;
+                MapLayers.Time.Time = MapLayers.Time.SliderMaxValue;
                 MapLayers_Time_expire_remaining();
     
                 MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.tail;
@@ -734,15 +1191,15 @@ function MapLayers_Time_Interval_Update() {
     /***** were going forwards *****/
 
     } else {
-        MapLayers.Time.time = lastvalue + incr;
+        MapLayers.Time.Time = lastvalue + incr;
         
         /***** past the end time? *****/
 
-        if (MapLayers.Time.time >= MapLayers.Time.SliderMaxValue ) {
+        if (MapLayers.Time.Time >= MapLayers.Time.SliderMaxValue ) {
             
             /***** is the loop or rock button pressed *****/
             
-            if ( ! MapLayers.Time.loop && ! MapLayers.Time.rock ) {
+            if ( ! MapLayers.Time.LoopState && ! MapLayers.Time.RockState ) {
                 MapLayers_Time_Interval_Pause();
                 stopped = true
             }
@@ -750,10 +1207,10 @@ function MapLayers_Time_Interval_Update() {
             /***** rock? *****/
                 //fixme if were rocking should we still wait a cyckle to incr?
 
-            if (MapLayers.Time.rock) {
-                MapLayers.Time.time = MapLayers.Time.SliderMaxValue;
-                MapLayers.Time.backwards = true;
-                MapLayers.Time.forwardbutton.set("checked", false);
+            if (MapLayers.Time.RockState) {
+                MapLayers.Time.Time = MapLayers.Time.SliderMaxValue;
+                MapLayers.Time.BackwardsState = true;
+                MapLayers.Time.ForwardButton.set("checked", false);
 
                 MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.tail;
                 MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.tail;
@@ -762,32 +1219,34 @@ function MapLayers_Time_Interval_Update() {
             /***** loop *****/
 
             } else {
-                MapLayers.Time.time = MapLayers.Time.SliderMinValue;
+                MapLayers.Time.Time = MapLayers.Time.SliderMinValue;
                 MapLayers_Time_expire_remaining();
         
                 MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
                 MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
                 MapLayers.Time.TSCurrentNode = MapLayers.Time.TSList.head;
-                MapLayers_Time_Advance(true);
+                // is this suposed to be here i forgot why
+                MapLayers_Time_Advance(true, false, false);
             }
         }
     }
 
     /***** update the time slider *****/
 
-    MapLayers.Time.Timeslider.set("value", MapLayers.Time.time, false);
-    //MapLayers.Time.Timeslider._lastValueReported=null;
+    //MapLayers.Time.TimeSlider.set("value", MapLayers.Time.Time, false);
+
+    //MapLayers.Time.TimeSlider._lastValueReported=null;
 
     /***** update the hash *****/
     
-    MapLayers_Hash_Replace("timeslider", MapLayers.Time.time);
+    MapLayers_Hash_Replace("timeslider", MapLayers.Time.Time);
     
     /***** update the display *****/
     
-    if (MapLayers.Time.backwards) {
-        MapLayers_Time_Retard();
+    if (MapLayers.Time.BackwardsState) {
+        MapLayers_Time_Retard(false, false, false);
     } else {
-        MapLayers_Time_Advance();
+        MapLayers_Time_Advance(false, false, false);
     }
     
 }
@@ -802,17 +1261,17 @@ function MapLayers_Time_Interval_Play() {
     
     //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Interval_Play()");
     
-    MapLayers.Time.firstplay = true;
+    MapLayers.Time.FirstPlayState = true;
     
-    if (MapLayers.Time.timer == null) {
+    if (MapLayers.Time.Timer == null) {
         
-        MapLayers.Time.timer = setInterval( MapLayers_Time_Interval_Update ,
-                                            MapLayers.Time.speed);
+        MapLayers.Time.Timer = setInterval( MapLayers_Time_Interval_Update ,
+                                            MapLayers.Time.Speed);
                                            
-        MapLayers.Time.playbutton.set('label', 'Pause');
-        MapLayers.Time.Timeslider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
-        MapLayers.Time.playbutton.set( 'onClick', MapLayers_Time_Interval_Pause);
-        MapLayers_Hash_Replace("play", true);
+        MapLayers.Time.PlayButton.set('label', 'Pause');
+        MapLayers.Time.TimeSlider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
+        MapLayers.Time.PlayButton.set( 'onClick', MapLayers_Time_Interval_Pause);
+        //MapLayers_Hash_Replace("play", true);
     }
     
 }
@@ -827,13 +1286,13 @@ function MapLayers_Time_Interval_Pause() {
     
     //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_Interval_Pause()");
     
-    if (MapLayers.Time.timer != null) {
-        clearInterval(MapLayers.Time.timer);
-        MapLayers.Time.timer = null;
+    if (MapLayers.Time.Timer != null) {
+        clearInterval(MapLayers.Time.Timer);
+        MapLayers.Time.Timer = null;
         
-        MapLayers.Time.playbutton.set('label', ' Play'); 
-        MapLayers.Time.Timeslider.set("intermediateChanges", true); // this helps prevent the onchange event from fireing
-        MapLayers.Time.playbutton.set( 'onClick', MapLayers_Time_Interval_Play);
+        MapLayers.Time.PlayButton.set('label', ' Play'); 
+        MapLayers.Time.TimeSlider.set("intermediateChanges", true); // this helps prevent the onchange event from fireing
+        MapLayers.Time.PlayButton.set( 'onClick', MapLayers_Time_Interval_Play);
         MapLayers_Hash_Replace("play", "");
     }
     
@@ -850,11 +1309,30 @@ function MapLayers_Time_Interval_Pause() {
 ******************************************************************************/
 
 
+function MapLayers_Time_setends_sub(begin, end) {
+
+    if (MapLayers.Time.Toolbar) {
+        MapLayers.Time.TimeSlider.set( 'minimum', begin, false );
+        MapLayers.Time.TimeSlider._lastValueReported=null;
+        MapLayers.Time.TimeSlider.set( 'maximum', end, false );
+        MapLayers.Time.TimeSlider._lastValueReported=null;
+
+        var beg_date = moment(begin);
+        MapLayers.Time.DateBox.constraints.min = beg_date.toDate() ;
+
+        var end_date = moment(end);
+        MapLayers.Time.DateBox.constraints.max = end_date.toDate() ;
+
+        MapLayers_Time_TimeBox_setends ( beg_date, end_date );
+    }
+}
+
 function MapLayers_Time_setends(begin, end) {
         
     //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_setends(begin, end)", begin, end);
     
     MapLayers.Time.IgnoreSliderChange = true;
+    
     
     /***** update the time slider *****/
     
@@ -862,11 +1340,16 @@ function MapLayers_Time_setends(begin, end) {
         MapLayers.Time.SliderMinValue = begin;
         MapLayers.Time.SliderMaxValue = end;
     
-        MapLayers.Time.Timeslider.set( 'minimum', MapLayers.Time.SliderMinValue, false );
-        MapLayers.Time.Timeslider._lastValueReported=null;
-        MapLayers.Time.Timeslider.set( 'maximum', MapLayers.Time.SliderMaxValue, false );
-        MapLayers.Time.Timeslider._lastValueReported=null;
-    
+        if (!MapLayers.Time.FirstPlayState) {
+        
+        /***** update the time slider value *****/
+        
+            MapLayers.Time.Time = MapLayers.Time.SliderMinValue;
+        }
+
+        MapLayers_Time_setends_sub( MapLayers.Time.SliderMinValue,
+                                    MapLayers.Time.SliderMaxValue );
+
         /***** make the ui visible *****/
         
         MapLayers_Time_setVisible(true);
@@ -880,25 +1363,30 @@ function MapLayers_Time_setends(begin, end) {
         MapLayers.Time.SliderMaxValue = MAX ( end,
                                              MapLayers.Time.SliderMaxValue
                                            );
-        MapLayers.Time.Timeslider.set( 'minimum', MapLayers.Time.SliderMinValue, false );
-        MapLayers.Time.Timeslider._lastValueReported=null;
-        MapLayers.Time.Timeslider.set( 'maximum', MapLayers.Time.SliderMaxValue, false );
-        MapLayers.Time.Timeslider._lastValueReported=null;
-    
+        MapLayers_Time_setends_sub( MapLayers.Time.SliderMinValue,
+                                    MapLayers.Time.SliderMaxValue );
+
     }
     
-    if (!MapLayers.Time.firstplay) {
+
+
+
+
+    if (!MapLayers.Time.FirstPlayState) {
         
         /***** update the time slider value *****/
         
-        MapLayers.Time.time = MapLayers.Time.SliderMinValue
-        last= MapLayers.Time.Timeslider.get("intermediateChanges")
+        MapLayers.Time.Time = MapLayers.Time.SliderMinValue;
+        last= MapLayers.Time.TimeSlider.get("intermediateChanges")
 
 
-        MapLayers.Time.Timeslider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
-        MapLayers.Time.Timeslider.set( "value", MapLayers.Time.time, false );
-        MapLayers.Time.Timeslider.set("intermediateChanges", last); // this helps prevent the onchange event from fireing
-        MapLayers.Time.Timeslider._lastValueReported=null;
+        MapLayers.Time.TimeSlider.set("intermediateChanges", false); // this helps prevent the onchange event from fireing
+        MapLayers_Time_UpdateToobar( MapLayers.Time.Time,
+                                     false,
+                                     false);
+
+        MapLayers.Time.TimeSlider.set("intermediateChanges", last); // this helps prevent the onchange event from fireing
+        MapLayers.Time.TimeSlider._lastValueReported=null;
         MapLayers.Time.TSCurrentNode = MapLayers.Time.TSList.head;
         MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
         MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
@@ -1025,14 +1513,14 @@ function MapLayers_Time_addnode(treenode) {
     /***** this timer should only expire after all the nodes are added     *****/
 
 
-    if (MapLayers.Time.updatetimer) {
-        window.clearInterval(MapLayers.Time.updatetimer);
+    if (MapLayers.Time.UpdateTimer) {
+        window.clearInterval(MapLayers.Time.UpdateTimer);
     }
-    MapLayers.Time.updatetimer = setInterval(
+    MapLayers.Time.UpdateTimer = setInterval(
         function () {
-            window.clearInterval(MapLayers.Time.updatetimer);
-            MapLayers.Time.updatetimer = null;
-            MapLayers_Time_Advance( true);
+            window.clearInterval(MapLayers.Time.UpdateTimer);
+            MapLayers.Time.UpdateTimer = null;
+            MapLayers_Time_Advance( true, false, false);
         },
         5000
     );
@@ -1076,7 +1564,7 @@ function MapLayers_Time_removenode(treenode) {
 
     /***** stop if playing *****/
     
-    if (MapLayers.Time.timer != null) {
+    if (MapLayers.Time.Timer != null) {
         MapLayers_Time_Interval_Pause();
     }
 

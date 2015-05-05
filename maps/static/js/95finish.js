@@ -31,12 +31,13 @@ dojo.require("dojo");
 
 function finishup() {
 
+
     MapLayers_Setcenter();
     MapLayers_Draw_init();
 
-    MapLayers_toolbar_Create();
-    MapLayers_Time_CreateSlider();
-    dijit.registry.byId("borderContainer").resize();
+
+
+
 
     /***** get layer list from the url *****/
     
@@ -51,6 +52,9 @@ function finishup() {
         MapLayers_Tree_Find_and_Open_Layers( layers, false);
     }
 
+    MapLayers_toolbar_Create();
+    MapLayers_Time_CreateSlider();
+    dijit.registry.byId("borderContainer").resize();
 
 /******************************************************************************
  add openlayers move event
