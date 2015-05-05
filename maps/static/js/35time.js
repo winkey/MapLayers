@@ -404,8 +404,10 @@ function MapLayers_Time_IncrBox_change( newValue ) {
 
     /***** restart the timer with the new speed *****/
     
-    MapLayers_Time_Interval_Pause();
-    MapLayers_Time_Interval_Play();
+    if ( MapLayers.Time.Timer ) {
+        MapLayers_Time_Interval_Pause();
+        MapLayers_Time_Interval_Play();
+    }
 
 }
 
