@@ -39,6 +39,7 @@ dojo.require("dijit/form/ComboBox");
 dojo.require("dojo/fx/Toggler");
 dojo.require("dijit/form/DateTextBox");
 dojo.require("dijit/form/TimeTextBox");
+dojo.require("dijit/Tooltip");
 
 dojo.ready(function() {
 
@@ -173,7 +174,7 @@ function MapLayers_Time_CreateTimeSlider() {
     }
 
     MapLayers.Time.TimeSlider = new dijit.form.HorizontalSlider({
-        tooltip: "Time",
+        id: "TimeSlider",
         value: TimeSlider_state,
         minimum: slider_min,
         maximum: slider_max,
@@ -181,6 +182,11 @@ function MapLayers_Time_CreateTimeSlider() {
         style: "width:200px;",
         onChange: MapLayers_Time_TimeSlider_change
     }, "timeslider");
+
+    MapLayers.Time.TimeSlider_tooltip = new dijit.Tooltip({
+        connectId: ["TimeSlider"],
+        label: "Time Slider"
+    });
 
     MapLayers.Time.Toolbar.addChild(MapLayers.Time.TimeSlider);
     MapLayers.Time.TimeSlider.startup();
@@ -415,8 +421,6 @@ function MapLayers_Time_IncrBox_change( newValue ) {
  function to create the speed slider for the timeslider
 *******************************************************************************/
 
-//fixme do we even want this?
-
 function MapLayers_Time_CreateSpeedSlider() {
 
     //if (MapLayers.Settings.debug)  console.log("MapLayers_Time_CreateSpeedSlider()");
@@ -431,7 +435,7 @@ function MapLayers_Time_CreateSpeedSlider() {
     }
 
     MapLayers.Time.SpeedSlider = new dijit.form.HorizontalSlider({
-        tooltip: "Speed",
+        id: "SpeedSlider",
         value: SpeedSlider_state,
         minimum: 100,
         maximum: 10000,
@@ -439,6 +443,11 @@ function MapLayers_Time_CreateSpeedSlider() {
         style: "width:100px;",
         onChange: MapLayers_Time_SpeedSlider_change
     }, "speedslider");
+
+    MapLayers.Time.TimeSlider_tooltip = new dijit.Tooltip({
+        connectId: ["SpeedSlider"],
+        label: "Speed Slider"
+    });
 
     MapLayers.Time.Toolbar.addChild(MapLayers.Time.SpeedSlider);
     MapLayers.Time.SpeedSlider.startup();
@@ -462,8 +471,11 @@ function MapLayers_Time_SpeedSlider_change( newValue ) {
     
     /***** restart the timer with the new speed *****/
     
-    MapLayers_Time_Interval_Pause();
-    MapLayers_Time_Interval_Play();
+    if ( MapLayers.Time.Timer ) {
+        MapLayers_Time_Interval_Pause();
+        MapLayers_Time_Interval_Play();
+    }
+
 }
 
 /*******************************************************************************
