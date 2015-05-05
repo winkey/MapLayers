@@ -364,12 +364,13 @@ function MapLayers_Time_CreateIncrBox() {
         ]
     });
 
-//fixme we need to do the hash lookup
+    var IncrBox_state = MapLayers_Hash_Get("incr");
+    if ( !IncrBox_state ) IncrBox_state = "Hour";
 
     MapLayers.Time.IncrBox = new dijit.form.ComboBox({
         id: "timeincrbox",
         name: "timeincrbox",
-        value: "Hour",
+        value: IncrBox_state,
         store: MapLayers.Time.IncrStore,
         searchAttr: "name",
         labelAttr: "name",
@@ -399,7 +400,7 @@ function MapLayers_Time_IncrBox_change( newValue ) {
     
     /***** update the hash *****/
         
-    MapLayers_Hash_Replace("incrbox", MapLayers.Time.Incr);
+    MapLayers_Hash_Replace("incr", newValue);
 
     /***** restart the timer with the new speed *****/
     
