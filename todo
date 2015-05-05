@@ -98,10 +98,11 @@ time.js
     make the view in google earth button do timestamps/timezones
 
     add center and zoom when a layer becomes "active"
-    split timeslider
+    split timeslider http://dojotoolkit.org/reference-guide/1.10/dojox/form/RangeSlider.html
 
     tooltips
     https://bitbucket.org/sage2/sage2/wiki/SAGE2%20Application%20API
+
 
 [12:04:28] <HyperJohn> i was thinking a fade out timer on the close loop
 [12:05:00] <winkey> close?
