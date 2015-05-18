@@ -669,25 +669,6 @@ function MapLayers_Store_Create( RootId, parse_callback, obstore_callback ) {
 
 
     /***** create the model *****/
-/*//fixme we need to use our own amd style
-    MapLayers.Store.Model = new dijit.tree.ObjectStoreModel({
-        store: MapLayers.Store.Observable,
-        //fixme do we need this with getroot?         
-        //query: { id: rootid },
-        mayHaveChildren: function(item) {
-            if (item.nodetype == 'Link' ) {
-                item = MapLayers.Store.Memory.get( item.target );
-            }
-            return  !item.leaf;
-        },
-
-        getRoot: function(onItem){
-            
-            this.store.get(RootId).then(onItem);
-        }
-    
-    });
-*/
 
     MapLayers.Store.Model = new MapLayers.Store._ObjectStoreModel({
         store: MapLayers.Store.Observable,
