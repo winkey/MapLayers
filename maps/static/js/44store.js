@@ -609,7 +609,7 @@ require( [ 'dojo/_base/declare', "dojo/when", "dijit/tree/ObjectStoreModel"],
 
 		getChildren: function(parentItem, onComplete, onError) {
 
-            this.log("getChildren( parentItem, onComplete, onError )", parentItem);
+            this.log("getChildren( parentItem, onComplete, onError parentItem.ChildPromise)", parentItem, parentItem.ChildPromise);
             
             var originalResults = this.inherited(arguments, [ 
                 parentItem,
