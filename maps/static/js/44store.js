@@ -565,7 +565,8 @@ require( [ 'dojo/_base/declare', "dojo/_base/lang", "dojo/store/Observable"],
     ObjectStoreModel object
 *******************************************************************************/
 
-require( [ 'dojo/_base/declare', "dojo/when", "dijit/tree/ObjectStoreModel"],
+require( [ 'dojo/_base/declare', "dojo/when", "dojo/promise/all",
+           "dijit/tree/ObjectStoreModel"],
            function(declare, when, ObjectStoreModel ) {
 
     MapLayers.Store._ObjectStoreModel = declare(ObjectStoreModel, {
