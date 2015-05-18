@@ -565,8 +565,8 @@ require( [ 'dojo/_base/declare', "dojo/_base/lang", "dojo/store/Observable"],
     ObjectStoreModel object
 *******************************************************************************/
 
-require( [ 'dojo/_base/declare', "dijit/tree/ObjectStoreModel"],
-           function(declare, ObjectStoreModel ) {
+require( [ 'dojo/_base/declare', "dojo/when", "dijit/tree/ObjectStoreModel"],
+           function(declare, when, ObjectStoreModel ) {
 
     MapLayers.Store._ObjectStoreModel = declare(ObjectStoreModel, {
 
@@ -574,7 +574,7 @@ require( [ 'dojo/_base/declare', "dijit/tree/ObjectStoreModel"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                //console.log("MapLayers.Store._ObjectStoreModel. : ", this, " : ", arguments);
+                console.log("MapLayers.Store._ObjectStoreModel. : ", this, " : ", arguments);
             }
         },
 
@@ -605,7 +605,29 @@ require( [ 'dojo/_base/declare', "dijit/tree/ObjectStoreModel"],
             
             this.store.get(MapLayers.Store.Model.RootId).then(onItem);
 
-        }
+        },
+
+		getChildren: function(parentItem, onComplete, onError) {
+
+            this.log("getChildren( parentItem, onComplete, onError )", parentItem);
+            
+            var originalResults = this.inherited(arguments, [ 
+                parentItem,
+                function (items) {
+                    if (parentItem.ChildPromise) {
+                        when(   
+                            parentItem.ChildPromise,
+                            onComplete
+                        );
+                    } else {
+                        onComplete(items);
+                    }
+        
+                },
+                onError]);
+            return originalResults
+		}
+
     });
 });
 
