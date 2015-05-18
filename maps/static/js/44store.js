@@ -579,7 +579,7 @@ require( [ 'dojo/_base/declare', "dijit/tree/ObjectStoreModel"],
         },
 
         //fixme do we need this with getroot?         
-        query: { id: this.RootId },
+        //query: { id: this.RootId },
 
         /***********************************************************************
           mayHaveChildren method
@@ -602,8 +602,9 @@ require( [ 'dojo/_base/declare', "dijit/tree/ObjectStoreModel"],
         getRoot: function(onItem){
 
             this.log("getRoot( onItem )", onItem);
+            
+            this.store.get(MapLayers.Store.Model.RootId).then(onItem);
 
-            MapLayers.Store.Observable.get(this.RootId).then(onItem);
         }
     });
 });
@@ -668,7 +669,7 @@ function MapLayers_Store_Create( RootId, parse_callback, obstore_callback ) {
 
 
     /***** create the model *****/
-//fixme we need to use our own amd style
+/*//fixme we need to use our own amd style
     MapLayers.Store.Model = new dijit.tree.ObjectStoreModel({
         store: MapLayers.Store.Observable,
         //fixme do we need this with getroot?         
@@ -684,8 +685,13 @@ function MapLayers_Store_Create( RootId, parse_callback, obstore_callback ) {
             
             this.store.get(RootId).then(onItem);
         }
-
     
+    });
+*/
+
+    MapLayers.Store.Model = new MapLayers.Store._ObjectStoreModel({
+        store: MapLayers.Store.Observable,
+        RootId: RootId
     });
 
 }
