@@ -31,30 +31,49 @@ dojo.require("dojo");
 
 function finishup() {
 
+    //if (MapLayers.Settings.debug) console.log("finishup()");
 
     MapLayers_Setcenter();
     MapLayers_Draw_init();
 
-
-
-
-
     /***** get layer list from the url *****/
     
-    var layers = MapLayers_Hash_Get('layers');
     var open =  MapLayers_Hash_Get('open');
 
-
     if ( open && open != "") {
-        MapLayers_Tree_Find_and_Open_Layers( open, true);
+        MapLayers.Tree.Tree.ExpandLayers( open);
     }
-    if ( layers && layers != "") {
-        MapLayers_Tree_Find_and_Open_Layers( layers, false);
-    }
+}
+
+function finishup2() {   
+
+    //if (MapLayers.Settings.debug) console.log("finishup2()");
 
     MapLayers_toolbar_Create();
     MapLayers_Time_CreateSlider();
     dijit.registry.byId("borderContainer").resize();
+
+    var layers = MapLayers_Hash_Get('layers');
+    if ( layers && layers != "") {
+        MapLayers.Tree.Tree.PrefetchLayers( layers );
+    } else {
+        finishup3();
+    }
+
+}
+
+function finishup3() {
+
+
+    //if (MapLayers.Settings.debug) console.log("finishup3()");
+
+    var layers = MapLayers_Hash_Get('layers');
+    if ( layers && layers != "") {
+        MapLayers.Tree.Tree.TurnOnLayers( layers );
+    }
+    MapLayers.Time.Toolbar.InitFromHash();
+
+
 
 /******************************************************************************
  add openlayers move event
@@ -81,10 +100,6 @@ function MapLayers_Login_GetJson() {
             MapLayers.login.isLoggedin = data.isLoggedin;
 
             MapLayers_OLMap_Create();
-
-
-
-            //MapLayers_Tree_GetJson();
             MapLayers_Tree_Create();
 
         }

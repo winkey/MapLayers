@@ -80,7 +80,7 @@ function MapLayers_Draw_NewPoint() {
     
     /***** create the tree item *****/
 
-    MapLayers_Tree_Create_Templayer("Point Layer", Layer, Control)
+    MapLayers.Tree.Tree.CreateTemplayer("Point Layer", Layer, Control)
 }
 
 function MapLayers_Draw_NewLine() {
@@ -110,7 +110,7 @@ function MapLayers_Draw_NewLine() {
     
     /***** create the tree item *****/
 
-    MapLayers_Tree_Create_Templayer("Line Layer", Layer, Control)
+    MapLayers.Tree.Tree.CreateTemplayer("Line Layer", Layer, Control)
 }
 
 function MapLayers_Draw_NewPoly() {
@@ -143,7 +143,7 @@ function MapLayers_Draw_NewPoly() {
     
     /***** create the tree item *****/
 
-    MapLayers_Tree_Create_Templayer("Polygon Layer", Layer, Control)
+    MapLayers.Tree.Tree.CreateTemplayer("Polygon Layer", Layer, Control)
 }
 
 function MapLayers_Draw_NewBox() {
@@ -183,7 +183,7 @@ function MapLayers_Draw_NewBox() {
     
     /***** create the tree item *****/
 
-    MapLayers_Tree_Create_Templayer("Box Layer", Layer, Control)
+    MapLayers.Tree.Tree.CreateTemplayer("Box Layer", Layer, Control)
 
 }
 
