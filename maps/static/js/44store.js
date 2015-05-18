@@ -623,7 +623,7 @@ require( [ 'dojo/_base/declare', "dojo/when", "dijit/tree/ObjectStoreModel"],
                             }
                         );
                     } else {
-                        console.log("non defered onComplete");
+                        console.log("non defered onComplete", items);
                         onComplete(items);
                     }
         
