@@ -2057,14 +2057,14 @@ require( ['dojo/_base/declare', "dijit/Toolbar", "dojo/fx/Toggler"],
             
             else if (treenode.begin_timespan != null && treenode.end_timespan != null ) {
                 
-                node = MapLayers_Time_removenode_sub(MapLayers.Time.BegList, treenode);
+                node = this.RemoveNodeSub(MapLayers.Time.BegList, treenode);
                 if ( MapLayers.Time.BegCurrentNode
                      && MapLayers.Time.BegCurrentNode.data.treenode.id == node.data.treenode.id
                    ) {
                     MapLayers.Time.BegCurrentNode = null;
                 }
 
-                node = MapLayers_Time_removenode_sub(MapLayers.Time.EndList, treenode);
+                node = this.RemoveNodeSub(MapLayers.Time.EndList, treenode);
                 if ( MapLayers.Time.EndCurrentNode
                      && MapLayers.Time.EndCurrentNode.data.treenode.id == node.data.treenode.id
                    ) {
