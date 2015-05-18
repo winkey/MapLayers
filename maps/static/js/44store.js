@@ -618,11 +618,12 @@ require( [ 'dojo/_base/declare', "dojo/when", "dijit/tree/ObjectStoreModel"],
                         when(   
                             parentItem.ChildPromise,
                             function () {
-                                console.log("defered getchildren");
+                                console.log("defered onComplete");
                                 onComplete(items);
                             }
                         );
                     } else {
+                        console.log("non defered onComplete");
                         onComplete(items);
                     }
         
