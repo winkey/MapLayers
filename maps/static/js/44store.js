@@ -614,9 +614,17 @@ require( [ 'dojo/_base/declare', "dojo/when", "dijit/tree/ObjectStoreModel"],
             var originalResults = this.inherited(arguments, [ 
                 parentItem,
                 function (items) {
-                    if (parentItem.ChildPromise) {
-                        when(   
-                            parentItem.ChildPromise,
+
+                    var ChildPromises = [];
+                    items.forEach(function(object) {
+                        if (object && object.ChildPromise) {
+                            ChildPromises.push(object.ChildPromise);
+                        }
+                    });
+                    if (ChildPromises.length) {
+                        
+                        when (
+                            all(ChildPromises),
                             function () {
                                 console.log("defered onComplete");
                                 onComplete(items);
