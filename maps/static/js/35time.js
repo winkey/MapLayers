@@ -90,7 +90,7 @@ require( ['dojo/_base/declare', "dijit/form/Button"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._PlayButton. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._PlayButton. : ", this, " : ", arguments);
             }
         },
 
@@ -144,7 +144,7 @@ require( ['dojo/_base/declare', "dijit/form/Button"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._PlayButton. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._PlayButton. : ", this, " : ", arguments);
             }
         },
 
@@ -205,7 +205,7 @@ require( ['dojo/_base/declare', "dijit/form/HorizontalSlider"],
         
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._TimeSlider. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._TimeSlider. : ", this, " : ", arguments);
             }
         },
 
@@ -259,11 +259,9 @@ require( ['dojo/_base/declare', "dijit/form/HorizontalSlider"],
             if ( !state ) {
                 state = 0;
             } else {
-                MapLayers.Time.Time = state;
+                MapLayers.Time.Time = Number(state);
             }
-            this.Update(state);
-
-            MapLayers.Time.Toolbar.Init();
+            this.Update(Number(state), false, false);
         },
 
         /***********************************************************************
@@ -330,7 +328,7 @@ require( ['dojo/_base/declare', "dijit/form/HorizontalSlider"],
 
         Update: function (ts, FromSlider, FromDateTimeBox) {
 
-            this.log("UpdateToobar(ts, FromSlider, FromDateTimeBox) ", ts, FromSlider, FromDateTimeBox);
+            this.log("Update(ts, FromSlider, FromDateTimeBox) ", ts, FromSlider, FromDateTimeBox);
             if(!FromSlider) {
                 MapLayers.Time.TimeSlider.Form.set("value", ts, false);
             }
@@ -353,7 +351,7 @@ require( ['dojo/_base/declare', "dijit/form/ToggleButton"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._LoopButton. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._LoopButton. : ", this, " : ", arguments);
             }
         },
 
@@ -420,7 +418,7 @@ require( ['dojo/_base/declare', "dijit/form/ToggleButton"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._RockButton. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._RockButton. : ", this, " : ", arguments);
             }
         },
 
@@ -489,7 +487,7 @@ require( ['dojo/_base/declare', "dijit/form/ComboBox", "dojo/store/Memory"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._IncrBox. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._IncrBox. : ", this, " : ", arguments);
             }
         },
 
@@ -618,7 +616,7 @@ require( ['dojo/_base/declare', "dijit/form/HorizontalSlider"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._SpeedSlider. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._SpeedSlider. : ", this, " : ", arguments);
             }
         },
 
@@ -710,7 +708,7 @@ require( ['dojo/_base/declare', "dijit/form/DateTextBox"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._DateBox. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._DateBox. : ", this, " : ", arguments);
             }
         },
 
@@ -745,10 +743,9 @@ require( ['dojo/_base/declare', "dijit/form/DateTextBox"],
             if ( !state ) {
                 state = 0;
             } else {
-                MapLayers.Time.Time = state;
+                MapLayers.Time.Time = Number(state);
             }
-            this.Update(state);
-
+            this.Update(Number(state), false, false);
         },
 
         /***********************************************************************
@@ -773,7 +770,7 @@ require( ['dojo/_base/declare', "dijit/form/DateTextBox"],
             
             /***** get the date value *****/
 
-            var mytime = MapLayers.Time.TimeBox.get('value')
+            var mytime = MapLayers.Time.TimeBox.Form.get('value')
 
             var time = mytime.getTime();
 
@@ -832,7 +829,7 @@ require( ['dojo/_base/declare', "dijit/form/DateTextBox"],
         },
 
         Update: function (ts, FromSlider, FromDateTimeBox) {
-            this.log("UpdateToobar(ts, FromSlider, FromDateTimeBox) ", ts, FromSlider, FromDateTimeBox);
+            this.log("Update(ts, FromSlider, FromDateTimeBox) ", ts, FromSlider, FromDateTimeBox);
 
             MapLayers.Time.TimeSlider.Update(ts, FromSlider, FromDateTimeBox);
 
@@ -850,6 +847,7 @@ require( ['dojo/_base/declare', "dijit/form/DateTextBox"],
                     delete MapLayers.Time.DateBox.Form.constraints.max;
                 }
 
+                //console.log("gotcha", date) 
                 MapLayers.Time.DateBox.Form.set("value", date, false);
 
                 if ( date_min != undefined ) {
@@ -879,7 +877,7 @@ require( ['dojo/_base/declare', "dijit/form/TimeTextBox"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._TimeBox. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._TimeBox. : ", this, " : ", arguments);
             }
         },
 
@@ -919,9 +917,9 @@ require( ['dojo/_base/declare', "dijit/form/TimeTextBox"],
             if ( !state ) {
                 state = 0;
             } else {
-                MapLayers.Time.Time = state;
+                MapLayers.Time.Time = Number(state);
             }
-            this.Update(state);
+            this.Update(Number(state), false, false);
         },
 
         /***********************************************************************
@@ -947,7 +945,7 @@ require( ['dojo/_base/declare', "dijit/form/TimeTextBox"],
 
             /***** get the date value *****/
 
-            var mydate = MapLayers.Time.DateBox.get('value')
+            var mydate = MapLayers.Time.DateBox.Form.get('value')
 
             var day = mydate.getUTCDate();
             var month = mydate.getUTCMonth();
@@ -1082,7 +1080,7 @@ require( ['dojo/_base/declare', "dijit/Toolbar", "dojo/fx/Toggler"],
 
         log:  function () {
             if (MapLayers.Settings.debug) {
-                console.log("MapLayers.Time._TimeBar. : ", this, " : ", arguments);
+                //console.log("MapLayers.Time._TimeBar. : ", this, " : ", arguments);
             }
         },
 
@@ -1145,6 +1143,8 @@ require( ['dojo/_base/declare', "dijit/Toolbar", "dojo/fx/Toggler"],
             MapLayers.Time.SpeedSlider.InitFromHash();
             MapLayers.Time.DateBox.InitFromHash();
             MapLayers.Time.TimeBox.InitFromHash();
+
+            MapLayers.Time.Toolbar.Init();
         },
 
         /***********************************************************************
@@ -1645,7 +1645,7 @@ require( ['dojo/_base/declare', "dijit/Toolbar", "dojo/fx/Toggler"],
                     if (MapLayers.Time.RockState) {
                         MapLayers.Time.Time = MapLayers.Time.SliderMinValue;
                         MapLayers.Time.BackwardsState = false;
-                        MapLayers.Time.ForwardButton.set("checked", true);
+                        MapLayers.Time.ForwardButton.Form.set("checked", true);
 
                         MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.head;
                         MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.head;
@@ -1686,7 +1686,7 @@ require( ['dojo/_base/declare', "dijit/Toolbar", "dojo/fx/Toggler"],
                     if (MapLayers.Time.RockState) {
                         MapLayers.Time.Time = MapLayers.Time.SliderMaxValue;
                         MapLayers.Time.BackwardsState = true;
-                        MapLayers.Time.ForwardButton.set("checked", false);
+                        MapLayers.Time.ForwardButton.Form.set("checked", false);
 
                         MapLayers.Time.BegCurrentNode = MapLayers.Time.BegList.tail;
                         MapLayers.Time.EndCurrentNode = MapLayers.Time.EndList.tail;
