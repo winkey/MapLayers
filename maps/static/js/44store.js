@@ -608,36 +608,48 @@ require( [ 'dojo/_base/declare', "dojo/when", "dojo/promise/all",
 
         },
 
+        /***********************************************************************
+          _PromisesOfPromises method
+        ***********************************************************************/
+
+        _PromisesOfPromises: function (results, callback) {
+
+                MapLayers.Store.Cache.log("_PromisesOfPromises(results )", results);
+
+                var ChildPromises = [];
+                results.forEach(function(object) {
+                    if (object && object.ChildPromise) {
+                        ChildPromises.push(object.ChildPromise);
+                    }
+                });
+                if (ChildPromises.length) {
+                    
+                    when (
+                        all(ChildPromises),
+                        function(result) {
+                            MapLayers.Store.Model._PromisesOfPromises(result, callback);
+                        }
+                    );
+                } else {
+                    callback(results);
+                }
+            },
+
+        /***********************************************************************
+          getChildren method
+        ***********************************************************************/
+
 		getChildren: function(parentItem, onComplete, onError) {
 
             this.log("getChildren( parentItem, onComplete, onError parentItem.ChildPromise)", parentItem, parentItem.ChildPromise);
             
-            var originalResults = this.inherited(arguments, [ 
+            var originalResults = this.inherited(arguments,[ 
                 parentItem,
                 function (items) {
-
-                    var ChildPromises = [];
-                    items.forEach(function(object) {
-                        if (object && object.ChildPromise) {
-                            ChildPromises.push(object.ChildPromise);
-                        }
-                    });
-                    if (ChildPromises.length) {
-                        
-                        when (
-                            all(ChildPromises),
-                            function () {
-                                console.log("defered onComplete");
-                                onComplete(items);
-                            }
-                        );
-                    } else {
-                        console.log("non defered onComplete", items);
-                        onComplete(items);
-                    }
-        
-                },
-                onError]);
+                    MapLayers.Store.Model._PromisesOfPromises(items, onComplete);
+                    },
+                onError
+            ]);
             return originalResults
 		}
 
