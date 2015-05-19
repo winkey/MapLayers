@@ -612,7 +612,7 @@ require( [ 'dojo/_base/declare', "dojo/when", "dojo/promise/all",
           _PromisesOfPromises method
         ***********************************************************************/
 
-        _PromisesOfPromises: function (results, callback) {
+        _PromisesOfPromises: function (results, origresults, callback) {
 
                 MapLayers.Store.Cache.log("_PromisesOfPromises(results )", results);
 
@@ -627,11 +627,11 @@ require( [ 'dojo/_base/declare', "dojo/when", "dojo/promise/all",
                     when (
                         all(ChildPromises),
                         function(result) {
-                            MapLayers.Store.Model._PromisesOfPromises(result, callback);
+                            MapLayers.Store.Model._PromisesOfPromises(result, origresults, callback);
                         }
                     );
                 } else {
-                    callback(results);
+                    callback(origresults);
                 }
             },
 
@@ -646,7 +646,7 @@ require( [ 'dojo/_base/declare', "dojo/when", "dojo/promise/all",
             var originalResults = this.inherited(arguments,[ 
                 parentItem,
                 function (items) {
-                    MapLayers.Store.Model._PromisesOfPromises(items, onComplete);
+                    MapLayers.Store.Model._PromisesOfPromises(items, items, onComplete);
                     },
                 onError
             ]);
